@@ -178,7 +178,36 @@ function UpdaterRow() {
   )
 }
 
+function OfficialLauncherCard() {
+  const official = useStore((s) => s.official)
+  const refresh = useStore((s) => s.refreshOfficial)
+  return (
+    <Card title={<><UserRound size={16} /> Conta e Minecraft Launcher</>} actions={<button className="link" onClick={() => void refresh()}>Procurar de novo</button>}>
+      <p className="muted small" style={{ marginTop: 0 }}>
+        Você entra com a sua conta Microsoft no Minecraft Launcher oficial. O ANÁTEMA cria e mantém o perfil
+        <strong> ANÁTEMA</strong> lá, com a memória e a resolução escolhidas aqui.
+      </p>
+      <Setting title="Minecraft Launcher" description={official?.found ? 'Instalado e pronto.' : official ? 'Não encontrado neste computador.' : 'Procurando…'}>
+        {official?.found ? (
+          <span className="status-pill ok">Encontrado</span>
+        ) : (
+          <button className="btn accent" onClick={() => api.official.download()}>
+            Baixar
+          </button>
+        )}
+      </Setting>
+      {official && <p className="muted small path">{official.minecraftDir}</p>}
+    </Card>
+  )
+}
+
 function Accounts() {
+  const isOfficial = useStore((s) => s.info?.playMode === 'official')
+  if (isOfficial) return <OfficialLauncherCard />
+  return <MicrosoftAccounts />
+}
+
+function MicrosoftAccounts() {
   const accounts = useStore((s) => s.accounts)
   const selected = useStore((s) => s.settings?.selectedAccount)
   const login = useStore((s) => s.login)

@@ -14,6 +14,8 @@ extraResources:
     to: manifest.json
   - from: resources/icon.png
     to: icon.png
+  - from: resources/profile-icon.png
+    to: profile-icon.png
 asar: true
 win:
   icon: resources/icon.ico

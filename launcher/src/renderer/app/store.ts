@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { Account, AppInfo, GameState, LogLine, PackStatus, ServerStatus, Settings, UpdateState } from '@shared/types'
+import type { Account, AppInfo, GameState, LogLine, OfficialLauncherStatus, PackStatus, ServerStatus, Settings, UpdateState } from '@shared/types'
 import { api } from './api'
 
 export type Page = 'inicio' | 'modpack' | 'ajustes' | 'registros'
@@ -26,12 +26,14 @@ interface Store {
   maximized: boolean
   toasts: Toast[]
   loggingIn: boolean
+  official: OfficialLauncherStatus | null
 
   go(page: Page): void
   init(): Promise<void>
   setSettings(patch: Partial<Settings>): Promise<void>
   refreshPack(remote?: boolean): Promise<void>
   refreshServer(): Promise<void>
+  refreshOfficial(): Promise<void>
   login(): Promise<void>
   toast(t: Omit<Toast, 'id'>): void
   dismiss(id: number): void
@@ -55,6 +57,7 @@ export const useStore = create<Store>((set, get) => ({
   maximized: false,
   toasts: [],
   loggingIn: false,
+  official: null,
 
   go: (page) => set({ page }),
 
@@ -89,6 +92,7 @@ export const useStore = create<Store>((set, get) => ({
     if (settings.reduceMotion) document.documentElement.classList.add('reduce-motion')
     void get().refreshPack(true)
     void get().refreshServer()
+    if (info.playMode === 'official') void get().refreshOfficial()
     setInterval(() => void get().refreshServer(), 30_000)
   },
 
@@ -112,6 +116,14 @@ export const useStore = create<Store>((set, get) => ({
       set({ server: await api.server.status() })
     } catch {
       /* o card mostra o último estado conhecido */
+    }
+  },
+
+  async refreshOfficial() {
+    try {
+      set({ official: await api.official.status() })
+    } catch {
+      /* mantém o último estado */
     }
   },
 

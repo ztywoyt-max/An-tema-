@@ -20,6 +20,21 @@ import { buildLaunchOptions } from './launch'
 import { installVanilla, vanillaInstalled } from './vanilla'
 import { packFileStatus, syncPackFiles } from './mods'
 import { AuthError } from '../auth/microsoft'
+import { neoforgeVersionId } from './neoforge'
+import {
+  ensureServerListed,
+  findOfficialLauncher,
+  officialMinecraftDir,
+  openOfficialLauncher,
+  writeOfficialProfile,
+} from './official'
+
+/**
+ * 'official': o ANÁTEMA prepara tudo e abre o Minecraft Launcher oficial com o perfil ANÁTEMA
+ *             (o jogador entra com a própria conta Microsoft lá).
+ * 'own':      o próprio ANÁTEMA faz o login Microsoft e inicia o jogo (exige app registrado no Azure).
+ */
+export type PlayMode = 'official' | 'own'
 
 /** Peso de cada etapa na barra de progresso geral. */
 const WEIGHTS: Partial<Record<Phase, [number, number]>> = {
@@ -50,7 +65,14 @@ export class GameService {
     private settings: SettingsStore,
     private accounts: AccountStore,
     private hooks: GameHooks,
+    private mode: PlayMode = 'official',
+    private profileIcon?: string,
   ) {}
+
+  /** Pasta onde ficam versões e bibliotecas: a .minecraft do launcher oficial ou a nossa. */
+  private mcRoot() {
+    return this.mode === 'official' ? officialMinecraftDir() : this.p.game
+  }
 
   getState() {
     return this.state
@@ -90,8 +112,8 @@ export class GameService {
       ...st,
       installed: {
         java: false,
-        minecraft: vanillaInstalled(this.p.game, manifest.minecraft),
-        loader: await neoforgeReady(this.p.game, manifest),
+        minecraft: vanillaInstalled(this.mcRoot(), manifest.minecraft),
+        loader: await neoforgeReady(this.mcRoot(), manifest),
       },
       checkedAt: Date.now(),
     }
@@ -102,7 +124,7 @@ export class GameService {
   }
 
   isBusy() {
-    return !['idle', 'error'].includes(this.state.phase)
+    return !['idle', 'error', 'handoff'].includes(this.state.phase)
   }
 
   cancel() {
@@ -130,10 +152,10 @@ export class GameService {
 
     this.set('minecraft', `Verificando Minecraft ${manifest.minecraft}`, { progress: WEIGHTS.minecraft![0] })
     const mcProgress = this.stageProgress('minecraft', `Minecraft ${manifest.minecraft}`)
-    await installVanilla(manifest.minecraft, this.p.game, { concurrency: s.concurrency, deep, signal, onProgress: mcProgress })
+    await installVanilla(manifest.minecraft, this.mcRoot(), { concurrency: s.concurrency, deep, signal, onProgress: mcProgress })
 
     this.set('loader', `Verificando NeoForge ${manifest.loader.version}`, { progress: WEIGHTS.loader![0] })
-    await installNeoForge(manifest, this.p.game, this.p.cache, java.console, {
+    await installNeoForge(manifest, this.mcRoot(), this.p.cache, java.console, {
       signal,
       force: false,
       onProgress: this.stageProgress('loader', 'Baixando NeoForge'),
@@ -162,9 +184,13 @@ export class GameService {
 
   async reset() {
     if (this.isBusy()) throw new Error('Feche o jogo antes de reinstalar.')
-    log.warn('Reinstalação completa solicitada: removendo bibliotecas, versões e mods.')
-    for (const dir of ['versions', 'libraries', 'mods', 'mods_retirados']) {
-      await rm(join(this.p.game, dir), { recursive: true, force: true })
+    log.warn('Reinstalação completa solicitada: removendo NeoForge, mods e Java do ANÁTEMA.')
+    for (const dir of ['mods', 'mods_retirados']) await rm(join(this.p.game, dir), { recursive: true, force: true })
+    if (this.mode === 'own') {
+      for (const dir of ['versions', 'libraries']) await rm(join(this.p.game, dir), { recursive: true, force: true })
+    } else if (this.loaded) {
+      // Na .minecraft do launcher oficial só removemos o que é nosso.
+      await rm(join(this.mcRoot(), 'versions', neoforgeVersionId(this.loaded.manifest)), { recursive: true, force: true })
     }
     await rm(this.p.installedState, { force: true })
     await rm(this.p.runtime, { recursive: true, force: true })
@@ -172,6 +198,7 @@ export class GameService {
   }
 
   async play() {
+    if (this.mode === 'official') return this.playOfficial()
     try {
       const settings = this.settings.get()
       if (!settings.selectedAccount) throw new AuthError('Entre com sua conta Microsoft para jogar.')
@@ -216,6 +243,43 @@ export class GameService {
         }
         this.hooks.onGameExited(code)
       })
+    } catch (e) {
+      this.fail(e)
+    }
+  }
+
+  /** Prepara tudo e entrega para o Minecraft Launcher oficial, com o perfil ANÁTEMA pronto. */
+  async playOfficial() {
+    try {
+      const launcher = await findOfficialLauncher()
+      const { manifest } = await this.prepare(false)
+      const settings = this.settings.get()
+      this.set('launching', 'Criando o perfil ANÁTEMA', { progress: 0.98 })
+      await writeOfficialProfile(this.mcRoot(), {
+        versionId: neoforgeVersionId(manifest),
+        gameDir: this.p.game,
+        memoryMB: settings.memoryMB,
+        jvmArgs: [...(manifest.jvmArgs ?? []), ...settings.jvmArgs.split(/\s+/).filter(Boolean)],
+        width: settings.width,
+        height: settings.height,
+        iconDataUri: this.profileIcon,
+      })
+      await ensureServerListed(this.p.game, manifest.server.name, manifest.server.address)
+      log.info(`Perfil ANÁTEMA atualizado em ${this.mcRoot()}.`)
+      if (!launcher) {
+        log.warn('Minecraft Launcher oficial não encontrado neste computador.')
+        this.set('error', 'Minecraft Launcher não encontrado', {
+          error: {
+            message: 'Tudo foi instalado, mas o Minecraft Launcher oficial não foi encontrado.',
+            hint: 'Instale-o pelo site minecraft.net (Baixar) e clique em Jogar de novo.',
+          },
+        })
+        return
+      }
+      openOfficialLauncher(launcher)
+      log.info('Minecraft Launcher aberto. Escolha o perfil ANÁTEMA e clique em Jogar.')
+      this.set('handoff', 'Minecraft Launcher aberto', { progress: undefined })
+      this.hooks.onGameStarted()
     } catch (e) {
       this.fail(e)
     }

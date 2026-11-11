@@ -43,6 +43,7 @@ const api: AnatemaApi = {
     state: () => call('game:state'),
   },
   server: { status: () => call('server:status') },
+  official: { status: () => call('official:status'), download: () => fire('app:openExternal', 'https://www.minecraft.net/pt-br/download') },
   logs: { history: () => call('logs:history'), clear: () => call('logs:clear'), export: () => call('logs:export') },
   updater: { check: () => call('updater:check'), install: () => fire('updater:install') },
   on<K extends keyof EventMap>(channel: K, cb: (payload: EventMap[K]) => void) {

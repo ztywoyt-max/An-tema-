@@ -13,6 +13,8 @@ export function PlayBar() {
   const login = useStore((s) => s.login)
   const loggingIn = useStore((s) => s.loggingIn)
   const go = useStore((s) => s.go)
+  const official = useStore((s) => s.info?.playMode === 'official')
+  const needsAccount = !official && !account
   const [, tick] = useState(0)
 
   useEffect(() => {
@@ -21,19 +23,24 @@ export function PlayBar() {
     return () => clearInterval(t)
   }, [game.phase])
 
-  const busy = !['idle', 'error', 'running'].includes(game.phase)
+  const busy = !['idle', 'error', 'running', 'handoff'].includes(game.phase)
+  const handoff = game.phase === 'handoff'
   const running = game.phase === 'running'
   const needsInstall = pack && (!pack.installed.minecraft || !pack.installed.loader)
   const pending = pack?.pendingCount ?? 0
 
   let title = 'A entrada aguarda.'
   let subtitle = 'Os arquivos serão verificados ao iniciar.'
-  if (!account) {
+  if (official) subtitle = 'Tudo é instalado e o Minecraft Launcher abre com o perfil ANÁTEMA.'
+  if (needsAccount) {
     title = 'Entre como Condenado.'
     subtitle = 'Conecte sua conta Microsoft para atravessar o domínio.'
   } else if (busy) {
     title = game.label
     subtitle = [game.detail, speed(game.bytesPerSecond)].filter(Boolean).join(' · ') || 'Preparando…'
+  } else if (handoff) {
+    title = 'Tudo pronto. O Minecraft Launcher foi aberto.'
+    subtitle = 'Lá, escolha o perfil ANÁTEMA e clique em Jogar. O servidor já está na lista de Multijogador.'
   } else if (running) {
     title = 'Você está no Domínio.'
     subtitle = `Sessão iniciada há ${elapsed(game.startedAt) || 'instantes'}. O launcher aguarda em segundo plano.`
@@ -42,7 +49,9 @@ export function PlayBar() {
     subtitle = game.error?.hint ?? 'Veja a aba Registros para os detalhes.'
   } else if (needsInstall) {
     title = 'Primeira travessia.'
-    subtitle = 'Java, Minecraft, NeoForge e mods serão instalados automaticamente.'
+    subtitle = official
+      ? 'NeoForge e mods serão instalados e o perfil ANÁTEMA criado no Minecraft Launcher.'
+      : 'Java, Minecraft, NeoForge e mods serão instalados automaticamente.'
   } else if (pending > 0) {
     title = 'Há uma atualização do modpack.'
     subtitle = `${pending} arquivo${pending > 1 ? 's' : ''} para baixar (${bytes(pack!.pendingBytes)}).`
@@ -52,7 +61,7 @@ export function PlayBar() {
   const showBar = busy
 
   let action: { label: string; onClick: () => void; variant: string; icon: React.ReactNode; disabled?: boolean }
-  if (!account) {
+  if (needsAccount) {
     action = { label: loggingIn ? 'Aguardando' : 'Entrar', onClick: () => void login(), variant: 'primary', icon: <ArrowUpRight size={20} />, disabled: loggingIn }
   } else if (busy) {
     action = { label: 'Cancelar', onClick: () => void api.game.cancel(), variant: 'ghost', icon: <X size={18} />, disabled: game.phase === 'launching' }
@@ -60,7 +69,7 @@ export function PlayBar() {
     action = { label: 'Fechar jogo', onClick: () => void api.game.kill(), variant: 'ghost', icon: <Square size={14} /> }
   } else {
     action = {
-      label: needsInstall ? 'Instalar' : pending > 0 ? 'Atualizar' : 'Jogar',
+      label: needsInstall ? 'Instalar' : pending > 0 ? 'Atualizar' : handoff ? 'Abrir de novo' : 'Jogar',
       onClick: () => void api.game.play(),
       variant: 'primary',
       icon: <ArrowUpRight size={20} />,
@@ -68,7 +77,7 @@ export function PlayBar() {
   }
 
   return (
-    <footer className={cx('playbar', busy && 'busy', running && 'running', game.phase === 'error' && 'error')}>
+    <footer className={cx('playbar', busy && 'busy', (running || handoff) && 'running', game.phase === 'error' && 'error')}>
       <div className="playbar-status">
         <span className="playbar-sigil">
           {busy ? <Loader2 size={18} className="spin" /> : game.phase === 'error' ? <CircleAlert size={18} /> : <i className="sigil-crow" dangerouslySetInnerHTML={{ __html: corvo }} />}

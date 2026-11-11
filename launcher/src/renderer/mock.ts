@@ -8,6 +8,7 @@ export function createMockApi(): AnatemaApi {
   const listeners = new Map<string, Set<(p: unknown) => void>>()
   const emit = <K extends keyof EventMap>(ch: K, p: EventMap[K]) => listeners.get(ch as string)?.forEach((fn) => fn(p))
   const params = new URLSearchParams(location.search)
+  const playMode = params.get('modo') === 'proprio' ? 'own' : 'official'
   const loggedIn = params.get('conta') !== '0'
 
   let settings: Settings = {
@@ -74,9 +75,10 @@ export function createMockApi(): AnatemaApi {
       setState({ phase, label, progress, detail: '312,4 MB de 1,21 GB · 58/212 arquivos', bytesPerSecond: 14_800_000 })
       await new Promise((r) => setTimeout(r, 700))
     }
-    setState({ phase: 'running', label: 'Em jogo', startedAt: Date.now() })
+    setState(playMode === 'official' ? { phase: 'handoff', label: 'Minecraft Launcher aberto' } : { phase: 'running', label: 'Em jogo', startedAt: Date.now() })
   }
 
+  if (params.get('estado') === 'aberto') state = { phase: 'handoff', label: 'Minecraft Launcher aberto' }
   if (params.get('estado') === 'baixando') {
     state = { phase: 'mods', label: 'Mods e recursos', progress: 0.73, detail: '612,4 MB de 1,21 GB · 148/212 arquivos', bytesPerSecond: 18_400_000 }
   } else if (params.get('estado') === 'erro') {
@@ -89,7 +91,7 @@ export function createMockApi(): AnatemaApi {
 
   return {
     app: {
-      info: async () => ({ version: '1.0.0', platform: 'win32', totalMemoryMB: 16310, dataDir: 'C:\\Users\\Jogador\\AppData\\Roaming\\.anatema', loginConfigured: true, isPackaged: false }),
+      info: async () => ({ version: '1.0.0', platform: 'win32', totalMemoryMB: 16310, dataDir: 'C:\\Users\\Jogador\\AppData\\Roaming\\.anatema', loginConfigured: playMode === 'own', isPackaged: false, playMode }),
       minimize: () => {},
       toggleMaximize: () => {},
       close: () => {},
@@ -150,6 +152,10 @@ export function createMockApi(): AnatemaApi {
               },
               checkedAt: Date.now(),
             },
+    },
+    official: {
+      status: async () => ({ found: params.get('oficial') !== '0', kind: 'store' as const, minecraftDir: 'C:\\Users\\Jogador\\AppData\\Roaming\\.minecraft' }),
+      download: () => window.open('https://www.minecraft.net/pt-br/download', '_blank'),
     },
     logs: { history: async () => logs, clear: async () => void (logs.length = 0), export: async () => null },
     updater: { check: async () => emit('updater:state', { state: 'none' }), install: () => {} },

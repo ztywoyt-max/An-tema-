@@ -63,7 +63,28 @@ export function TitleBar() {
   )
 }
 
+function OfficialChip() {
+  const official = useStore((s) => s.official)
+  const found = official?.found
+  return (
+    <button
+      className="account-chip official"
+      title={found ? 'O login é feito no Minecraft Launcher oficial' : 'Instalar o Minecraft Launcher oficial'}
+      onClick={() => !found && api.official.download()}
+    >
+      <span className={cx('status-dot', found === true && 'ok', found === false && 'warn')} />
+      <span>{official === null ? 'Procurando Minecraft…' : found ? 'Minecraft Launcher' : 'Instalar Minecraft Launcher'}</span>
+    </button>
+  )
+}
+
 function AccountMenu() {
+  const isOfficial = useStore((s) => s.info?.playMode === 'official')
+  if (isOfficial) return <OfficialChip />
+  return <MicrosoftAccountMenu />
+}
+
+function MicrosoftAccountMenu() {
   const account = useStore(selectAccount)
   const accounts = useStore((s) => s.accounts)
   const login = useStore((s) => s.login)

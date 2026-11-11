@@ -131,6 +131,7 @@ export type Phase =
   | 'mods'
   | 'launching'
   | 'running'
+  | 'handoff'
   | 'error'
 
 export interface GameState {
@@ -188,6 +189,14 @@ export interface AppInfo {
   dataDir: string
   loginConfigured: boolean
   isPackaged: boolean
+  /** official = abre o Minecraft Launcher oficial; own = login e inicialização pelo ANÁTEMA. */
+  playMode: 'official' | 'own'
+}
+
+export interface OfficialLauncherStatus {
+  found: boolean
+  kind?: 'exe' | 'store'
+  minecraftDir: string
 }
 
 /* ───────────────────────── Ponte (preload) ───────────────────────── */
@@ -224,6 +233,7 @@ export interface AnatemaApi {
     state(): Promise<GameState>
   }
   server: { status(): Promise<ServerStatus> }
+  official: { status(): Promise<OfficialLauncherStatus>; download(): void }
   logs: {
     history(): Promise<LogLine[]>
     clear(): Promise<void>

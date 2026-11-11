@@ -11,6 +11,8 @@ import { GameService } from './game/service'
 import { pingServer } from './server/ping'
 import { setFetch } from './net/download'
 import { setupUpdater } from './updater'
+import { findOfficialLauncher, officialMinecraftDir } from './game/official'
+import { readFileSync } from 'node:fs'
 
 const DEV_URL = process.env.ANATEMA_DEV_SERVER
 
@@ -113,6 +115,16 @@ async function bootstrap() {
   const accounts = new AccountStore(p.accounts)
   await accounts.load()
 
+  // Sem app Microsoft registrado, o ANÁTEMA usa o Minecraft Launcher oficial para o login.
+  const playMode = loginConfigured() ? 'own' : 'official'
+  let profileIcon: string | undefined
+  try {
+    profileIcon = `data:image/png;base64,${readFileSync(resourcePath('profile-icon.png')).toString('base64')}`
+  } catch {
+    /* sem ícone */
+  }
+  log.info(`Modo de jogo: ${playMode === 'official' ? 'Minecraft Launcher oficial' : 'login próprio'}`)
+
   const game = new GameService(p, settings, accounts, {
     onState: (s) => send('game:state', s),
     onPackStatus: (s) => send('pack:changed', s),
@@ -126,7 +138,7 @@ async function bootstrap() {
       if (mainWindow && !mainWindow.isVisible()) mainWindow.show()
       if (mainWindow?.isMinimized()) mainWindow.restore()
     },
-  })
+  }, playMode, profileIcon)
 
   log.on((lines) => send('log:lines', lines))
 
@@ -140,7 +152,12 @@ async function bootstrap() {
     dataDir: p.root,
     loginConfigured: loginConfigured(),
     isPackaged: app.isPackaged,
+    playMode,
   }))
+  ipcMain.handle('official:status', async () => {
+    const l = await findOfficialLauncher()
+    return { found: !!l, kind: l?.kind, minecraftDir: officialMinecraftDir() }
+  })
   ipcMain.on('app:minimize', () => mainWindow?.minimize())
   ipcMain.on('app:toggleMaximize', () => (mainWindow?.isMaximized() ? mainWindow.unmaximize() : mainWindow?.maximize()))
   ipcMain.on('app:close', () => {

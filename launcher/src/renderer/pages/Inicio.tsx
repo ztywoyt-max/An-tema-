@@ -5,6 +5,7 @@ import { bytes, cx, shortDate } from '../app/format'
 import { Card, Eyebrow } from '../components/ui'
 import { MicrosoftMark } from '../components/TitleBar'
 import { useState } from 'react'
+import { api } from '../app/api'
 
 export function Inicio() {
   const pack = useStore((s) => s.pack)
@@ -128,7 +129,43 @@ function ServerCard() {
   )
 }
 
+function OfficialCard() {
+  const official = useStore((s) => s.official)
+  return (
+    <Card className="account-card" eyebrow="Identidade · O primeiro passo" title="Entre como Condenado.">
+      <ol className="steps">
+        <li>
+          <b>1</b>
+          <span>Clique em <strong>Jogar</strong>: o ANÁTEMA instala NeoForge, mods e configurações.</span>
+        </li>
+        <li>
+          <b>2</b>
+          <span>O <strong>Minecraft Launcher</strong> oficial abre com o perfil <strong>ANÁTEMA</strong> já selecionado.</span>
+        </li>
+        <li>
+          <b>3</b>
+          <span>Clique em Jogar lá, com a sua conta. O servidor já estará em Multijogador.</span>
+        </li>
+      </ol>
+      {official?.found === false && (
+        <>
+          <p className="note warn">O Minecraft Launcher oficial não foi encontrado neste computador.</p>
+          <button className="btn ms" onClick={() => api.official.download()}>
+            Baixar o Minecraft Launcher
+          </button>
+        </>
+      )}
+    </Card>
+  )
+}
+
 function AccountCard() {
+  const official = useStore((s) => s.info?.playMode === 'official')
+  if (official) return <OfficialCard />
+  return <MicrosoftAccountCard />
+}
+
+function MicrosoftAccountCard() {
   const account = useStore(selectAccount)
   const login = useStore((s) => s.login)
   const loggingIn = useStore((s) => s.loggingIn)
