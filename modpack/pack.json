@@ -110,13 +110,20 @@
       "slug": "farmers-respite",
       "name": "Farmer's Respite",
       "category": "jogabilidade",
-      "description": "Chás, cafés e bebidas para o Farmer's Delight."
+      "description": "Chás, cafés e bebidas para o Farmer's Delight.",
+      "alternatives": [
+        "farmers-respite-neoforge"
+      ]
     },
     {
       "slug": "farm-and-charm",
       "name": "Farm & Charm",
       "category": "jogabilidade",
-      "description": "Vida rural: cultivo, animais e cozinha do campo."
+      "description": "Vida rural: cultivo, animais e cozinha do campo.",
+      "alternatives": [
+        "lets-do-farm-charm",
+        "farm-charm"
+      ]
     },
     {
       "slug": "lets-do-vinery",
@@ -212,7 +219,10 @@
       "slug": "weathering-renewed",
       "name": "Weathering Renewed",
       "category": "jogabilidade",
-      "description": "Clima e intempéries renovados."
+      "description": "Clima e intempéries renovados.",
+      "alternatives": [
+        "weathering"
+      ]
     },
     {
       "slug": "worldedit",
@@ -350,7 +360,11 @@
       "slug": "presence-footsteps",
       "name": "Presence Footsteps",
       "category": "sons",
-      "description": "Passos com som de acordo com o terreno."
+      "description": "Passos com som de acordo com o terreno.",
+      "alternatives": [
+        "presence-footsteps-forge",
+        "presencefootsteps"
+      ]
     },
     {
       "slug": "particle-rain",
@@ -429,6 +443,13 @@
       "name": "KubeJS",
       "category": "administracao",
       "description": "Scripts de personalização do servidor."
+    },
+    {
+      "slug": "watermedia",
+      "name": "WaterMedia",
+      "category": "bibliotecas",
+      "description": "Biblioteca de vídeo e áudio do WaterFrames e WaterVision.",
+      "below": "2.2"
     },
     {
       "slug": "architectury-api",

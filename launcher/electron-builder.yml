@@ -34,4 +34,6 @@ linux:
   category: Game
 publish:
   provider: github
+  owner: ztywoyt-max
+  repo: An-tema-
   releaseType: release

@@ -43,5 +43,9 @@
   },
   "overrides": {
     "@xmcl/unzip": "2.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ztywoyt-max/An-tema-.git"
   }
 }

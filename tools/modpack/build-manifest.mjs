@@ -55,13 +55,41 @@ function fromLegacy(entry, def) {
   }
 }
 
-async function resolveModrinth(def, project) {
-  const q = `?loaders=${encodeURIComponent('["neoforge"]')}&game_versions=${encodeURIComponent(`["${pack.minecraft}"]`)}`
-  const versions = (await api(`/project/${def.slug}/version${q}`)) ?? []
-  const pick =
-    (def.version && versions.find((v) => v.version_number === def.version || v.id === def.version)) ||
-    versions.find((v) => v.version_type === 'release') ||
-    versions[0]
+/** Extrai a parte numérica de uma versão ("2.1.37", "neoforge-2.1.37+mc1.21") para comparar. */
+function numericVersion(v) {
+  const m = /(\d+(?:\.\d+)+)/.exec(v ?? '')
+  return m ? m[1].split('.').map(Number) : []
+}
+function compareVersions(a, b) {
+  const x = numericVersion(a)
+  const y = numericVersion(b)
+  for (let i = 0; i < Math.max(x.length, y.length); i++) {
+    const d = (x[i] ?? 0) - (y[i] ?? 0)
+    if (d) return d
+  }
+  return 0
+}
+
+/**
+ * Escolhe a versão de um projeto para NeoForge/1.21.1.
+ * Ordem: versão fixada pela dependência (version_id) → "version" do pack.json → mais recente
+ * que respeite "below" (limite superior) → release mais recente.
+ */
+async function resolveModrinth(def, project, pinnedVersionId) {
+  let pick = null
+  if (pinnedVersionId) {
+    const v = await api(`/version/${pinnedVersionId}`)
+    if (v && v.loaders.includes('neoforge') && v.game_versions.includes(pack.minecraft)) pick = v
+  }
+  if (!pick) {
+    const q = `?loaders=${encodeURIComponent('["neoforge"]')}&game_versions=${encodeURIComponent(`["${pack.minecraft}"]`)}`
+    let versions = (await api(`/project/${project.id}/version${q}`)) ?? []
+    if (def.below) versions = versions.filter((v) => compareVersions(v.version_number, def.below) < 0)
+    pick =
+      (def.version && versions.find((v) => v.version_number === def.version || v.id === def.version)) ||
+      versions.find((v) => v.version_type === 'release') ||
+      versions[0]
+  }
   if (!pick) return null
   const file = pick.files.find((f) => f.primary) ?? pick.files[0]
   return {
@@ -82,12 +110,21 @@ async function resolveModrinth(def, project) {
       sha512: file.hashes.sha512,
       ...(def.optional ? { optional: true, defaultEnabled: def.defaultEnabled ?? true } : {}),
     },
-    deps: pick.dependencies.filter((d) => d.dependency_type === 'required' && d.project_id).map((d) => d.project_id),
+    deps: pick.dependencies
+      .filter((d) => d.dependency_type === 'required' && d.project_id)
+      .map((d) => ({ project: d.project_id, version: d.version_id ?? null })),
   }
 }
 
+/** Procura no Modrinth projetos com nome parecido que tenham versão NeoForge 1.21.1. */
+async function suggest(def) {
+  const facets = encodeURIComponent(JSON.stringify([['categories:neoforge'], [`versions:${pack.minecraft}`]]))
+  const res = await api(`/search?query=${encodeURIComponent(def.name ?? def.slug)}&facets=${facets}&limit=5`)
+  return (res?.hits ?? []).map((h) => `${h.slug} ("${h.title}")`)
+}
+
 const files = []
-const report = { resolved: 0, legacy: [], missing: [], autoDeps: [] }
+const report = { resolved: 0, legacy: [], missing: [], autoDeps: [], suggestions: {} }
 const bySlug = new Map()
 
 if (OFFLINE) {
@@ -99,43 +136,60 @@ if (OFFLINE) {
     } else report.missing.push(def.slug)
   }
 } else {
-  const slugs = pack.mods.map((m) => m.slug)
+  const candidates = pack.mods.flatMap((m) => [m.slug, ...(m.alternatives ?? [])])
   const projects = new Map()
-  for (let i = 0; i < slugs.length; i += 80) {
-    const chunk = slugs.slice(i, i + 80)
+  for (let i = 0; i < candidates.length; i += 80) {
+    const chunk = candidates.slice(i, i + 80)
     for (const p of (await api(`/projects?ids=${encodeURIComponent(JSON.stringify(chunk))}`)) ?? []) {
       projects.set(p.slug, p)
       projects.set(p.id, p)
     }
   }
-  const pendingDeps = new Set()
+  // Dependências: projeto → versão exigida (quando o mod declara uma versão exata).
+  const pendingDeps = new Map()
+  const queueDeps = (deps) => {
+    for (const d of deps) if (!pendingDeps.has(d.project) || d.version) pendingDeps.set(d.project, d.version)
+  }
   for (const def of pack.mods) {
-    const project = projects.get(def.slug)
-    const r = project ? await resolveModrinth(def, project) : null
+    let r = null
+    let project = null
+    for (const slug of [def.slug, ...(def.alternatives ?? [])]) {
+      project = projects.get(slug)
+      r = project ? await resolveModrinth(def, project) : null
+      if (r) {
+        if (slug !== def.slug) console.log(`  ${def.slug} → encontrado como "${slug}"`)
+        break
+      }
+    }
     if (r) {
       files.push(r.entry)
       bySlug.set(project.id, true)
-      r.deps.forEach((d) => pendingDeps.add(d))
+      queueDeps(r.deps)
       report.resolved++
     } else if (legacyBySlug.has(def.slug)) {
       files.push(fromLegacy(legacyBySlug.get(def.slug), def))
       report.legacy.push(def.slug)
-    } else report.missing.push(def.slug)
+    } else {
+      report.missing.push(def.slug)
+      report.suggestions[def.slug] = await suggest(def)
+    }
   }
-  // Dependências obrigatórias que não estavam na lista entram como bibliotecas.
+  // Dependências obrigatórias que não estavam na lista entram como bibliotecas,
+  // na versão que o mod pede (quando ele declara uma).
   while (pendingDeps.size) {
-    const ids = [...pendingDeps].filter((id) => !bySlug.has(id))
+    const wanted = [...pendingDeps].filter(([id]) => !bySlug.has(id))
     pendingDeps.clear()
-    if (!ids.length) break
-    const deps = (await api(`/projects?ids=${encodeURIComponent(JSON.stringify(ids))}`)) ?? []
+    if (!wanted.length) break
+    const deps = (await api(`/projects?ids=${encodeURIComponent(JSON.stringify(wanted.map(([id]) => id)))}`)) ?? []
     for (const p of deps) {
       bySlug.set(p.id, true)
       if (files.some((f) => f.id === p.slug)) continue
-      const r = await resolveModrinth({ slug: p.slug, category: 'bibliotecas' }, p)
+      const pinned = wanted.find(([id]) => id === p.id)?.[1]
+      const r = await resolveModrinth({ slug: p.slug, category: 'bibliotecas' }, p, pinned)
       if (r) {
         files.push(r.entry)
         report.autoDeps.push(p.slug)
-        r.deps.forEach((d) => pendingDeps.add(d))
+        queueDeps(r.deps)
       } else report.missing.push(`${p.slug} (dependência)`)
     }
   }
@@ -167,5 +221,8 @@ console.log(`  Modrinth: ${report.resolved} · trava antiga: ${report.legacy.len
 if (report.autoDeps.length) console.log(`  Dependências adicionadas: ${report.autoDeps.join(', ')}`)
 if (report.missing.length) {
   console.log(`  NÃO ENCONTRADOS (${report.missing.length}): ${report.missing.join(', ')}`)
+  for (const [slug, hits] of Object.entries(report.suggestions)) {
+    console.log(`    ${slug}: ${hits.length ? `parecidos no Modrinth → ${hits.join(', ')}` : 'nada parecido com versão NeoForge 1.21.1'}`)
+  }
   if (process.argv.includes('--strict')) process.exit(1)
 }
