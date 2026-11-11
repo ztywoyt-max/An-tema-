@@ -6,7 +6,7 @@ const Build := preload("res://src/world/build.gd")
 
 # Pontos de interesse (lidos por main/world para colocar jogador, inimigos e painéis).
 const SPAWN := Vector3(0.0, 0.05, 15.0)
-const REST_POINT := Vector3(0.0, 0.0, 11.0)
+const REST_POINT := Vector3(-4.5, 0.0, 13.0)
 const DUMMIES := [Vector3(-27.0, 0.0, -12.0), Vector3(-22.0, 0.0, -14.0), Vector3(-17.0, 0.0, -12.0)]
 const PARRY_TRAINER := Vector3(-29.0, 0.0, 0.0)
 const SUMMON_PANEL := Vector3(-13.0, 0.0, 5.0)
@@ -14,13 +14,13 @@ const ARENA_CENTER := Vector3(-22.0, 0.0, -5.0)
 const TIDE_PANEL := Vector3(9.0, 0.0, 19.0)
 const WIND_PANEL := Vector3(-9.0, 0.0, 19.0)
 const BRAZIER := Vector3(14.0, 0.0, 6.0)
-const TOWER_TOP := Vector3(32.5, 6.0, -22.5)
+const TOWER_TOP := Vector3(32.5, 8.0, -22.5)
 const FAR_PLATFORM := Vector3(66.0, 5.0, 0.0)
 const PALMS := [Vector3(-33.0, 0.55, 19.0), Vector3(33.0, 0.55, 19.0), Vector3(-33.0, 0.55, -23.0), Vector3(-15.0, 0.55, 19.0), Vector3(15.0, 0.55, -1.0)]
-const FLAGS := [Vector3(-34.0, 0.0, -18.5), Vector3(19.0, 0.0, -18.5), Vector3(35.0, 6.0, -25.0), Vector3(71.0, 5.0, -5.0), Vector3(-7.5, 0.0, 9.0), Vector3(7.5, 0.0, 9.0)]
+const FLAGS := [Vector3(-34.0, 0.0, -18.5), Vector3(19.0, 0.0, -18.5), Vector3(35.0, 8.0, -25.0), Vector3(71.0, 5.0, -5.0), Vector3(-7.5, 0.0, 9.0), Vector3(7.5, 0.0, 9.0)]
 ## Zonas de vento: [centro, tamanho, vetor do vento (m/s)]
 const UPDRAFTS := [
-	[Vector3(31.0, 13.0, -21.0), Vector3(3.2, 15.0, 3.2), Vector3(0.0, 15.0, 0.0)],
+	[Vector3(31.0, 15.5, -21.0), Vector3(3.2, 15.0, 3.2), Vector3(0.0, 15.0, 0.0)],
 	[Vector3(49.0, 6.0, -2.0), Vector3(7.0, 20.0, 7.0), Vector3(0.0, 13.0, 0.0)],
 	[Vector3(69.0, 12.0, 3.0), Vector3(3.2, 15.0, 3.2), Vector3(0.0, 15.0, 0.0)],
 	[Vector3(3.0, 5.0, -8.0), Vector3(4.0, 11.0, 4.0), Vector3(0.0, 12.0, 0.0)],
@@ -146,17 +146,18 @@ func _pool() -> void:
 
 
 func _climb_and_tower() -> void:
-	# Degraus de escalada: 1,3 m (pulo), 2,8 m, 4,4 m (pulo duplo / agarrar a borda) e a torre a 6 m.
-	_slab(20.4, 23.4, -26, -22, 1.3, 1.3, m_wood, m_stone)
-	_slab(23.4, 26.4, -26, -22, 2.8, 2.8, m_wood, m_stone)
-	_slab(26.4, 29.4, -26, -22, 4.4, 4.4, m_wood, m_stone)
-	_slab(29.4, 36, -26, -19, 6.0, 6.0, m_floor, m_stone)
-	Build.box_mm(self, Vector3(29.4, 6.0, -26.5), Vector3(36.5, 6.9, -26), m_wall)
-	Build.box_mm(self, Vector3(36, 6.0, -26), Vector3(36.5, 6.9, -19), m_wall)
-	# Rampa de deslizar: da torre (6 m) até o convés.
-	Build.ramp(self, Vector3(32.7, 0.0, -6.0), Vector3(32.7, 6.0, -19.0), 4.6, 0.5, m_wood)
-	Build.box_mm(self, Vector3(30.2, 0.0, -19.0), Vector3(30.4, 6.0, -18.6), m_stone)
-	Build.box_mm(self, Vector3(35.0, 0.0, -19.0), Vector3(35.2, 6.0, -18.6), m_stone)
+	# Degraus de escalada: 1,5 m (pulo), 3,7 m, 5,9 m e a torre a 8 m. Cada um fica 2,2 m acima
+	# do anterior: mais alto que o pulo simples, então é preciso agarrar a borda ou usar o pulo duplo.
+	_slab(20.4, 23.4, -26, -22, 1.5, 1.5, m_wood, m_stone)
+	_slab(23.4, 26.4, -26, -22, 3.7, 3.7, m_wood, m_stone)
+	_slab(26.4, 29.4, -26, -22, 5.9, 5.9, m_wood, m_stone)
+	_slab(29.4, 36, -26, -19, 8.0, 8.0, m_floor, m_stone)
+	Build.box_mm(self, Vector3(29.4, 8.0, -26.5), Vector3(36.5, 8.9, -26), m_wall)
+	Build.box_mm(self, Vector3(36, 8.0, -26), Vector3(36.5, 8.9, -19), m_wall)
+	# Rampa de deslizar: da torre (8 m) até o convés.
+	Build.ramp(self, Vector3(32.7, 0.0, -5.0), Vector3(32.7, 8.0, -19.0), 4.6, 0.5, m_wood)
+	Build.box_mm(self, Vector3(30.2, 0.0, -19.0), Vector3(30.4, 8.0, -18.6), m_stone)
+	Build.box_mm(self, Vector3(35.0, 0.0, -19.0), Vector3(35.2, 8.0, -18.6), m_stone)
 	# Plataforma distante (alvo do planar), sobre um pilar.
 	_slab(60, 72, -6, 6, 5.0, 1.2, m_floor, m_stone)
 	Build.cylinder(self, Vector3(66, -2.6, 0), 2.2, 12.8, m_dark, true, 1.7)

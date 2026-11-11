@@ -5,6 +5,9 @@ signal notice(text: String, kind: String)
 signal currency_changed(value: int)
 signal local_player_ready(player: Node3D)
 signal paused_changed(paused: bool)
+signal combo_changed(hits: int, damage: float, rank: String, rank_index: int, rank_up: bool)
+signal combo_ended(hits: int, damage: float, broken: bool)
+signal hotbar_changed
 
 # Camadas de colisão (valores em bits).
 const L_WORLD := 1
@@ -22,6 +25,7 @@ var test_mode := false         ## rodando testes automáticos
 var player: Node3D             ## jogador local
 var players: Dictionary = {}   ## id da rede -> jogador
 var world: Node3D
+var stage: Node3D              ## partida em andamento (jogadores, inimigos, painéis)
 var hud: Node
 var cam_rig: Node3D
 var input_enabled := true
@@ -29,6 +33,9 @@ var paused := false
 var in_game := false
 var currency := 0
 var clock := 0.0
+var font_title: Font
+var font_ui: Font
+var font_hand: Font
 
 var _slow_token := 0
 
@@ -98,6 +105,27 @@ func set_paused(value: bool) -> void:
 	if not Net.is_online():
 		get_tree().paused = value
 	paused_changed.emit(value)
+
+
+# ---- pontes para a partida (src/world/stage.gd)
+
+func world_interact(player: Node3D) -> void:
+	if stage:
+		stage.interact(player)
+
+
+func water_current(pos: Vector3) -> Vector3:
+	return stage.water_current(pos) if stage else Vector3.ZERO
+
+
+func player_died(player: Node3D) -> void:
+	if stage:
+		stage.on_player_died(player)
+
+
+func spawn_skill(kind: String, owner_actor: Node3D, pos: Vector3, dir: Vector3) -> void:
+	if stage:
+		stage.spawn_skill(kind, owner_actor, pos, dir, true)
 
 
 func layer_mask(bits: Array) -> int:
