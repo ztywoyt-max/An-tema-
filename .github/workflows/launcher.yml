@@ -34,16 +34,31 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
-      - name: Versão a partir da tag
-        if: startsWith(github.ref, 'refs/tags/launcher-v')
-        shell: bash
-        run: npm version --no-git-tag-version "${GITHUB_REF_NAME#launcher-v}"
       - name: Gerar instalador
-        run: npm run build && npx electron-builder --win --publish ${{ github.event_name == 'pull_request' && 'never' || 'always' }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run build && npx electron-builder --win --publish never
       - uses: actions/upload-artifact@v4
         with:
           name: ANATEMA-Launcher-Windows
           path: launcher/release/*.exe
           retention-days: 30
+      # Publica a release vX.Y.Z (uma vez por versão). O latest.yml é o que os launchers
+      # instalados consultam para se atualizar sozinhos.
+      - name: Publicar release
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          shopt -s nullglob
+          V=$(node -p "require('./package.json').version")
+          FILES=(release/*.exe release/*.blockmap release/latest.yml)
+          ls -la "${FILES[@]}"
+          if gh release view "v$V" --json assets --jq '.assets[].name' 2>/dev/null | grep -q '\.exe$'; then
+            echo "Release v$V já publicada com o instalador — nada a fazer."
+          elif gh release view "v$V" >/dev/null 2>&1; then
+            gh release upload "v$V" "${FILES[@]}" --clobber
+          else
+            gh release create "v$V" "${FILES[@]}" --target "$GITHUB_SHA" --latest \
+              --title "ANÁTEMA $V" \
+              --notes "Baixe **ANATEMA-Setup-$V.exe** e execute. O launcher se atualiza sozinho nas próximas versões."
+          fi
