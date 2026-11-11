@@ -1,4 +1,7 @@
-# Ativar o login Microsoft do launcher
+# (Opcional) Login Microsoft dentro do launcher
+
+> Não é necessário. Por padrão o ANÁTEMA abre o Minecraft Launcher oficial, onde o jogador já entra com a
+> própria conta. Este guia só serve para, no futuro, o ANÁTEMA iniciar o jogo sozinho sem o launcher oficial.
 
 O Minecraft Java só aceita login de launchers registrados na Microsoft. O registro precisa ser feito
 com a conta Microsoft do dono do projeto — é o único passo que não dá para automatizar. Leva ~5 minutos.

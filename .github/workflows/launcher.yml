@@ -1,5 +1,6 @@
-# Compila e testa o launcher. Em cada push gera o instalador do Windows como artefato;
-# ao criar uma tag "launcher-v1.2.3" publica a versão (e o launcher dos jogadores se atualiza sozinho).
+# Compila e testa o launcher e gera o instalador do Windows.
+# Publicação: quando "version" em launcher/package.json muda na main, a release vX.Y.Z é criada
+# automaticamente e os launchers instalados se atualizam sozinhos. Mesma versão = nada é republicado.
 name: Launcher
 
 on:
@@ -38,7 +39,7 @@ jobs:
         shell: bash
         run: npm version --no-git-tag-version "${GITHUB_REF_NAME#launcher-v}"
       - name: Gerar instalador
-        run: npm run build && npx electron-builder --win --publish ${{ startsWith(github.ref, 'refs/tags/launcher-v') && 'always' || 'never' }}
+        run: npm run build && npx electron-builder --win --publish ${{ github.event_name == 'pull_request' && 'never' || 'always' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v4

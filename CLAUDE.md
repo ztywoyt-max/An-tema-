@@ -16,12 +16,21 @@ O dono não quer mexer em nada fora do Minecraft e do Claude: automatize tudo o 
 | `modpack/manifest.json` | Gerado: links, tamanhos e hashes. Não editar à mão |
 | `modpack/legado-mods.lock.json` | Trava antiga (versões já testadas), usada como reserva |
 | `tools/modpack/build-manifest.mjs` | Gera o manifesto (`--offline` usa só a trava antiga) |
-| `.github/workflows/` | `launcher.yml` (instalador Windows, release em tag `launcher-vX.Y.Z`), `modpack.yml` (resolve mods no Modrinth) |
+| `.github/workflows/` | `launcher.yml` (instalador Windows + release), `modpack.yml` (resolve mods no Modrinth e testa a abertura) |
+
+Publicar nova versão do launcher: subir `version` em `launcher/package.json` e dar push na main — o workflow cria
+a release `vX.Y.Z` sozinho (o proxy desta sessão bloqueia push de tags). Os launchers instalados se atualizam sozinhos.
 
 ## Decisões tomadas
 
-- **Login apenas com conta Microsoft** (OAuth + PKCE → Xbox → XSTS → Minecraft). Nada de modo offline/pirata.
-  O Client ID do Azure entra no build pela variável `MS_CLIENT_ID` do repositório (`ANATEMA_MS_CLIENT_ID`).
+- **Jogar exige conta Minecraft original.** Nada de modo offline, login por nick/senha ou launcher pirata
+  (o dono pediu; foi recusado — não implementar).
+- **Modo padrão (`official`)**: o ANÁTEMA instala NeoForge na `.minecraft` do Minecraft Launcher oficial,
+  sincroniza os mods em `%APPDATA%\.anatema\jogo`, cria o perfil "ANÁTEMA" (`launcher_profiles.json`,
+  `gameDir` apontando para a pasta do ANÁTEMA), põe o servidor no `servers.dat` e abre o launcher oficial.
+  Código: `launcher/src/main/game/official.ts`.
+- **Modo `own`** (login Microsoft dentro do ANÁTEMA) liga sozinho se `microsoftClientId` for preenchido em
+  `launcher/launcher.config.json` (exige app no Azure aprovado pela Mojang; ver `docs/LOGIN_MICROSOFT.md`).
 - NeoForge é instalado com o instalador oficial em modo `--install-client` (testado: funciona).
 - Minecraft "puro" é baixado direto da Mojang pelo próprio launcher (`src/main/game/vanilla.ts`).
 - Java: Temurin 21 JRE baixado do GitHub da Adoptium, com hash fixo no manifesto.
@@ -55,7 +64,7 @@ Para ver a interface sem Electron, sirva `dist/renderer` e abra `index.html?pagi
 
 ## Pendências
 
-- Registrar o app no Microsoft Entra e pedir liberação da API do Minecraft à Mojang (só o dono pode fazer).
-- Publicar a primeira versão do launcher (tag `launcher-v1.0.0`) assim que o login estiver liberado.
+- (Opcional) Login Microsoft dentro do próprio ANÁTEMA — só se o dono registrar o app no Azure.
+- Servidor precisa de `online-mode=true` (EasyLogin não é mais necessário).
 - Painel do servidor (iniciar/parar, console, comandos, avisos) — próximo passo após o launcher.
 - Reescrita dos mods próprios.
