@@ -1,5 +1,5 @@
 {
   "$comment": "Configuração embutida no launcher no momento do build. Variáveis de ambiente ANATEMA_DIST_URL e ANATEMA_MS_CLIENT_ID têm prioridade.",
-  "distributionUrl": "",
+  "distributionUrl": "https://raw.githubusercontent.com/ztywoyt-max/An-tema-/main/modpack/manifest.json",
   "microsoftClientId": ""
 }
