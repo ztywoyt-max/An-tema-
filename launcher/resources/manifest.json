@@ -3,7 +3,7 @@
   "pack": {
     "name": "ANÁTEMA",
     "version": "2026.11.0",
-    "updated": "2026-11-11T11:18:41.692Z"
+    "updated": "2026-11-11T11:21:29.294Z"
   },
   "minecraft": "1.21.1",
   "loader": {
@@ -1113,6 +1113,22 @@
       "sha512": "1f6f8796469f747cff36f477b4f589a3d69613882399f9ee7f86db36c7bca9aa4828731f43db15dc6c7f5a4c1bbe3d4092a232e8cef010b09cec0581848fda90"
     },
     {
+      "id": "farmers-respite",
+      "path": "mods/farmersrespite-1.21.1-3.0.1.jar",
+      "name": "Farmer's Respite",
+      "version": "3.0.1",
+      "side": "both",
+      "category": "jogabilidade",
+      "description": "Chás, cafés e bebidas para o Farmer's Delight.",
+      "page": "https://modrinth.com/mod/farmers-respite-unofficial-port",
+      "icon": "https://cdn.modrinth.com/data/AioQLjKj/447f1938e2d8872ae0a62d40b36407a5d1081f83_96.webp",
+      "license": "LicenseRef-All-Rights-Reserved",
+      "url": "https://cdn.modrinth.com/data/AioQLjKj/versions/aChm7DAW/farmersrespite-1.21.1-3.0.1.jar",
+      "size": 673199,
+      "sha1": "9da31eaa6ac8fcfae8d4d53323aa04ad11f054b0",
+      "sha512": "6b3b8a6b862cde8cf9089945020c61be18ae4f644b7fe9e24e2458d30100512e042fe7bd7637b58cad8bc11bc3415dc610931dc56329f54595b5ded16d77c8f8"
+    },
+    {
       "id": "immersive-armors",
       "path": "mods/immersive_armors-1.7.6+1.21.1-neoforge.jar",
       "name": "Immersive Armors",
@@ -1159,6 +1175,22 @@
       "size": 5548915,
       "sha1": "c7c2f876d306823dfccaa30339057dc467e43cb2",
       "sha512": "4f50735fae4f07c8574352def88e685039d6aaf495f7da97a70cc062059caa058d11d1df503220d24ce218701c895d4808204e7387186fe5def968f0fff253a2"
+    },
+    {
+      "id": "weathering-renewed",
+      "path": "mods/Immersive-weathering-V1.0.4-neoforge-beta.jar",
+      "name": "Immersive Weathering: Renewed",
+      "version": "V1.0.4-NeoForge",
+      "side": "both",
+      "category": "jogabilidade",
+      "description": "Blocos que envelhecem, musgo, ferrugem e erosão naturais.",
+      "page": "https://modrinth.com/mod/immersive-weather-renewed",
+      "icon": "https://cdn.modrinth.com/data/AtjxBimt/3db9181192dedc046f455ec61a48a076e0cf7991.jpeg",
+      "license": "LGPL-3.0-only",
+      "url": "https://cdn.modrinth.com/data/AtjxBimt/versions/n3NgrJOg/Immersive-weathering-V1.0.4-neoforge-beta.jar",
+      "size": 2283529,
+      "sha1": "011571c9eca3613ca2f4275da922eb3ec12061e1",
+      "sha512": "a2a7ebd8a0d101ec6c470ad6451b6fd86f526cd88f188cd6afe9673580be7264567be76f2d2ab19194c5332cbbe56eec2e67b359c34b610d65c9d4733aff9ad8"
     },
     {
       "id": "l_enders-cataclysm",
@@ -1484,9 +1516,5 @@
       "tag": "Desenvolvimento",
       "body": "Forja, Ficha RP, Corvo Mensageiro, Anatomia e os demais sistemas estão sendo reescritos com mais qualidade. Acompanhe as crônicas."
     }
-  ],
-  "unresolved": [
-    "farmers-respite",
-    "weathering-renewed"
   ]
 }
