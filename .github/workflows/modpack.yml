@@ -1,0 +1,55 @@
+# Resolve a lista de mods (modpack/pack.json) no Modrinth e atualiza o manifesto com links e hashes.
+# Roda sozinho quando pack.json muda; também pode ser disparado manualmente.
+name: Modpack
+
+on:
+  push:
+    branches: [main]
+    paths: ['modpack/pack.json', 'tools/modpack/**']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Gerar manifesto
+        run: node tools/modpack/build-manifest.mjs | tee relatorio.txt
+      - name: Resumo
+        run: cat relatorio.txt >> "$GITHUB_STEP_SUMMARY"
+      # Instala o modpack do zero com o mesmo motor do launcher e abre o jogo até o menu principal.
+      # Se algum mod impedir o jogo de abrir, o manifesto NÃO é publicado.
+      - name: Preparar teste de abertura
+        working-directory: launcher
+        run: |
+          npm ci
+          npx esbuild tests/headless.ts --bundle --platform=node --format=cjs --outfile=dist-test/headless.cjs
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1-mesa-dri > /dev/null
+      - name: Testar se o jogo abre com todos os mods
+        working-directory: launcher
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: xvfb-run -a -s "-screen 0 1280x720x24" node dist-test/headless.cjs "$RUNNER_TEMP/anatema" ../modpack/manifest.json --boot
+      - name: Guardar registro do teste
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: teste-de-abertura
+          path: ${{ runner.temp }}/anatema/boot.log
+          if-no-files-found: ignore
+      - name: Salvar no repositório
+        run: |
+          if git diff --quiet -- modpack/manifest.json launcher/resources/manifest.json; then
+            echo "Manifesto sem mudanças."; exit 0
+          fi
+          git config user.name "anatema-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add modpack/manifest.json launcher/resources/manifest.json
+          git commit -m "modpack: atualiza manifesto"
+          git push

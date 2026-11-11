@@ -1,0 +1,118 @@
+@import '@fontsource/cinzel/500.css';
+@import '@fontsource/cinzel/700.css';
+@import '@fontsource/cormorant-garamond/500-italic.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/jetbrains-mono/400.css';
+
+:root {
+  /* Base */
+  --bg: #0a0607;
+  --bg-2: #120a0c;
+  --surface: rgba(30, 16, 19, 0.62);
+  --surface-2: rgba(44, 22, 27, 0.7);
+  --surface-solid: #1a0e11;
+  --line: rgba(255, 214, 200, 0.08);
+  --line-2: rgba(255, 214, 200, 0.14);
+
+  /* Texto */
+  --text: #f2e7dd;
+  --text-2: #c9b6aa;
+  --muted: #8f7b72;
+  --faint: #5d4c47;
+
+  /* Marca */
+  --crimson: #c8283b;
+  --crimson-hi: #e2394d;
+  --crimson-lo: #7c1222;
+  --blood: #4a0912;
+  --ember: #ff8a5c;
+  --bone: #efe1d4;
+  --gold: #d7b98e;
+
+  /* Estados */
+  --ok: #7fbf9c;
+  --warn: #e6ae5f;
+  --err: #ef5a6a;
+  --info: #8fb3d9;
+
+  --radius-s: 8px;
+  --radius: 14px;
+  --radius-l: 20px;
+
+  --font-display: 'Cinzel', 'Times New Roman', serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-ui: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', Consolas, monospace;
+
+  --shadow: 0 18px 50px -20px rgba(0, 0, 0, 0.8), 0 2px 0 rgba(255, 255, 255, 0.02) inset;
+  --glow: 0 0 0 1px rgba(226, 57, 77, 0.35), 0 10px 40px -8px rgba(200, 40, 59, 0.55);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  overflow: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+  background: none;
+  padding: 0;
+}
+
+::selection {
+  background: rgba(200, 40, 59, 0.45);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 214, 200, 0.1);
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 214, 200, 0.2);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}

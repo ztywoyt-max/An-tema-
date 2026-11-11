@@ -1,0 +1,592 @@
+{
+  "$comment": "Definição do modpack ANÁTEMA. Edite esta lista; o script tools/modpack/build-manifest.mjs gera o manifesto com links e hashes.",
+  "name": "ANÁTEMA",
+  "version": "2026.11.0",
+  "minecraft": "1.21.1",
+  "loader": {
+    "type": "neoforge",
+    "version": "21.1.256",
+    "installer": {
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/21.1.256/neoforge-21.1.256-installer.jar",
+      "sha256": "4aad931e8fd85fbf6ba35bab647811069d35ff010900492e39db1cb8b017348c"
+    }
+  },
+  "java": {
+    "major": 21,
+    "platforms": {
+      "windows-x64": {
+        "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jre_x64_windows_hotspot_21.0.12.1_1.zip",
+        "sha256": "d35f31e712f0fcf6ac5a093edc90204fbff22f720ba3950bd09d331d5e621636",
+        "size": 48999141,
+        "executable": "bin/javaw.exe"
+      },
+      "linux-x64": {
+        "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jre_x64_linux_hotspot_21.0.12.1_1.tar.gz",
+        "sha256": "2413149700df0f7d440500a84a8f764c535f21e5a5e87d38328b64eec2c5b500",
+        "size": 52059408,
+        "executable": "bin/java"
+      },
+      "macos-arm64": {
+        "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jre_aarch64_mac_hotspot_21.0.12.1_1.tar.gz",
+        "sha256": "dec50fc6f9fcd4fe3ae8cabf5a5fa68f6afc48841f7698e468e9aa5d54beed84",
+        "size": 48144965,
+        "executable": "bin/java"
+      },
+      "macos-x64": {
+        "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jre_x64_mac_hotspot_21.0.12.1_1.tar.gz",
+        "sha256": "6717ec641fd9ce0bb209ca083ee23b42202ac68cb6fcc5753496e0e4a0f41989",
+        "size": 42131876,
+        "executable": "bin/java"
+      }
+    }
+  },
+  "server": {
+    "name": "O Domínio dos Condenados",
+    "address": "domination-variance.tun.ply.gg"
+  },
+  "memory": {
+    "minimumMB": 4096,
+    "recommendedMB": 6144
+  },
+  "jvmArgs": [
+    "-XX:+UseG1GC",
+    "-XX:+ParallelRefProcEnabled",
+    "-XX:MaxGCPauseMillis=200",
+    "-XX:+UnlockExperimentalVMOptions",
+    "-XX:G1NewSizePercent=30",
+    "-XX:G1ReservePercent=20",
+    "-XX:G1HeapRegionSize=32M"
+  ],
+  "mods": [
+    {
+      "slug": "borninchaos",
+      "name": "Born in Chaos",
+      "category": "jogabilidade",
+      "description": "Criaturas e ameaças sombrias que tornam a noite perigosa."
+    },
+    {
+      "slug": "naturalist",
+      "name": "Naturalist",
+      "category": "jogabilidade",
+      "description": "Fauna realista: animais selvagens com comportamentos próprios."
+    },
+    {
+      "slug": "l_enders-cataclysm",
+      "name": "L_Ender's Cataclysm",
+      "category": "jogabilidade",
+      "description": "Chefes colossais e masmorras épicas."
+    },
+    {
+      "slug": "sophisticated-backpacks",
+      "name": "Sophisticated Backpacks",
+      "category": "jogabilidade",
+      "description": "Mochilas com melhorias e organização."
+    },
+    {
+      "slug": "epic-knights-shields-armor-and-weapons",
+      "name": "Epic Knights",
+      "category": "jogabilidade",
+      "description": "Armaduras, escudos e armas medievais."
+    },
+    {
+      "slug": "simply-swords",
+      "name": "Simply Swords",
+      "category": "jogabilidade",
+      "description": "Novas armas brancas com habilidades únicas."
+    },
+    {
+      "slug": "immersive-armors",
+      "name": "Immersive Armors",
+      "category": "jogabilidade",
+      "description": "Armaduras temáticas com efeitos próprios."
+    },
+    {
+      "slug": "farmers-delight",
+      "name": "Farmer's Delight",
+      "category": "jogabilidade",
+      "description": "Agricultura e culinária aprofundadas."
+    },
+    {
+      "slug": "farmers-respite",
+      "name": "Farmer's Respite",
+      "category": "jogabilidade",
+      "description": "Chás, cafés e bebidas para o Farmer's Delight."
+    },
+    {
+      "slug": "farm-and-charm",
+      "name": "Farm & Charm",
+      "category": "jogabilidade",
+      "description": "Vida rural: cultivo, animais e cozinha do campo."
+    },
+    {
+      "slug": "lets-do-vinery",
+      "name": "Vinery",
+      "category": "jogabilidade",
+      "description": "Vinhedos, uvas e produção de vinhos."
+    },
+    {
+      "slug": "lets-do-beachparty",
+      "name": "Beachparty",
+      "category": "jogabilidade",
+      "description": "Itens e decoração litorânea."
+    },
+    {
+      "slug": "comforts",
+      "name": "Comforts",
+      "category": "jogabilidade",
+      "description": "Sacos de dormir e redes para viagens."
+    },
+    {
+      "slug": "carry-on",
+      "name": "Carry On",
+      "category": "jogabilidade",
+      "description": "Carregue baús, blocos e criaturas nas mãos."
+    },
+    {
+      "slug": "corpse",
+      "name": "Corpse",
+      "category": "jogabilidade",
+      "description": "Seu corpo fica no local da morte com os itens."
+    },
+    {
+      "slug": "thirst-was-taken",
+      "name": "Thirst Was Taken",
+      "category": "jogabilidade",
+      "description": "Sede e pureza da água."
+    },
+    {
+      "slug": "cold-sweat",
+      "name": "Cold Sweat",
+      "category": "jogabilidade",
+      "description": "Temperatura corporal: frio, calor e roupas adequadas."
+    },
+    {
+      "slug": "playerrevive",
+      "name": "PlayerRevive",
+      "category": "jogabilidade",
+      "description": "Ferido à beira da morte, outros jogadores podem te reanimar."
+    },
+    {
+      "slug": "immersive-melodies",
+      "name": "Immersive Melodies",
+      "category": "jogabilidade",
+      "description": "Instrumentos musicais tocáveis para as cenas de RP."
+    },
+    {
+      "slug": "etched",
+      "name": "Etched",
+      "category": "jogabilidade",
+      "description": "Grave e toque discos com músicas próprias."
+    },
+    {
+      "slug": "immersive-paintings",
+      "name": "Immersive Paintings",
+      "category": "jogabilidade",
+      "description": "Pinturas personalizadas com imagens próprias."
+    },
+    {
+      "slug": "simple-voice-chat",
+      "name": "Simple Voice Chat",
+      "category": "jogabilidade",
+      "description": "Voz por proximidade: fale com quem está perto."
+    },
+    {
+      "slug": "custom-player-models",
+      "name": "Customizable Player Models",
+      "category": "jogabilidade",
+      "description": "Modelos de personagem personalizados."
+    },
+    {
+      "slug": "waterframes",
+      "name": "WaterFrames",
+      "category": "jogabilidade",
+      "description": "Molduras e telas que exibem imagens e vídeos no mundo."
+    },
+    {
+      "slug": "watervision",
+      "name": "WaterVision",
+      "category": "jogabilidade",
+      "description": "Visão subaquática mais clara e imersiva."
+    },
+    {
+      "slug": "weathering-renewed",
+      "name": "Weathering Renewed",
+      "category": "jogabilidade",
+      "description": "Clima e intempéries renovados."
+    },
+    {
+      "slug": "worldedit",
+      "name": "WorldEdit",
+      "category": "construcao",
+      "description": "Edição do mapa pela equipe de construção."
+    },
+    {
+      "slug": "chipped",
+      "name": "Chipped",
+      "category": "construcao",
+      "description": "Centenas de variações de blocos."
+    },
+    {
+      "slug": "rechiseled",
+      "name": "Rechiseled",
+      "category": "construcao",
+      "description": "Cinzel para variações decorativas de blocos."
+    },
+    {
+      "slug": "framedblocks",
+      "name": "FramedBlocks",
+      "category": "construcao",
+      "description": "Blocos com formatos e texturas moldáveis."
+    },
+    {
+      "slug": "handcrafted",
+      "name": "Handcrafted",
+      "category": "construcao",
+      "description": "Móveis e decoração artesanal."
+    },
+    {
+      "slug": "another-furniture",
+      "name": "Another Furniture",
+      "category": "construcao",
+      "description": "Móveis de madeira para casas e tavernas."
+    },
+    {
+      "slug": "immersive-furniture",
+      "name": "Immersive Furniture",
+      "category": "construcao",
+      "description": "Móveis personalizáveis peça por peça."
+    },
+    {
+      "slug": "supplementaries",
+      "name": "Supplementaries",
+      "category": "construcao",
+      "description": "Decoração, utilidades e detalhes de cenário."
+    },
+    {
+      "slug": "amendments",
+      "name": "Amendments",
+      "category": "construcao",
+      "description": "Objetos vanilla mais úteis e decorativos."
+    },
+    {
+      "slug": "littletiles",
+      "name": "LittleTiles",
+      "category": "construcao",
+      "description": "Construção em miniatura dentro de um bloco."
+    },
+    {
+      "slug": "biomes-o-plenty",
+      "name": "Biomes O' Plenty",
+      "category": "construcao",
+      "description": "Biomas para exploração e construção do mapa."
+    },
+    {
+      "slug": "chunky",
+      "name": "Chunky",
+      "category": "construcao",
+      "description": "Pré-geração do mundo (administração)."
+    },
+    {
+      "slug": "paxi",
+      "name": "Paxi",
+      "category": "construcao",
+      "description": "Carrega os pacotes de dados e recursos do ANÁTEMA."
+    },
+    {
+      "slug": "sodium",
+      "name": "Sodium",
+      "category": "desempenho",
+      "description": "Renderização muito mais rápida."
+    },
+    {
+      "slug": "lithium",
+      "name": "Lithium",
+      "category": "desempenho",
+      "description": "Otimiza a simulação do mundo."
+    },
+    {
+      "slug": "ferrite-core",
+      "name": "FerriteCore",
+      "category": "desempenho",
+      "description": "Reduz o uso de memória."
+    },
+    {
+      "slug": "modernfix",
+      "name": "ModernFix",
+      "category": "desempenho",
+      "description": "Correções e carregamento mais rápido."
+    },
+    {
+      "slug": "immediatelyfast",
+      "name": "ImmediatelyFast",
+      "category": "desempenho",
+      "description": "Otimiza a renderização de interface e entidades."
+    },
+    {
+      "slug": "dynamic-fps",
+      "name": "Dynamic FPS",
+      "category": "desempenho",
+      "description": "Economiza recursos com o jogo em segundo plano."
+    },
+    {
+      "slug": "clumps",
+      "name": "Clumps",
+      "category": "desempenho",
+      "description": "Agrupa orbes de experiência."
+    },
+    {
+      "slug": "ambientsounds",
+      "name": "AmbientSounds",
+      "category": "sons",
+      "description": "Ambientes sonoros vivos por bioma e hora."
+    },
+    {
+      "slug": "sound-physics-remastered",
+      "name": "Sound Physics Remastered",
+      "category": "sons",
+      "description": "Reverberação e abafamento realistas."
+    },
+    {
+      "slug": "presence-footsteps",
+      "name": "Presence Footsteps",
+      "category": "sons",
+      "description": "Passos com som de acordo com o terreno."
+    },
+    {
+      "slug": "particle-rain",
+      "name": "Particle Rain",
+      "category": "visual",
+      "description": "Chuva, neve e tempestades de areia mais bonitas."
+    },
+    {
+      "slug": "entityculling",
+      "name": "Entity Culling",
+      "category": "visual",
+      "description": "Esconde entidades fora da visão para ganhar FPS."
+    },
+    {
+      "slug": "appleskin",
+      "name": "AppleSkin",
+      "category": "interface",
+      "description": "Informações de fome e saturação."
+    },
+    {
+      "slug": "jei",
+      "name": "Just Enough Items",
+      "category": "interface",
+      "description": "Consulta de itens e receitas."
+    },
+    {
+      "slug": "mouse-tweaks",
+      "name": "Mouse Tweaks",
+      "category": "interface",
+      "description": "Gestão de inventário com o mouse."
+    },
+    {
+      "slug": "controlling",
+      "name": "Controlling",
+      "category": "interface",
+      "description": "Busca nos atalhos de teclado."
+    },
+    {
+      "slug": "searchables",
+      "name": "Searchables",
+      "category": "interface",
+      "description": "Biblioteca de pesquisa das telas."
+    },
+    {
+      "slug": "better-advanced-tooltips",
+      "name": "Better Advanced Tooltips",
+      "category": "interface",
+      "description": "Dicas de itens mais completas."
+    },
+    {
+      "slug": "ftb-quests",
+      "name": "FTB Quests",
+      "category": "administracao",
+      "description": "Missões e capítulos da história."
+    },
+    {
+      "slug": "ftb-teams",
+      "name": "FTB Teams",
+      "category": "administracao",
+      "description": "Equipes e progresso compartilhado."
+    },
+    {
+      "slug": "ftb-ranks",
+      "name": "FTB Ranks",
+      "category": "administracao",
+      "description": "Cargos e permissões."
+    },
+    {
+      "slug": "ftb-essentials",
+      "name": "FTB Essentials",
+      "category": "administracao",
+      "description": "Ferramentas administrativas."
+    },
+    {
+      "slug": "kubejs",
+      "name": "KubeJS",
+      "category": "administracao",
+      "description": "Scripts de personalização do servidor."
+    },
+    {
+      "slug": "architectury-api",
+      "name": "Architectury API",
+      "category": "bibliotecas",
+      "description": "Biblioteca de compatibilidade."
+    },
+    {
+      "slug": "athena-ctm",
+      "name": "Athena",
+      "category": "bibliotecas",
+      "description": "Texturas conectadas."
+    },
+    {
+      "slug": "cloth-config",
+      "name": "Cloth Config API",
+      "category": "bibliotecas",
+      "description": "Telas de configuração."
+    },
+    {
+      "slug": "creativecore",
+      "name": "CreativeCore",
+      "category": "bibliotecas",
+      "description": "Biblioteca dos mods da CreativeMD."
+    },
+    {
+      "slug": "geckolib",
+      "name": "GeckoLib",
+      "category": "bibliotecas",
+      "description": "Animações de modelos."
+    },
+    {
+      "slug": "glitchcore",
+      "name": "GlitchCore",
+      "category": "bibliotecas",
+      "description": "Biblioteca do Biomes O' Plenty."
+    },
+    {
+      "slug": "moonlight",
+      "name": "Moonlight Lib",
+      "category": "bibliotecas",
+      "description": "Biblioteca do Supplementaries."
+    },
+    {
+      "slug": "resourceful-lib",
+      "name": "Resourceful Lib",
+      "category": "bibliotecas",
+      "description": "Biblioteca de conteúdo."
+    },
+    {
+      "slug": "rhino",
+      "name": "Rhino",
+      "category": "bibliotecas",
+      "description": "Motor JavaScript do KubeJS."
+    },
+    {
+      "slug": "terrablender",
+      "name": "TerraBlender",
+      "category": "bibliotecas",
+      "description": "Integração de biomas."
+    },
+    {
+      "slug": "sophisticated-core",
+      "name": "Sophisticated Core",
+      "category": "bibliotecas",
+      "description": "Biblioteca das mochilas."
+    },
+    {
+      "slug": "yungs-api",
+      "name": "YUNG's API",
+      "category": "bibliotecas",
+      "description": "Biblioteca de estruturas."
+    },
+    {
+      "slug": "ftb-library",
+      "name": "FTB Library",
+      "category": "bibliotecas",
+      "description": "Biblioteca dos mods FTB."
+    },
+    {
+      "slug": "iris",
+      "name": "Iris Shaders",
+      "category": "shaders",
+      "description": "Suporte a shaders. Opcional — exige uma placa de vídeo boa.",
+      "optional": true,
+      "defaultEnabled": false
+    }
+  ],
+  "systems": [
+    {
+      "id": "forja",
+      "name": "Forja",
+      "description": "Fabricação de armas e ferramentas com minigame de precisão na bigorna.",
+      "status": "em-desenvolvimento"
+    },
+    {
+      "id": "ficha",
+      "name": "Ficha RP",
+      "description": "Criação e gerenciamento de personagens.",
+      "status": "em-desenvolvimento"
+    },
+    {
+      "id": "corvo",
+      "name": "Corvo Mensageiro",
+      "description": "Envio de cartas por corvos personalizáveis.",
+      "status": "em-desenvolvimento"
+    },
+    {
+      "id": "ilusoes",
+      "name": "Ilusões",
+      "description": "Ilusões e alterações visuais de regiões.",
+      "status": "em-desenvolvimento"
+    },
+    {
+      "id": "anatomia",
+      "name": "Vitalidade & Anatomia",
+      "description": "Ferimentos por parte do corpo e HUD anatômico.",
+      "status": "em-desenvolvimento"
+    },
+    {
+      "id": "vidas",
+      "name": "Três Vidas",
+      "description": "Mortes definitivas e recuperação administrativa.",
+      "status": "em-desenvolvimento"
+    },
+    {
+      "id": "criativo",
+      "name": "Inventário ANÁTEMA",
+      "description": "Aba exclusiva com os itens próprios do servidor.",
+      "status": "em-desenvolvimento"
+    },
+    {
+      "id": "midias",
+      "name": "Mídias",
+      "description": "Imagens, vídeos e sons exibidos no mundo.",
+      "status": "em-desenvolvimento"
+    }
+  ],
+  "news": [
+    {
+      "id": "launcher-1",
+      "title": "Um novo portal para o Domínio",
+      "date": "2026-11-11",
+      "tag": "Launcher",
+      "body": "O launcher do ANÁTEMA foi refeito do zero: instalação automática, login oficial com conta Microsoft, verificação de arquivos e muito mais."
+    },
+    {
+      "id": "sistemas",
+      "title": "Os sistemas próprios estão sendo reforjados",
+      "date": "2026-11-11",
+      "tag": "Desenvolvimento",
+      "body": "Forja, Ficha RP, Corvo Mensageiro, Anatomia e os demais sistemas estão sendo reescritos com mais qualidade. Acompanhe as crônicas."
+    }
+  ],
+  "removidos": [
+    {
+      "slug": "celestial",
+      "motivo": "Celestial 2.0 (NeoForge) quebra a inicialização no 1.21.1: mixin PoseStackMixin com nomes de mapeamento errados. O céu carmesim será feito no mod ANÁTEMA."
+    }
+  ]
+}
