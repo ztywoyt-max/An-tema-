@@ -240,6 +240,15 @@ func sentinels() -> Array:
 	return out
 
 
+## Quantas Sentinelas estão atacando agora (fora a que pergunta).
+func attackers(except: Node3D) -> int:
+	var n := 0
+	for e: Node in get_tree().get_nodes_in_group(&"enemies"):
+		if e != except and e is Sentinel and e.alive and e.state == Sentinel.St.ATTACK:
+			n += 1
+	return n
+
+
 func find_enemy(uid: int) -> Node3D:
 	for e: Node in get_tree().get_nodes_in_group(&"enemies"):
 		if "uid" in e and e.uid == uid:

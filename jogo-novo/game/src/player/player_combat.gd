@@ -8,6 +8,8 @@ const Items := preload("res://src/player/items.gd")
 const PARRY_WINDOW := 0.17
 const PERFECT_WINDOW := 0.085
 const COMBO_TIMEOUT := 3.2
+const STEP_REACH := 5.2
+const RIPOSTE_WINDOW := 0.9
 const RANKS := [[3, "Brisa"], [8, "Rajada"], [15, "Ventania"], [25, "Vendaval"], [40, "Tempestade"], [60, "Furacão"]]
 
 ## Golpes. Tempos em segundos do clipe (velocidade 1): a0-a1 = janela que acerta; combo = quando o próximo pode sair.
@@ -24,6 +26,10 @@ const MOVES := {
 	"air1": {"clip": "atk_air1", "dur": 0.42, "a0": 0.1, "a1": 0.22, "combo": 0.22, "dmg": 12.0, "post": 8.0, "stam": 7.0, "air": true, "lunge": 2.2, "l0": 0.02, "l1": 0.18, "stop": 0.04, "knock": 1.5, "next_l": "air2", "next_h": "plunge"},
 	"air2": {"clip": "atk_air2", "dur": 0.42, "a0": 0.09, "a1": 0.22, "combo": 0.22, "dmg": 14.0, "post": 8.0, "stam": 7.0, "air": true, "lunge": 2.2, "l0": 0.02, "l1": 0.18, "stop": 0.04, "knock": 1.5, "next_l": "air1", "next_h": "plunge"},
 	"crit": {"clip": "atk_crit", "dur": 1.05, "a0": 0.3, "a1": 0.37, "combo": 0.9, "dmg": 75.0, "post": 0.0, "stam": 0.0, "lunge": 3.5, "l0": 0.2, "l1": 0.32, "stop": 0.16, "knock": 9.0, "heavy": true, "crit": true, "next_l": "l1", "next_h": "h1"},
+	"riposte": {"clip": "atk_thrust", "from": 0.1, "dur": 0.56, "a0": 0.13, "a1": 0.27, "combo": 0.32, "dmg": 24.0, "post": 40.0, "stam": 0.0, "lunge": 3.8, "l0": 0.1, "l1": 0.2, "stop": 0.1, "knock": 6.0, "heavy": true, "next_l": "l2", "next_h": "h1"},
+	"kick": {"clip": "atk_kick", "dur": 0.52, "a0": 0.13, "a1": 0.25, "combo": 0.34, "dmg": 14.0, "post": 20.0, "stam": 12.0, "lunge": 1.8, "l0": 0.04, "l1": 0.15, "stop": 0.09, "knock": 18.0, "heavy": true, "body": 2.2, "push": true, "next_l": "l1", "next_h": "h1"},
+	"sweep": {"clip": "atk_sweep", "dur": 0.6, "a0": 0.13, "a1": 0.36, "combo": 0.44, "dmg": 12.0, "post": 26.0, "stam": 12.0, "lunge": 1.2, "l0": 0.04, "l1": 0.2, "stop": 0.06, "knock": 2.0, "heavy": true, "body": 2.5, "around": 2.5, "trip": true, "next_l": "l1", "next_h": "h1"},
+	"throw": {"clip": "atk_throw", "dur": 0.78, "a0": 0.4, "a1": 0.46, "combo": 0.62, "dmg": 30.0, "post": 0.0, "stam": 0.0, "lunge": 3.2, "l0": 0.03, "l1": 0.15, "stop": 0.12, "knock": 17.0, "launch": 6.5, "heavy": true, "body": 3.0, "throw": true, "crit": true, "next_l": "l1", "next_h": "h1"},
 	"cast": {"clip": "cast", "dur": 0.55, "a0": 0.22, "a1": 0.22, "combo": 0.4, "dmg": 0.0, "post": 0.0, "stam": 0.0, "skill": true, "next_l": "l1", "next_h": "h1"},
 }
 
@@ -56,6 +62,9 @@ var skill: Dictionary = {}
 var skill_done := false
 var pending_item: Dictionary = {}
 var launch_jump := false
+var riposte_t := 0.0           ## janela de contra-ataque depois de um parry
+var throw_dir := Vector3.FORWARD
+var lunge_end := 0.0
 
 
 func setup(player: Node3D) -> void:
@@ -101,17 +110,30 @@ func _pick_move(kind: String) -> String:
 			if air_combo >= 3:
 				return ""
 			return nxt if MOVES.has(nxt) and MOVES[nxt].get("air", false) else ("air1" if kind == "light" else "plunge")
+		# no meio do combo: inimigo aberto vira finalização; agachado vira rasteira/chute
+		var open_enemy := _staggered_near()
+		if open_enemy:
+			target = open_enemy
+			return "crit" if kind == "light" else "throw"
+		if p.held(&"crouch"):
+			return "sweep" if kind == "light" else "kick"
 		return nxt
 	if not p.is_on_floor() and p.state != St.SLIDE and p.coyote <= 0.0:
 		if kind == "heavy":
 			return "plunge"
 		return "air1" if air_combo < 3 else ""
-	if kind == "light":
-		var st := _staggered_near()
-		if st:
-			target = st
-			return "crit"
-	if p.state == St.DASH or p.state == St.SLIDE or (p.sprinting and p.horizontal_speed() > 8.5):
+	var st := _staggered_near()
+	if st:
+		# inimigo aberto: leve = golpe crítico, pesado = arremesso
+		target = st
+		return "crit" if kind == "light" else "throw"
+	if kind == "light" and riposte_t > 0.0:
+		return "riposte"
+	if p.state == St.SLIDE:
+		return "dash" if kind == "light" else "sweep"
+	if p.held(&"crouch") and p.is_on_floor():
+		return "sweep" if kind == "light" else "kick"
+	if p.state == St.DASH or (p.sprinting and p.horizontal_speed() > 8.5):
 		return "dash"
 	return "l1" if kind == "light" else "h1"
 
@@ -152,8 +174,9 @@ func start(id: String) -> void:
 	p.anim_upper("")
 	p.set_state(St.ATTACK)
 	# mira: alvo travado, senão o inimigo mais à frente
-	if id != "crit":
+	if id != "crit" and id != "throw":
 		target = _find_target()
+	riposte_t = 0.0
 	var dir: Vector3 = p.forward_dir()
 	if target and is_instance_valid(target):
 		dir = Geo.flat_dir(p.global_position, target.global_position)
@@ -170,15 +193,24 @@ func start(id: String) -> void:
 	var dist := lunge * 0.55
 	if target and is_instance_valid(target):
 		var gap: float = Geo.flat(target.global_position - p.global_position).length() - (1.25 + target.radius)
-		dist = clampf(gap, 0.0, lunge)
+		# passo de vento: se o alvo escolhido está um pouco além do alcance, o golpe fecha a distância
+		var reach := lunge
+		if gap > lunge and gap < STEP_REACH and not move.get("air", false) and p.is_on_floor():
+			# chega no alvo antes de a janela do golpe abrir
+			reach = gap
+			window = maxf(float(move["a0"]) + 0.03 - float(move.get("l0", 0.0)), 0.06)
+			Fx.burst("dash", p.center(), -dir, Color(0.85, 1.0, 0.98), 0.8)
+		dist = clampf(gap, 0.0, reach)
 	lunge_speed = dist / window * speed
+	lunge_end = float(move.get("l0", 0.0)) + window
+	throw_dir = p.wish_dir.normalized() if p.wish_dir.length() > 0.3 else dir
 	if move.has("from"):
 		p.visual.play_from(move["clip"], move["from"], 0.06, speed)
 		p.net_anim = move["clip"]
 		p.net_anim_seq += 1
 	else:
 		p.anim(move["clip"], 0.07 if was_attacking else 0.05, speed, true)
-	if id == "crit":
+	if id == "crit" or id == "throw":
 		p.invulnerable = maxf(p.invulnerable, 1.0)
 	Sfx.play_at("swing_heavy" if move.get("heavy", false) else "swing", p.global_position, -6.0, 1.0 / maxf(speed, 0.5))
 
@@ -249,7 +281,7 @@ func physics(delta: float) -> void:
 		return
 	# movimento do golpe
 	var l0 := float(move.get("l0", 0.0))
-	var l1 := float(move.get("l1", 0.0))
+	var l1 := lunge_end
 	if t < float(move["a0"]):
 		_track_target(delta, 12.0)
 	var hv := Vector3.ZERO
@@ -259,8 +291,12 @@ func physics(delta: float) -> void:
 			var gap: float = Geo.flat(target.global_position - p.global_position).length() - (1.1 + target.radius)
 			if gap <= 0.0:
 				hv = Vector3.ZERO
-	p.velocity.x = move_toward(p.velocity.x, hv.x, 140.0 * delta)
-	p.velocity.z = move_toward(p.velocity.z, hv.z, 140.0 * delta)
+	if hv != Vector3.ZERO:
+		p.velocity.x = hv.x
+		p.velocity.z = hv.z
+	else:
+		p.velocity.x = move_toward(p.velocity.x, 0.0, 160.0 * delta)
+		p.velocity.z = move_toward(p.velocity.z, 0.0, 160.0 * delta)
 	if move.get("air", false) or not on_floor:
 		# golpes no ar seguram a queda
 		if move.get("air", false) and air_combo <= 3:
@@ -365,8 +401,17 @@ func _hit_window(prev_t: float) -> void:
 		var d: Vector3 = a.global_position - p.global_position
 		if d.length() > 7.0:
 			continue
-		var hit := Geo.sweep_hits_capsule(prev_seg, seg, a.capsule_segment(), reach + a.radius)
-		if not hit and do_assist:
+		var hit := false
+		if move.has("body"):
+			var fb := Geo.flat(d)
+			var body_range: float = float(move["body"]) + a.radius
+			var in_arc: bool = move.has("around") or fb.length() < 0.6 or fb.normalized().dot(p.forward_dir()) > 0.35
+			hit = fb.length() < body_range and in_arc and absf(d.y) < 1.7
+			if move.get("throw", false):
+				hit = hit and a == target
+		else:
+			hit = Geo.sweep_hits_capsule(prev_seg, seg, a.capsule_segment(), reach + a.radius)
+		if not hit and do_assist and not move.has("body"):
 			# ajuda de mira: quem está bem na frente e ao alcance leva o golpe
 			var fl := Geo.flat(d)
 			var range_ok: bool = fl.length() < 1.9 + a.radius + (float(p.visual.WEAPON_LENGTH.get(p.weapon_id, 1.0)) - 1.0)
@@ -387,11 +432,14 @@ func _apply_hit(a: Node3D) -> void:
 	var dir := Geo.flat_dir(p.global_position, a.global_position)
 	if dir == Vector3.ZERO:
 		dir = p.forward_dir()
+	if move.get("throw", false):
+		dir = throw_dir
 	var hit := {
 		"damage": dmg, "posture": float(move["post"]) * float(ws["posture"]) * charge_mult,
 		"knock": dir * float(move["knock"]), "launch": float(move.get("launch", 0.0)),
 		"from": p, "from_pos": p.global_position, "kind": move_id, "crit": move.get("crit", false),
-		"heavy": move.get("heavy", false),
+		"heavy": move.get("heavy", false), "trip": move.get("trip", false), "push": move.get("push", false),
+		"throw": move.get("throw", false),
 	}
 	var res: String = Net.deal_hit(a, hit)
 	if res == "immune" or res == "dodged":
@@ -412,6 +460,14 @@ func _apply_hit(a: Node3D) -> void:
 		Sfx.play_at("hit_heavy" if heavy else "hit", at, -2.0)
 		register_hit(dmg, a.head_pos(), move.get("crit", false))
 	p.gain_breath(3.0 if not heavy else 5.0)
+	if move.get("crit", false):
+		# finalização: recupera um pouco de vida, como recompensa por quebrar a postura
+		p.heal(12.0)
+		Fx.number(p.head_pos(), 12.0, "heal")
+		Fx.ring(at, Vector3.UP, Color(1.0, 0.85, 0.4), 3.2, 0.45)
+		Game.slowmo(0.3, 0.25)
+		if p.cam_rig:
+			p.cam_rig.kick_fov(-8.0 if false else 6.0)
 	if charge_mult > 1.5:
 		Fx.ring(at, dir, ws["color"], 3.0, 0.4)
 
@@ -499,6 +555,8 @@ func block_started() -> void:
 
 func tick(delta: float) -> void:
 	block_time += delta
+	if riposte_t > 0.0:
+		riposte_t -= delta
 	if p.is_on_floor() and p.state != p.St.ATTACK:
 		air_combo = 0
 	if combo_timer > 0.0:
@@ -570,6 +628,7 @@ func _parry(hit: Dictionary, attacker: Node, perfect: bool) -> void:
 	p.gain_breath(25.0 if perfect else 10.0)
 	p.stamina = minf(p.stamina + 12.0, p.max_stamina)
 	block_time = PARRY_WINDOW + 0.01
+	riposte_t = RIPOSTE_WINDOW
 	var at: Vector3 = p.center() + p.forward_dir() * 0.6
 	Fx.burst("parry", at, p.forward_dir(), Color(1.0, 0.97, 0.8), 1.4 if perfect else 1.0)
 	Fx.shake(0.3 if perfect else 0.18)

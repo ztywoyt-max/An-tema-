@@ -28,8 +28,8 @@ func _run() -> void:
 	rig = Game.cam_rig
 	St = p.St
 	var which := Game.arg("test", "all")
-	var all := ["spawn", "run", "dash", "jump", "glide", "updraft", "slide", "wallrun", "ledge", "burst", "swim", "tide", "wind",
-		"combo", "heavy", "air", "skills", "parry", "damage", "sentinel", "death", "hotbar", "camera"]
+	var all := ["spawn", "run", "dash", "jump", "glide", "updraft", "slide", "wallrun", "walljump", "momentum", "ledge", "burst", "swim", "tide", "wind",
+		"combo", "heavy", "air", "skills", "parry", "damage", "sentinel", "freestyle", "tokens", "death", "hotbar", "camera"]
 	for t: String in all:
 		if which == "all" or which == t:
 			await _reset()
@@ -292,10 +292,10 @@ func t_slide() -> void:
 func t_wallrun() -> void:
 	print("[correr na parede]")
 	# corredor: paredes em x=21 e x=27, fosso entre elas. Corre para o norte colado na parede leste.
-	await _reset(Vector3(26.2, 0.1, -2.0), 0.0)
+	await _reset(Vector3(26.2, 0.1, 2.0), 0.0)
 	hold("move_forward")
 	hold("dash")
-	await wait(0.55)
+	await wait(0.45)
 	await tap("jump", 0.12)
 	hold("move_right")
 	var seen := false
@@ -308,6 +308,56 @@ func t_wallrun() -> void:
 	check(seen, "corre na parede", "%.2f s" % max_t)
 	release("move_right")
 	check(p.global_position.z < -8.0, "atravessou parte do fosso pela parede", "z=%.1f" % p.global_position.z)
+
+
+func t_walljump() -> void:
+	print("[pulo na parede]")
+	# parede alta do norte (face em z = -26)
+	await _reset(Vector3(0.0, 0.1, -23.2), 0.0)
+	hold("move_forward")
+	await wait(0.15)
+	await tap("jump", 0.2)
+	await wait(0.12)
+	var z0: float = p.global_position.z
+	await tap("jump", 0.04)
+	check(p.velocity.z > 3.0 and p.velocity.y > 8.0, "pula para longe da parede e para cima", "vz=%.1f vy=%.1f" % [p.velocity.z, p.velocity.y])
+	check(p.jumps_left == 1, "não gasta o pulo duplo", str(p.jumps_left))
+	release("move_forward")
+	await wait(0.25)
+	check(p.global_position.z > z0 + 1.0, "afasta da parede", "%.1f m" % (p.global_position.z - z0))
+	# mesma parede de novo: não pode; vira pulo duplo
+	p.teleport(Vector3(0.0, 2.0, -25.3), 0.0)
+	p.velocity = Vector3.ZERO
+	await frames(2)
+	await tap("jump", 0.04)
+	check(p.visual.current == "double_jump", "na mesma parede vira pulo duplo", p.visual.current)
+
+
+func t_momentum() -> void:
+	print("[conservação de impulso]")
+	await _reset(LANE, LANE_YAW)
+	hold("move_forward")
+	await wait(0.3)
+	p.velocity = Vector3(18.0, 0.0, 0.0)
+	await wait(0.5)
+	check(p.horizontal_speed() > 12.0, "segurando a direção, a velocidade extra some devagar", "%.1f m/s" % p.horizontal_speed())
+	release("move_forward")
+	await wait(0.4)
+	check(p.horizontal_speed() < 1.0, "soltando, para rápido", "%.1f m/s" % p.horizontal_speed())
+	# pulo durante a investida = pulo longo
+	await _reset(LANE, LANE_YAW)
+	var start: Vector3 = p.global_position
+	hold("move_forward")
+	await frames(2)
+	await tap("dash", 0.03)
+	await wait(0.06)
+	await tap("jump", 0.04)
+	check(p.horizontal_speed() > 12.0 and p.velocity.y > 8.0, "pulo na investida conserva a velocidade", "%.1f m/s" % p.horizontal_speed())
+	for i in 200:
+		await frames(1)
+		if p.is_on_floor():
+			break
+	check(start.distance_to(p.global_position) > 11.0, "pulo longo cobre distância", "%.1f m" % start.distance_to(p.global_position))
 
 
 func t_ledge() -> void:
@@ -704,6 +754,130 @@ func t_sentinel() -> void:
 	Net.world_action("dismiss")
 	await frames(3)
 	check(Game.stage.sentinels().is_empty(), "painel dispensa as Sentinelas")
+
+
+func _summon_at(pos: Vector3) -> Node3D:
+	var s: Node3D = Game.stage.spawn_enemy("sentinel", pos, 0.0)
+	await frames(2)
+	return s
+
+
+func t_freestyle() -> void:
+	print("[golpes de corpo e finalizações]")
+	# passo de aproximação: alvo a 4,5 m, o golpe fecha a distância
+	await _face_dummy(5.0)
+	var d := _dummy()
+	var hits := [0]
+	var cb := func(_a: float, _r: String) -> void: hits[0] += 1
+	d.damaged.connect(cb)
+	await tap("attack_light", 0.03)
+	await wait(0.45)
+	d.damaged.disconnect(cb)
+	check(hits[0] >= 1, "golpe leve alcança alvo a 4,5 m (passo de vento)", str(hits[0]))
+	check(p.global_position.distance_to(d.global_position) < 2.4, "terminou colado no alvo", "%.1f m" % p.global_position.distance_to(d.global_position))
+	# rasteira derruba
+	await _reset(Room.ARENA_CENTER + Vector3(0, 0.05, 1.7), 0.0)
+	var s: Node3D = await _summon_at(Room.ARENA_CENTER)
+	p.invulnerable = 999.0
+	hold("crouch")
+	await frames(2)
+	await tap("attack_light", 0.03)
+	await frames(3)
+	check(p.visual.current == "atk_sweep", "agachar + leve = rasteira", p.visual.current)
+	await wait(0.4)
+	check(s.state == s.St.DOWN, "rasteira derruba o inimigo", str(s.state))
+	release("crouch")
+	await wait(2.4)
+	check(s.state != s.St.DOWN and s.alive, "o inimigo levanta depois")
+	# chute empurra longe
+	Game.stage.dismiss_enemies()
+	await _reset(Room.ARENA_CENTER + Vector3(0, 0.05, 1.7), 0.0)
+	s = await _summon_at(Room.ARENA_CENTER)
+	p.invulnerable = 999.0
+	hold("crouch")
+	await frames(2)
+	await tap("attack_heavy", 0.03)
+	await frames(3)
+	check(p.visual.current == "atk_kick", "agachar + pesado = chute", p.visual.current)
+	var z0: float = s.global_position.z
+	release("crouch")
+	await wait(1.0)
+	check(z0 - s.global_position.z > 3.0, "chute joga o inimigo longe", "%.1f m" % (z0 - s.global_position.z))
+	# chute contra a parede
+	Game.stage.dismiss_enemies()
+	await _reset(Vector3(-15.0, 0.05, -12.0), -90.0)
+	s = await _summon_at(Vector3(-13.3, 0.0, -12.0))
+	p.invulnerable = 999.0
+	notices.clear()
+	hold("crouch")
+	await frames(2)
+	await tap("attack_heavy", 0.03)
+	release("crouch")
+	await wait(0.8)
+	check(said("Contra a parede"), "inimigo jogado contra a parede fica atordoado", str(notices))
+	# arremesso de inimigo com a postura quebrada
+	Game.stage.dismiss_enemies()
+	await _reset(Room.ARENA_CENTER + Vector3(0, 0.05, 1.7), 0.0)
+	s = await _summon_at(Room.ARENA_CENTER)
+	p.invulnerable = 999.0
+	s.receive_hit({"damage": 1.0, "posture": 60.0, "from": p, "from_pos": p.global_position})
+	s.receive_hit({"damage": 1.0, "posture": 60.0, "from": p, "from_pos": p.global_position})
+	await frames(2)
+	var from: Vector3 = s.global_position
+	await tap("attack_heavy", 0.03)
+	await frames(3)
+	check(p.visual.current == "atk_throw", "pesado em inimigo aberto = arremesso", p.visual.current)
+	var thrown := false
+	for i in 200:
+		await frames(1)
+		if s.state == s.St.THROWN:
+			thrown = true
+	check(thrown, "o inimigo é arremessado")
+	check(from.distance_to(s.global_position) > 5.0, "voa longe", "%.1f m" % from.distance_to(s.global_position))
+	check(s.state == s.St.DOWN or s.state == s.St.RECOVER or not s.alive, "cai derrubado", str(s.state))
+	# afogar
+	if s.alive:
+		s.global_position = Vector3(0, -3.6, -8.0)
+		await wait(0.3)
+		check(not s.alive, "inimigo jogado no mar se afoga")
+	# contra-ataque depois do parry
+	var tr: Node3D = Game.stage.trainer
+	await _reset(tr.global_position + Vector3(2.0, 0.05, 0), 90.0)
+	var th := [0]
+	var cb2 := func(_a: float, _r: String) -> void: th[0] += 1
+	tr.damaged.connect(cb2)
+	for i in 1200:
+		await frames(1)
+		if _about_to_hit(tr, 0.06):
+			hold("block")
+			break
+	await wait(0.2)
+	await tap("attack_light", 0.03)
+	await frames(3)
+	check(p.visual.current == "atk_thrust" and p.combat.move_id == "riposte", "leve depois do parry = contra-ataque", p.combat.move_id)
+	release("block")
+	await wait(0.5)
+	check(th[0] >= 1, "o contra-ataque acerta", str(th[0]))
+	tr.damaged.disconnect(cb2)
+
+
+func t_tokens() -> void:
+	print("[vários inimigos]")
+	await _reset(Room.ARENA_CENTER + Vector3(0, 0.05, 0), 0.0)
+	p.invulnerable = 999.0
+	for i in 4:
+		Net.world_action("summon")
+	var most := 0
+	var any := false
+	for i in 1100:
+		await frames(1)
+		var n: int = Game.stage.attackers(null)
+		most = maxi(most, n)
+		if n > 0:
+			any = true
+	check(any, "os inimigos atacam em grupo")
+	check(most <= 2, "no máximo dois atacam ao mesmo tempo", str(most))
+	p.invulnerable = 0.0
 
 
 func t_death() -> void:

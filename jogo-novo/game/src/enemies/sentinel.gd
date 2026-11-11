@@ -5,7 +5,7 @@ extends "res://src/actors/actor.gd"
 const Humanoid := preload("res://src/actors/humanoid.gd")
 const Geo := preload("res://src/core/geo.gd")
 
-enum St { IDLE, CHASE, CIRCLE, ATTACK, RECOVER, HIT, GUARD, STAGGER, DEAD, RETURN }
+enum St { IDLE, CHASE, CIRCLE, ATTACK, RECOVER, HIT, GUARD, STAGGER, DEAD, RETURN, DOWN, THROWN }
 
 ## wind = instante do clipe em que para na pose de preparo; hold = quanto tempo segura (o aviso).
 const ATTACKS := {
@@ -60,6 +60,9 @@ var _net_pos := Vector3.ZERO
 var _net_has := false
 var _last_atk_seq := -1
 var _returning_in := false
+var _splat_cd := 0.0
+var _got_up := false
+var thrown_hit: Array = []
 
 
 func _ready() -> void:
@@ -170,6 +173,13 @@ func _physics_process(delta: float) -> void:
 			_st_dead(delta)
 		St.RETURN:
 			_st_return(delta)
+		St.DOWN:
+			_st_down(delta)
+		St.THROWN:
+			_st_thrown(delta)
+	var knock_speed := knock.length()
+	if _splat_cd > 0.0:
+		_splat_cd -= delta
 	if state != St.RETURN:
 		if is_on_floor():
 			if velocity.y < 0.0:
@@ -184,9 +194,25 @@ func _physics_process(delta: float) -> void:
 	visual.rotation.y = facing
 	visual.owner_velocity = velocity
 	visual.set_wet(clampf(wet / 3.0, 0.0, 1.0))
-	# caiu na água ou foi longe demais: volta ao posto
-	if alive and state != St.RETURN and (Tide.depth_at(global_position) > 1.1 or global_position.distance_to(spawn_pos) > 34.0):
-		_begin_return()
+	# empurrado contra a parede: bate, perde postura e fica atordoado
+	if alive and _splat_cd <= 0.0 and is_on_wall() and (state == St.HIT or state == St.THROWN or state == St.STAGGER):
+		var hv_speed := Vector2(velocity.x, velocity.z).length()
+		if knock_speed > 6.5 or (state == St.THROWN and hv_speed > 5.0):
+			_wall_splat()
+	# caiu no mar: a Sentinela comum se afoga; a de treino volta ao posto
+	if alive and state != St.RETURN:
+		if Tide.depth_at(global_position) > 1.1:
+			if mode == "normal":
+				var surf := Vector3(global_position.x, Tide.height_at(global_position), global_position.z)
+				Fx.burst("splash", surf, Vector3.UP, Color.WHITE, 2.0)
+				Fx.ring(surf, Vector3.UP, Color.WHITE, 3.0, 0.7)
+				Sfx.play_at("splash", surf, 0.0)
+				Game.say("Sentinela afogada", "gold")
+				die()
+			else:
+				_begin_return()
+		elif global_position.distance_to(spawn_pos) > 34.0:
+			_begin_return()
 
 
 func _stop(delta: float) -> void:
@@ -265,7 +291,19 @@ func _st_circle(delta: float) -> void:
 			_start_attack()
 
 
+## Só dois inimigos atacam ao mesmo tempo; os outros rodeiam esperando a vez.
+func _can_attack() -> bool:
+	if mode != "normal" or Game.stage == null:
+		return true
+	return Game.stage.attackers(self) < 2
+
+
 func _start_attack() -> void:
+	if pattern_i == 0 and not _can_attack():
+		circle_dir = 1.0 if randf() < 0.5 else -1.0
+		circle_time = randf_range(0.6, 1.3)
+		set_state(St.CIRCLE)
+		return
 	atk_name = pattern[pattern_i]
 	atk = ATTACKS[atk_name]
 	atk_seq += 1
@@ -404,6 +442,85 @@ func _st_stagger(delta: float) -> void:
 		recover_t = 0.6
 
 
+func _enter_down() -> void:
+	atk_name = ""
+	visual.set_speed(1.0)
+	visual.stop_upper(0.1)
+	_got_up = false
+	recent_stuns = 0
+	set_state(St.DOWN)
+	anim("knockdown", 0.06, 1.0, true)
+	Sfx.play_at("land", global_position, -2.0, 0.8)
+	Fx.burst("dust", global_position, Vector3.UP, Color.WHITE, 1.2)
+
+
+func _st_down(delta: float) -> void:
+	_stop(delta)
+	if state_time > 1.25 and not _got_up:
+		_got_up = true
+		anim("getup", 0.1, 1.0, true)
+	if state_time > 1.95:
+		recover_t = 0.25
+		set_state(St.RECOVER)
+
+
+func _enter_thrown(vel: Vector3) -> void:
+	atk_name = ""
+	visual.set_speed(1.0)
+	visual.stop_upper(0.1)
+	posture = 0.0
+	stagger_t = 0.0
+	thrown_hit.clear()
+	knock = Vector3.ZERO
+	velocity = vel
+	set_state(St.THROWN)
+	anim("fall", 0.1, 1.0, true)
+
+
+func _st_thrown(delta: float) -> void:
+	# arremessado: derruba os outros inimigos no caminho
+	for e: Node in get_tree().get_nodes_in_group(&"enemies"):
+		if e == self or not e.alive or thrown_hit.has(e):
+			continue
+		if e.center().distance_to(center()) < 1.5:
+			thrown_hit.append(e)
+			var dir := Geo.flat(velocity).normalized()
+			e.receive_hit({"damage": 18.0, "posture": 25.0, "knock": dir * 7.0, "trip": true, "from": target, "from_pos": global_position, "kind": "thrown", "heavy": true})
+			Fx.burst("hit_heavy", e.center(), dir, Color(1.0, 0.9, 0.6), 1.2)
+			Sfx.play_at("hit_heavy", e.center(), -1.0)
+	facing += delta * 9.0
+	if state_time > 0.12 and is_on_floor():
+		apply_damage(6.0)
+		if alive:
+			_enter_down()
+	elif state_time > 3.0:
+		_enter_down()
+
+
+func _wall_splat() -> void:
+	_splat_cd = 0.8
+	var n := get_wall_normal()
+	var at := center() - n * radius
+	knock = Vector3.ZERO
+	velocity.x = 0.0
+	velocity.z = 0.0
+	Fx.ring(at, n, Color(1.0, 0.9, 0.6), 2.4, 0.35)
+	Fx.burst("shock", at, n, Color.WHITE, 1.1)
+	Fx.shake(0.3)
+	Sfx.play_at("slam", at, -2.0, 1.2)
+	apply_damage(10.0)
+	damaged.emit(10.0, "hit")
+	if not alive:
+		return
+	Game.say("Contra a parede!", "info")
+	add_posture(30.0)
+	if state == St.THROWN:
+		_enter_down()
+	elif state != St.STAGGER:
+		_enter_hit(1.2, true)
+		recent_stuns = 0
+
+
 func _begin_return() -> void:
 	atk_name = ""
 	visual.set_speed(1.0)
@@ -474,7 +591,7 @@ func receive_hit(hit: Dictionary) -> String:
 		damaged.emit(dmg * 0.2, "blocked")
 		return "blocked"
 	var was_staggered := state == St.STAGGER
-	if was_staggered and not hit.get("crit", false):
+	if (was_staggered and not hit.get("crit", false)) or state == St.DOWN:
 		dmg *= 1.25
 	visual.flash(1.0)
 	var stop := 0.09 if heavy else 0.05
@@ -484,8 +601,14 @@ func receive_hit(hit: Dictionary) -> String:
 	if not alive:
 		knock += k
 		return "hit"
-	knock += k
 	var launch: float = float(hit.get("launch", 0.0))
+	if hit.get("throw", false):
+		_enter_thrown(k + Vector3.UP * maxf(launch, 5.0))
+		recent_stuns = 0
+		return "hit"
+	knock += k
+	if state == St.DOWN or state == St.THROWN:
+		return "hit"
 	if launch > 0.0:
 		velocity.y = launch
 	elif not is_on_floor():
@@ -501,6 +624,9 @@ func receive_hit(hit: Dictionary) -> String:
 		return "hit"
 	add_posture(float(hit.get("posture", 0.0)))
 	if state == St.STAGGER:
+		return "hit"
+	if hit.get("trip", false):
+		_enter_down()
 		return "hit"
 	var armored: bool = state == St.ATTACK and atk_phase >= 1 and atk.get("armor", false)
 	if not armored or launch > 0.0:

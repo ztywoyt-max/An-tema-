@@ -151,4 +151,5 @@ func tick_status(delta: float) -> void:
 		if _burn_tick <= 0.0:
 			_burn_tick = 0.5
 			apply_damage(3.0, {"element": "fire"})
-	knock = knock.move_toward(Vector3.ZERO, delta * 28.0)
+	if hitstop <= 0.0:
+		knock = knock.move_toward(Vector3.ZERO, delta * 28.0)

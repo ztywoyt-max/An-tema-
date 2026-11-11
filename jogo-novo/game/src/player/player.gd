@@ -31,6 +31,9 @@ const DASH_COOLDOWN := 0.34
 const DASH_IFRAMES := 0.2
 const DASH_COST := 16.0
 const SLIDE_MIN_SPEED := 4.6
+const MOMENTUM_DECAY := 7.0
+const WALLJUMP_OUT := 7.6
+const WALLJUMP_UP := 10.4
 const GLIDE_FALL := -2.3
 const GLIDE_SPEED := 9.6
 const WALLRUN_TIME := 1.3
@@ -68,6 +71,7 @@ var jumps_left := 1
 var air_dashes_left := 1
 var glide_armed := false
 var jump_cut_done := false
+var jump_held_t := 0.0
 var dash_cd := 0.0
 var dash_dir := Vector3.FORWARD
 var dash_held_after := false
@@ -79,6 +83,8 @@ var burst_hit: Array = []
 var wall_normal := Vector3.ZERO
 var wall_dir := Vector3.ZERO
 var wall_cd := 0.0
+var walljump_cd := 0.0
+var last_wall_normal := Vector3.ZERO
 var ledge: Dictionary = {}
 var mantle_from := Vector3.ZERO
 var mantle_to := Vector3.ZERO
@@ -303,6 +309,7 @@ func _read_input(delta: float) -> void:
 		jump_buffer = JUMP_BUFFER
 	else:
 		jump_buffer = maxf(jump_buffer - delta, 0.0)
+	jump_held_t = jump_held_t + delta if held(&"jump") else 0.0
 	if buffer_time > 0.0:
 		buffer_time -= delta
 	if pressed(&"attack_light"):
@@ -342,6 +349,8 @@ func _tick_resources(delta: float) -> void:
 		dash_cd -= delta
 	if wall_cd > 0.0:
 		wall_cd -= delta
+	if walljump_cd > 0.0:
+		walljump_cd -= delta
 	if stamina_delay > 0.0:
 		stamina_delay -= delta
 	elif stamina < max_stamina:
@@ -375,6 +384,7 @@ func _st_ground(delta: float) -> void:
 		jumps_left = 1
 		air_dashes_left = 1
 		glide_armed = false
+		last_wall_normal = Vector3.ZERO
 	var guard := lock_target != null and is_instance_valid(lock_target)
 	var dash_down := held(&"dash")
 	if not dash_down:
@@ -421,12 +431,20 @@ func _st_ground(delta: float) -> void:
 
 func _ground_move(delta: float, max_speed: float) -> void:
 	var hv := Vector3(velocity.x, 0.0, velocity.z)
+	var spd := hv.length()
 	var target := wish_dir * max_speed
-	var rate := ACCEL if wish_dir.length() > 0.05 else DECEL
-	# virada brusca responde mais rápido
-	if hv.length() > 1.0 and target.length() > 0.1 and hv.normalized().dot(target.normalized()) < 0.0:
-		rate *= 1.6
-	hv = hv.move_toward(target, rate * delta)
+	# impulso conservado: acima da velocidade normal, quem segura a direção perde velocidade devagar
+	if spd > max_speed + 0.3 and wish_dir.length() > 0.3 and hv.normalized().dot(wish_dir.normalized()) > 0.2:
+		var dir := hv.normalized()
+		var ang := signf(dir.cross(wish_dir).y) * minf(3.2 * delta, dir.angle_to(wish_dir.normalized()))
+		dir = dir.rotated(Vector3.UP, ang)
+		hv = dir * maxf(spd - MOMENTUM_DECAY * delta, max_speed)
+	else:
+		var rate := ACCEL if wish_dir.length() > 0.05 else DECEL
+		# virada brusca responde mais rápido
+		if spd > 1.0 and target.length() > 0.1 and hv.normalized().dot(target.normalized()) < 0.0:
+			rate *= 1.6
+		hv = hv.move_toward(target, rate * delta)
 	velocity.x = hv.x
 	velocity.z = hv.z
 
@@ -524,12 +542,15 @@ func _st_air(delta: float) -> void:
 		if coyote > 0.0:
 			_jump()
 			return
+		if _try_walljump():
+			return
 		if jumps_left > 0:
 			_double_jump()
 			return
 		glide_armed = true
 		jump_buffer = 0.0
-	if glide_armed and held(&"jump") and velocity.y < 0.5:
+	# planar só depois de segurar um instante (o toque primeiro tenta pulo na parede / pulo duplo)
+	if glide_armed and jump_held_t > 0.06 and velocity.y < 0.5:
 		_enter_glide()
 		return
 	coyote = maxf(coyote - delta, 0.0)
@@ -552,6 +573,58 @@ func _st_air(delta: float) -> void:
 				anim("fall", 0.25)
 		elif visual.current != "fall":
 			anim("fall", 0.2)
+
+
+## Parede ao alcance (para o pulo na parede): devolve a normal ou zero.
+func _wall_near() -> Vector3:
+	if is_on_wall():
+		var n := get_wall_normal()
+		if absf(n.y) < 0.3:
+			return Vector3(n.x, 0.0, n.z).normalized()
+	var space := get_world_3d().direct_space_state
+	var origin := global_position + Vector3.UP * 0.9
+	var dirs := [forward_dir(), -forward_dir(), right_dir(), -right_dir()]
+	if wish_dir.length() > 0.3:
+		dirs.push_front(wish_dir.normalized())
+	var hv := Vector3(velocity.x, 0.0, velocity.z)
+	if hv.length() > 1.0:
+		dirs.push_front(hv.normalized())
+	for d: Vector3 in dirs:
+		var q := PhysicsRayQueryParameters3D.create(origin, origin + d * (radius + 0.5), Game.L_WORLD)
+		var hit := space.intersect_ray(q)
+		if not hit.is_empty() and absf((hit["normal"] as Vector3).y) < 0.3:
+			var n2: Vector3 = hit["normal"]
+			return Vector3(n2.x, 0.0, n2.z).normalized()
+	return Vector3.ZERO
+
+
+## Pulo na parede: chuta a parede e sobe. Não gasta o pulo duplo; para repetir é preciso outra parede.
+func _try_walljump() -> bool:
+	if walljump_cd > 0.0:
+		return false
+	var n := _wall_near()
+	if n == Vector3.ZERO:
+		return false
+	if last_wall_normal != Vector3.ZERO and n.dot(last_wall_normal) > 0.85:
+		return false
+	last_wall_normal = n
+	jump_buffer = 0.0
+	walljump_cd = 0.2
+	wall_cd = 0.25
+	var hv := Vector3(velocity.x, 0.0, velocity.z)
+	var tang := hv - n * hv.dot(n)
+	velocity = n * WALLJUMP_OUT + tang * 0.7
+	velocity.y = WALLJUMP_UP
+	jump_cut_done = true
+	air_dashes_left = 1
+	glide_armed = true
+	face_dir(velocity, 0.0, 0.0)
+	set_state(St.AIR)
+	anim("jump", 0.05, 1.0, true)
+	Sfx.play_at("jump", global_position, -4.0, 1.15)
+	Fx.burst("dust", global_position + Vector3.UP * 0.9 - n * radius, n, Color.WHITE, 0.9)
+	Fx.ring(global_position + Vector3.UP * 0.9 - n * radius, n, Color(0.85, 1.0, 0.98), 1.2, 0.25)
+	return true
 
 
 func _double_jump() -> void:
@@ -668,7 +741,7 @@ func _st_dash(delta: float) -> void:
 		Sfx.play_at("jump", global_position, -6.0)
 		return
 	if state_time >= DASH_TIME:
-		var keep := SPRINT_SPEED if held(&"dash") else RUN_SPEED
+		var keep := (SPRINT_SPEED + 1.5) if held(&"dash") else (RUN_SPEED + 1.5)
 		velocity.x = dash_dir.x * keep
 		velocity.z = dash_dir.z * keep
 		if is_on_floor():
@@ -909,6 +982,8 @@ func _st_wallrun(delta: float) -> void:
 		velocity = wall_normal * 7.0 + wall_dir * spd * 0.8
 		velocity.y = JUMP_VEL * 0.95
 		jump_cut_done = true
+		last_wall_normal = wall_normal
+		walljump_cd = 0.2
 		wall_cd = 0.35
 		set_state(St.AIR)
 		anim("jump", 0.06, 1.0, true)
@@ -1025,6 +1100,9 @@ func _st_mantle(_delta: float) -> void:
 	if t >= 1.0:
 		set_state(St.GROUND)
 		coyote = COYOTE
+		if move_input.y < -0.3:
+			var f := forward_dir()
+			velocity = f * RUN_SPEED
 
 
 # =============================================================================== nadar
