@@ -1,4 +1,6 @@
 extends Node
+
+const PORT := 24565
 ## Rede do co-op (versão inicial; preenchida mais adiante).
 
 
@@ -51,3 +53,11 @@ func join(_address: String) -> void:
 
 func close() -> void:
 	pass
+
+
+func local_addresses() -> PackedStringArray:
+	var out := PackedStringArray()
+	for a in IP.get_local_addresses():
+		if a.contains(".") and not a.begins_with("127.") and not a.begins_with("169.254."):
+			out.append(a)
+	return out

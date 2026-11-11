@@ -47,7 +47,7 @@ func _ready() -> void:
 
 
 func _load_fonts() -> void:
-	for pair: Array in [["font_title", "res://assets/fonts/titulo.ttf"], ["font_ui", "res://assets/fonts/interface.ttf"], ["font_hand", "res://assets/fonts/mao.ttf"]]:
+	for pair: Array in [["font_title", "res://assets/fonts/titulo.woff2"], ["font_ui", "res://assets/fonts/interface.woff2"], ["font_hand", "res://assets/fonts/mao.woff2"]]:
 		if ResourceLoader.exists(pair[1]):
 			Game.set(pair[0], load(pair[1]))
 	if Game.font_hand:

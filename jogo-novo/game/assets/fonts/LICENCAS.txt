@@ -1,0 +1,8 @@
+Fontes usadas na interface, todas sob a SIL Open Font License 1.1 (https://scripts.sil.org/OFL):
+
+- titulo.woff2              Kaushan Script — Copyright (c) Pablo Impallari
+- mao.woff2                 Caveat Brush — Copyright 2015 Google Inc.
+- interface.woff2           Alegreya Sans (500) — Copyright 2013 The Alegreya Sans Project Authors (Huerta Tipográfica)
+- interface_negrito.woff2   Alegreya Sans (700)
+
+Baixadas dos pacotes @fontsource (npm).
