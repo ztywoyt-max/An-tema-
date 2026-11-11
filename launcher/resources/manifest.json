@@ -3,7 +3,7 @@
   "pack": {
     "name": "ANÁTEMA",
     "version": "2026.11.0",
-    "updated": "2026-11-11T11:21:29.294Z"
+    "updated": "2026-11-11T11:38:26.043Z"
   },
   "minecraft": "1.21.1",
   "loader": {
@@ -1507,7 +1507,7 @@
       "title": "Um novo portal para o Domínio",
       "date": "2026-11-11",
       "tag": "Launcher",
-      "body": "O launcher do ANÁTEMA foi refeito do zero: instalação automática, login oficial com conta Microsoft, verificação de arquivos e muito mais."
+      "body": "O launcher do ANÁTEMA foi refeito do zero: instala NeoForge, mods e configurações sozinho, confere cada arquivo e abre o Minecraft Launcher oficial com o perfil ANÁTEMA pronto. É só clicar em Jogar."
     },
     {
       "id": "sistemas",
