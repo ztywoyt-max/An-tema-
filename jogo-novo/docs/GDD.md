@@ -3,7 +3,8 @@
 > Nome provisório: **VESSA** (o reino). Projeto independente do ANÁTEMA/Minecraft.
 > Mudanças da v0.1: tom tropical e luminoso (não mais sombrio/cinza), humanos **condenados pelo mar**,
 > primeira + terceira pessoa, movimentação livre, **Água e Vento** como pilares.
-> Referências visuais em `referencias/` (01–08).
+> v0.2.1: as imagens em `referencias/` são **somente referência de estilo de arte**. Nenhum personagem, lugar ou
+> enredo vem delas. A história abaixo é só um esqueleto mínimo, a ser escrita com o dono.
 
 ## 1. Decisões tomadas
 
@@ -50,44 +51,21 @@ amarelo-sol `#F3D36B`, areia `#EFE0B8`, ouro `#C9A24A`. Sombras tendem a azul/ro
 de palafita, vegetação), assets CC0 como base (Quaternius, Kenney, Poly Haven) retrabalhados no estilo, e você
 pode adicionar artistas/IA geradora de modelos depois. Não vou prometer escultura à mão perfeita só por texto.
 
-## 4. História
+## 4. História (esqueleto — a definir com o dono)
 
-### O Reino de Vessa
-Um arquipélago de lagoas turquesa e recifes gigantes. O povo vive em **vilas sobre palafitas**, pesca, navega e
-cultua as marés. Terra quente, vento constante, cores por toda parte. À primeira vista, um paraíso.
+**Fixo (decidido):**
+- Reino de **Vessa**, litoral tropical e quente, vilas sobre palafitas, recifes, lagoas.
+- Os humanos foram **condenados pelo mar**.
+- Água e Vento são as duas forças centrais.
 
-### A Condenação (a virada que você pediu)
-Há séculos, os vessanos descobriram a **Pérola-Mãe**, o coração do oceano, e a usaram para dominar as marés:
-colheitas fartas, tempestades desviadas, cidades erguidas sobre o recife. O mar não se vingou; **julgou**.
-O **Rei da Maré** (a figura do tridente, 03) abriu um tribunal e proferiu a **Sentença**:
+**Em aberto (precisa de você):**
+- Qual foi o crime e como é a condenação? (o que o mar impõe aos humanos, qual o custo, existe saída?)
+- Quem são os jogadores e por que voltam a lutar quando morrem?
+- Qual o papel do Vento na história? (aliado, rival, outra face do mar?)
+- Quem são os chefes e o que eles representam?
+- Quantos atos e quantos finais?
 
-> *"Tomaram o que não se devolve. Que nunca mais deixem a água, e que a água nunca os deixe."*
-
-Os humanos foram **condenados pelo mar**:
-- Quem nasce em Vessa carrega a **Marca da Maré**, linhas luminosas na pele, como veias de coral.
-- Não podem se afastar do litoral: longe da água, a Marca queima.
-- Não morrem de vez: o mar os **devolve** (reaparecem nas praias) até cumprirem a pena.
-- O vento, antes aliado do povo, é o **único lado do mar que não condenou**.
-
-### Os protagonistas: os Devolvidos
-Jogadores são Devolvidos, pessoas que o mar cospe de volta ao morrer. Cada morte custa **Lembranças** (a moeda).
-Eles são os únicos que veem o julgamento por baixo da superfície bonita do reino.
-
-### O Vento
-O **Bardo do Vento** (a figura com o instrumento de cordas, 02) é um andarilho que toca melodias que
-convocam correntes de ar. Ensina aos Devolvidos o **Canto dos Ventos**, o que dá a eles o dash, o impulso
-e o planar. O vento é liberdade; a água é lei. Esse é o conflito do jogo.
-
-### Estrutura (4 atos)
-1. **Praia dos Pés Descalços** (04/05): tutorial, primeira vila sobre palafitas, chefe: **o Pescador Afogado**.
-2. **A Lagoa das Mil Casas** (01): vilas flutuantes, maré que sobe e desce, atalhos por barcos.
-3. **O Recife Vivo** (07/08): corais gigantes, cavernas de concha, mergulho, a Roda da Condenação (06).
-4. **O Tribunal Submerso**: o fundo do mar, o Rei da Maré, a Pérola-Mãe.
-
-### Finais
-- **Cumprir a Sentença**: aceitar o mar; paz, mas o povo permanece preso.
-- **Romper a Sentença**: libertar o vento e destruir a Pérola; o povo escapa, mas Vessa seca.
-- **Devolver a Pérola**: o final difícil, exige poupar certos chefes ao longo do jogo.
+Não vou inventar personagens, relíquias ou chefes sem você aprovar. Quando você responder, a história entra aqui.
 
 ## 5. Os dois pilares em detalhe
 
@@ -98,7 +76,7 @@ e o planar. O vento é liberdade; a água é lei. Esse é o conflito do jogo.
 - **Surfar ondas**: deslizar em ondas e correntezas para viajar rápido.
 - **Estado Molhado**: aumenta condução de relâmpago/gelo, diminui fogo, apaga tochas.
 - **Chefes e inimigos aquáticos** que mudam o campo de batalha (inundam a arena, puxam jogadores).
-- **Pontos de descanso**: santuários de concha ("Conchas de Descanso"), onde o jogo salva e reaparecem inimigos.
+- **Pontos de descanso**: pontos de descanso (visual a definir), onde o jogo salva e reaparecem inimigos.
 
 ### 5.2 Vento
 - **Campo de vento**: o vento tem direção e força por região; vegetação, panos e fumaça o mostram, e o jogador
@@ -130,7 +108,7 @@ pulo → planar), e **câmera sempre legível**.
 - **1ª e 3ª pessoa** com troca em tempo real (tecla), cada uma com o próprio *FOV*, sensibilidade e animações.
 - Travar alvo na 3ª pessoa; na 1ª, mira central com assistência leve de parry.
 - **Hotbar** de 8 slots (armas, consumíveis, ferramentas e Cantos); roda de seleção rápida no gamepad.
-- HUD: vida, stamina, Fôlego-de-Vento, Lembranças; discreto, estilo desenhado, pode ser escondido.
+- HUD: vida, stamina, Fôlego-de-Vento, moeda; discreto, estilo desenhado, pode ser escondido.
 
 ## 8. Combate
 
@@ -141,27 +119,21 @@ pulo → planar), e **câmera sempre legível**.
 - Armas: lâmina-concha (espada), arpão (lança), machado de coral, adagas de osso-de-peixe, cajado-ressoador
   (foco do Canto), escudo-casco (parry reforçado). Cada uma com uma habilidade de Água e uma de Vento.
 - Build: 5 atributos, encantamentos de maré, runas de vento.
-- **Morte**: reaparece na última Concha de Descanso; Lembranças ficam no local da morte (perde se morrer antes
+- **Morte**: reaparece no último ponto de descanso; a moeda fica no local da morte (perde se morrer antes
   de recuperar).
 
 ## 9. Co-op (2–4 jogadores)
 
-- Host cria a sessão, amigos entram por código; invocação em Conchas de Descanso.
+- Host cria a sessão, amigos entram por código; invocação em pontos de descanso.
 - Combos de Água + Vento: um joga correnteza, outro usa a rajada para surfar com o grupo.
-- Ressurreição por "Chamado do Mar" (cooperativa) com custo de Lembranças.
+- Ressurreição por ressurreição cooperativa (nome e custo a definir).
 - Escala de vida dos chefes com o número de jogadores.
 - Autoridade no host, previsão local de movimento, reconciliação de golpes.
 
-## 10. Chefes (rascunho)
+## 10. Chefes
 
-| Ato | Chefe | Mecânica |
-|---|---|---|
-| 1 | O Pescador Afogado | Arpão, puxa o jogador, arena enche de água |
-| 2 | A Senhora das Mil Casas | Domina a maré, derruba palafitas |
-| 2 (opc.) | O Cardume Vivo | Enxame, exige Canto de vento para dispersar |
-| 3 | A Concha-Mãe (07) | Gigante, fases abre/fecha, correntes de ar |
-| 3 | Os Dançarinos da Roda (06) | Ritual coletivo, ciclone |
-| 4 | O Rei da Maré (03) | Tridente, três fases: tribunal, tempestade, Pérola |
+A definir junto com a história (seção 4). Regras já fixadas: 2–3 fases, padrões legíveis, pelo menos
+uma mecânica de **Água** ou **Vento** por chefe, e vida escalada pelo número de jogadores no co-op.
 
 ## 11. Arquitetura técnica (Godot 4)
 
@@ -181,6 +153,12 @@ jogo-novo/
   tools/       scripts (Blender, build, testes)
 ```
 
+### Pipeline de arte 3D (Blender)
+Testado nesta sessão: o módulo `bpy` (Blender 5.3) instala via pip e roda sem interface, então scripts Python
+criam modelos com **materiais procedurais**, renderizam e exportam `.glb` para o Godot. Script de teste em
+`../tools/blender/teste_coral.py`. Fica bom para vegetação, corais, palafitas e cenário; personagens com
+rosto e anatomia exigem mais iteração (ver conversa). Meta de estilo: referências 01–08.
+
 ## 12. Roteiro por marcos
 
 | Marco | Entrega | Pronto quando |
@@ -190,7 +168,7 @@ jogo-novo/
 | M2 | Água básica | Lagoa com shader, natação, maré simples |
 | M3 | Combate | Ataque, parry, stamina, hotbar, inimigo com IA |
 | M4 | Co-op mínimo | 2 jogadores na mesma ilha |
-| M5 | **Fatia vertical** | Praia + Pescador Afogado + 1 cena de história, estilo visual final |
+| M5 | **Fatia vertical** | 1 ilha, 1 chefe, estilo visual final |
 | M6+ | Atos 2–4 | Um ato por marco |
 
 ## 13. Perguntas ainda em aberto
