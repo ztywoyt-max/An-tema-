@@ -1,0 +1,109 @@
+; Projeto VESSA — sala de teste.
+; Editado à mão: o mapa de entradas é criado em código (src/core/controls.gd).
+
+config_version=5
+
+[application]
+
+config/name="VESSA"
+config/description="Soulslike co-op de Água e Vento. Sala de teste."
+config/version="0.1.0"
+run/main_scene="res://main.tscn"
+config/features=PackedStringArray("4.7", "Forward Plus")
+config/icon="res://icon.svg"
+boot_splash/bg_color=Color(0.059, 0.11, 0.2, 1)
+boot_splash/show_image=false
+config/use_custom_user_dir=true
+config/custom_user_dir_name="Vessa"
+
+[autoload]
+
+Controls="*res://src/core/controls.gd"
+Settings="*res://src/core/settings.gd"
+Game="*res://src/core/game.gd"
+Wind="*res://src/core/wind.gd"
+Tide="*res://src/core/tide.gd"
+Sfx="*res://src/core/sfx.gd"
+Fx="*res://src/core/fx.gd"
+Net="*res://src/core/net.gd"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/mode=2
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/vsync/vsync_mode=1
+
+[physics]
+
+common/physics_ticks_per_second=120
+common/max_physics_steps_per_frame=12
+common/physics_interpolation=true
+3d/physics_engine="Jolt Physics"
+
+[rendering]
+
+anti_aliasing/quality/msaa_3d=2
+lights_and_shadows/directional_shadow/size=4096
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3
+textures/default_filters/anisotropic_filtering_level=3
+environment/defaults/default_clear_color=Color(0.33, 0.62, 0.9, 1)
+textures/vram_compression/import_s3tc_bptc=true
+
+[shader_globals]
+
+wind_vec={
+"type": "vec3",
+"value": Vector3(1, 0, 0.3)
+}
+sea_level={
+"type": "float",
+"value": -1.0
+}
+sea_time={
+"type": "float",
+"value": 0.0
+}
+wave_amp={
+"type": "float",
+"value": 1.0
+}
+sun_dir={
+"type": "vec3",
+"value": Vector3(0.4, 0.7, 0.3)
+}
+shadow_tint={
+"type": "color",
+"value": Color(0.44, 0.42, 0.8, 1)
+}
+brush_tex={
+"type": "sampler2D",
+"value": "res://assets/textures/brush.png"
+}
+noise_tex={
+"type": "sampler2D",
+"value": "res://assets/textures/noise.png"
+}
+caustics_tex={
+"type": "sampler2D",
+"value": "res://assets/textures/caustics.png"
+}
+clouds_tex={
+"type": "sampler2D",
+"value": "res://assets/textures/clouds.png"
+}
+
+[layer_names]
+
+3d_physics/layer_1="mundo"
+3d_physics/layer_2="jogador"
+3d_physics/layer_3="inimigo"
+3d_physics/layer_4="alvo"
+3d_physics/layer_5="interacao"
+3d_physics/layer_6="zona"
+
+[internationalization]
+
+locale/fallback="pt_BR"
