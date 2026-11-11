@@ -112,6 +112,7 @@
       "category": "jogabilidade",
       "description": "Chás, cafés e bebidas para o Farmer's Delight.",
       "alternatives": [
+        "farmers-respite-unofficial-port",
         "farmers-respite-neoforge"
       ]
     },
@@ -217,11 +218,11 @@
     },
     {
       "slug": "weathering-renewed",
-      "name": "Weathering Renewed",
+      "name": "Immersive Weathering: Renewed",
       "category": "jogabilidade",
-      "description": "Clima e intempéries renovados.",
+      "description": "Blocos que envelhecem, musgo, ferrugem e erosão naturais.",
       "alternatives": [
-        "weathering"
+        "immersive-weather-renewed"
       ]
     },
     {
