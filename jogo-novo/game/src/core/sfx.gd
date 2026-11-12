@@ -87,12 +87,15 @@ func loop(key: String, sound: String, volume_db := 0.0, bus: StringName = &"SFX"
 	var s := stream(sound)
 	if s == null:
 		return
+	if s is AudioStreamOggVorbis:
+		(s as AudioStreamOggVorbis).loop = true
+	elif s is AudioStreamWAV:
+		(s as AudioStreamWAV).loop_mode = AudioStreamWAV.LOOP_FORWARD
 	var p := AudioStreamPlayer.new()
 	p.stream = s
 	p.bus = bus
 	p.volume_db = volume_db
 	add_child(p)
-	p.finished.connect(p.play)
 	p.play()
 	_loops[key] = p
 
