@@ -47,8 +47,12 @@ func _ready() -> void:
 	root.add_child(list)
 	first = UiKit.button("Jogar", 60, func() -> void: main.start_game("solo"))
 	list.add_child(first)
-	list.add_child(UiKit.button("Co-op: criar sala", 50, func() -> void: _show_host()))
-	list.add_child(UiKit.button("Co-op: entrar na sala", 50, func() -> void: _show_join()))
+	if Net.READY:
+		list.add_child(UiKit.button("Co-op: criar sala", 50, func() -> void: _show_host()))
+		list.add_child(UiKit.button("Co-op: entrar na sala", 50, func() -> void: _show_join()))
+	else:
+		var soon := UiKit.label("      Co-op (em construção)", 44, Color(1, 1, 1, 0.45))
+		list.add_child(soon)
 	list.add_child(UiKit.button("Ajustes", 50, func() -> void:
 		var sp := SettingsPanel.new()
 		sp.show_name = true

@@ -1,6 +1,8 @@
 extends Node
 
 const PORT := 24565
+## Vira true quando o co-op estiver pronto (o menu só mostra os botões então).
+const READY := false
 ## Rede do co-op (versão inicial; preenchida mais adiante).
 
 

@@ -1,0 +1,91 @@
+VESSA — sala de teste
+=====================
+
+Como jogar (Windows)
+--------------------
+1. Extraia o arquivo .zip em qualquer pasta.
+2. Abra VESSA.exe. (Se o Windows mostrar "O Windows protegeu o computador", clique em
+   "Mais informações" e depois em "Executar assim mesmo" — o jogo ainda não tem assinatura digital.)
+3. No menu, escolha "Jogar". Ajustes e a lista de controles ficam no menu e na pausa (Esc).
+
+Requisitos: Windows 10/11 de 64 bits e uma placa de vídeo com suporte a Vulkan (qualquer uma dos
+últimos anos). O jogo é gratuito.
+
+
+Controles
+---------
+                         Teclado e mouse          Controle
+Mover                    W A S D                  analógico esquerdo
+Câmera                   mouse                    analógico direito
+Pular / pulo duplo       Espaço                   A
+Planar                   segurar Espaço no ar     segurar A no ar
+Investida (toque)        Shift                    B
+Correr (segurar)         Shift                    B
+Deslizar / mergulhar     Ctrl ou C                apertar o analógico esquerdo
+Impulso de vento         segurar Q e soltar       gatilho esquerdo
+Ataque leve              botão esquerdo           RB
+Ataque pesado            E (segurar carrega)      gatilho direito
+Bloquear / parry         botão direito            LB
+Travar alvo              botão do meio ou Tab     apertar o analógico direito
+Interagir / descansar    F                        Y
+Usar item selecionado    R                        seta para cima
+Hotbar                   1 a 8 ou roda do mouse   setas esquerda / direita
+1ª / 3ª pessoa           V ou F5                  seta para baixo
+Pausa                    Esc                      Start
+Tela cheia               F11
+Painel de depuração      F3                       Select
+
+
+Golpes e manobras
+-----------------
+Leve x4 ................................ combo básico; o 4º é um salto com golpe vertical
+Pesado (segurar carrega) ............... corte largo que empurra
+Leve, Pesado ........................... giro: acerta todos em volta
+Leve, Leve, Pesado ..................... lançador (segure Pulo para subir junto)
+Leve x3, Pesado ........................ estocada longa
+No ar: Leve, Leve ...................... combo aéreo que segura a queda
+No ar: Pesado .......................... mergulho com onda de choque
+Investida ou deslize + ataque .......... estocada em investida
+Agachar + Leve ......................... rasteira: derruba quem está perto
+Agachar + Pesado ....................... chute: joga longe; contra a parede, atordoa; no mar, afoga
+Bloquear no instante do golpe .......... parry (o parry perfeito solta uma rajada)
+Leve logo depois de um parry ........... contra-ataque rápido
+Inimigo com a postura quebrada ......... Leve = golpe crítico (cura um pouco); Pesado = arremesso
+Investida no instante do golpe ......... esquiva perfeita: câmera lenta e fôlego de vento
+Pulo encostado numa parede ............. pulo na parede (troque de parede para repetir)
+Pulo durante a investida ............... pulo longo que conserva a velocidade
+Correr e pular ao lado de uma parede ... corrida na parede
+Pular de frente para uma borda alta .... agarra a borda; Espaço sobe
+
+O ataque vai para onde você aponta: segure uma direção para trocar de alvo no meio do combo.
+Se o alvo estiver um pouco longe, o golpe fecha a distância sozinho.
+
+
+O que há na sala de teste
+-------------------------
+- Arena (a oeste): três bonecos de treino (mostram o dano e o dano por segundo), uma Sentinela de
+  treino que só ataca para você praticar o parry, e painéis para invocar / dispensar Sentinelas.
+- Totem de água (canto noroeste): atira orbes que o vento desvia; um parry devolve o orbe.
+- Painéis "Maré" e "Vento": mudam a maré e a força/direção do vento na hora.
+- Ponto de descanso: recupera vida, reabastece o cantil e marca onde você reaparece.
+- Torre (nordeste): degraus para treinar o agarrar de borda, rampa para deslizar e uma corrente
+  de ar que levanta quem plana. Dá para planar até a plataforma distante a leste.
+- Corredor de duas paredes sobre um fosso: corrida na parede e pulos de parede em parede.
+- Faixa turquesa junto à parede norte: corredor de rajada (vento a favor).
+- Terraço de madeira (sudeste): seco na maré baixa, alagado na maré alta.
+- Praia de areia (sudoeste), piscina aberta para o mar no meio do convés, ruínas e orbes de
+  Essência no fundo.
+- Braseiro: põe fogo em quem encosta; quem está molhado não pega fogo.
+
+Hotbar: 1 Sabre · 2 Lança · 3 Remo de Guerra · 4 Cantil · 5 Rajada · 6 Jato d'Água · 7 Ciclone
+
+
+Co-op (2 a 4 jogadores)
+-----------------------
+Em construção: os botões aparecem no menu assim que estiver pronto.
+
+
+Estado do projeto
+-----------------
+Esta é uma sala de teste: serve para experimentar movimento, combate, água e vento. A história, o
+mundo e o visual final dos personagens e do cenário ainda estão em construção.

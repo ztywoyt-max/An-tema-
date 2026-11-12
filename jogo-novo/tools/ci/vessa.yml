@@ -1,0 +1,105 @@
+# DESATIVADO: este arquivo só passa a valer se for copiado para .github/workflows/vessa.yml.
+# Ele publica um pré-lançamento PÚBLICO no GitHub; por isso fica aqui até o dono autorizar.
+#
+# Testa e empacota o jogo VESSA (pasta jogo-novo/) para Windows e Linux.
+# A cada push que mexe no jogo: importa os recursos, roda os testes automáticos (o jogo joga
+# sozinho), exporta e publica o pré-lançamento "vessa-teste" com os .zip para baixar.
+# É um pré-lançamento de propósito: não vira a release "mais recente", então não interfere na
+# atualização automática do launcher do ANÁTEMA.
+name: VESSA
+
+on:
+  push:
+    paths: ['jogo-novo/game/**', 'jogo-novo/LEIA-ME.txt', '.github/workflows/vessa.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vessa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: 4.7.2
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache do Godot
+        uses: actions/cache@v4
+        with:
+          path: ~/godot
+          key: godot-${{ env.GODOT_VERSION }}-win-linux-v1
+
+      - name: Baixar Godot e modelos de exportação
+        run: |
+          set -euo pipefail
+          BASE="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"
+          if [ ! -x ~/godot/godot ]; then
+            mkdir -p ~/godot/templates && cd ~/godot
+            curl -fsSL -o godot.zip "$BASE/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+            unzip -q godot.zip && mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot && rm godot.zip
+            curl -fsSL -o tpl.tpz "$BASE/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+            unzip -q -j tpl.tpz templates/windows_release_x86_64.exe templates/windows_release_x86_64_console.exe \
+              templates/linux_release.x86_64 templates/version.txt -d templates
+            rm tpl.tpz
+          fi
+          mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          cp ~/godot/templates/* ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+
+      - name: Importar recursos
+        run: ~/godot/godot --headless --path jogo-novo/game --import
+
+      - name: Testes automáticos (o jogo joga sozinho)
+        run: |
+          set -o pipefail
+          ~/godot/godot --headless --fixed-fps 120 --path jogo-novo/game -- --test=all 2>&1 | tee testes.log | grep -E "^\[|ok |FALHA|TESTES"
+          grep -q " 0 falharam" testes.log
+
+      - name: Exportar
+        run: |
+          set -euo pipefail
+          mkdir -p jogo-novo/build/windows jogo-novo/build/linux
+          ~/godot/godot --headless --path jogo-novo/game --export-release "Windows Desktop" ../build/windows/VESSA.exe
+          ~/godot/godot --headless --path jogo-novo/game --export-release "Linux" ../build/linux/VESSA.x86_64
+          test -s jogo-novo/build/windows/VESSA.exe
+          test -s jogo-novo/build/linux/VESSA.x86_64
+          cp jogo-novo/LEIA-ME.txt jogo-novo/build/windows/
+          cp jogo-novo/LEIA-ME.txt jogo-novo/build/linux/
+          chmod +x jogo-novo/build/linux/VESSA.x86_64
+          (cd jogo-novo/build/windows && zip -q -9 ../VESSA-sala-de-teste-windows.zip VESSA.exe LEIA-ME.txt)
+          (cd jogo-novo/build/linux && zip -q -9 ../VESSA-sala-de-teste-linux.zip VESSA.x86_64 LEIA-ME.txt)
+          ls -la jogo-novo/build
+
+      - name: Testes na versão exportada
+        run: |
+          set -o pipefail
+          jogo-novo/build/linux/VESSA.x86_64 --headless --fixed-fps 120 -- --test=all 2>&1 | tee exportado.log | grep -E "FALHA|TESTES"
+          grep -q " 0 falharam" exportado.log
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VESSA-sala-de-teste
+          path: jogo-novo/build/*.zip
+          retention-days: 30
+
+      - name: Publicar pré-lançamento
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG=vessa-teste
+          V=$(grep -oP 'config/version="\K[^"]+' jogo-novo/game/project.godot)
+          NOTES="Sala de teste do VESSA (versão $V, ${GITHUB_SHA::7}).
+
+          **Windows:** baixe \`VESSA-sala-de-teste-windows.zip\`, extraia e abra \`VESSA.exe\`.
+          Os controles e os golpes estão no \`LEIA-ME.txt\` e no menu de pausa (Esc).
+
+          Montado automaticamente; passou nos testes em que o jogo joga sozinho."
+          gh release delete "$TAG" --cleanup-tag -y 2>/dev/null || true
+          gh release create "$TAG" jogo-novo/build/VESSA-sala-de-teste-windows.zip jogo-novo/build/VESSA-sala-de-teste-linux.zip \
+            --target "$GITHUB_SHA" --prerelease --latest=false \
+            --title "VESSA — sala de teste" --notes "$NOTES"

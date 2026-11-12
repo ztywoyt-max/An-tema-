@@ -34,10 +34,10 @@ func _ready() -> void:
 	var direct := Game.args.has("play") or Game.args.has("bot") or Game.args.has("test")
 	if direct:
 		start_game()
-	elif not Game.args.has("shot"):
+	elif not Game.args.has("shot") or Game.args.has("menu"):
 		_show_menu()
 	if Game.args.has("shot"):
-		_setup_shot(not direct)
+		_setup_shot(not direct and not Game.args.has("menu"))
 	if Game.args.has("bot"):
 		var bot: Node = load("res://src/dev/bot.gd").new()
 		add_child(bot)
