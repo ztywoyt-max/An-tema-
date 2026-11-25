@@ -23,12 +23,23 @@ node ferramentas/vozes.mjs gerar cavaleiro      # um MP3 por fala (só o que mud
 node ferramentas/linha.mjs cavaleiro 1          # linha do tempo de um capítulo
 node render.mjs --filme cavaleiro --cap 1       # um capítulo (MP4 + legendas .srt)
 node ferramentas/montar.mjs cavaleiro --tudo    # filme completo
+node ferramentas/exportar.mjs cavaleiro         # arquivo para o PC/YouTube, menos de 500 MB
 node ferramentas/youtube.mjs cavaleiro          # título, descrição com capítulos e tags
 node render.mjs miniatura --quadros 0.5         # miniatura
 ```
 
-Sem vozes, as durações são estimadas e as falas dos personagens aparecem com "bipes" de texto.
-Ao gerar as vozes, basta renderizar de novo: tudo se reajusta.
+Tudo de uma vez (é o que usar quando o dono pedir para "aplicar as vozes"):
+
+```bash
+cd estudio && ferramentas/produzir.sh cavaleiro ../roteiros/01-o-cavaleiro-sem-armadura.md
+```
+
+Entrega: `saida/<filme>-youtube.mp4` (o app só envia arquivos de até 500 MiB; o `-completo.mp4` tem
+mais de 1 GB), `saida/<filme>-youtube.txt` e `saida/<filme>-miniatura-a/b.jpg`.
+
+Sem vozes, as durações são estimadas e o filme sai sem falas (não há legendas nem caixas de texto:
+o dono não quer). Ao gerar as vozes, basta renderizar de novo: tudo se reajusta.
+A chave da ElevenLabs só vale em sessões abertas depois de salva no ambiente.
 
 ## Estúdio PS1
 

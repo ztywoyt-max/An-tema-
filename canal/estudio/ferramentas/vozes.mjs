@@ -26,13 +26,14 @@ const pastaVozes = path.join(pasta, 'vozes');
 const arqDur = path.join(pastaVozes, 'duracoes.json');
 const API = 'https://api.elevenlabs.io';
 
-const chave = process.env.ELEVENLABS_API_KEY || 'injetada-pelo-proxy';
+// sem a variável, o cabeçalho não é enviado: o proxy do ambiente coloca a chave salva
+const chave = process.env.ELEVENLABS_API_KEY;
 
 async function api(metodo, rota, corpo, { binario = false, tentativas = 5 } = {}) {
   for (let i = 0; ; i++) {
     const r = await fetch(API + rota, {
       method: metodo,
-      headers: { 'xi-api-key': chave, ...(corpo ? { 'Content-Type': 'application/json' } : {}), Accept: binario ? 'audio/mpeg' : 'application/json' },
+      headers: { ...(chave ? { 'xi-api-key': chave } : {}), ...(corpo ? { 'Content-Type': 'application/json' } : {}), Accept: binario ? 'audio/mpeg' : 'application/json' },
       body: corpo ? JSON.stringify(corpo) : undefined,
     });
     if (r.ok) return binario ? Buffer.from(await r.arrayBuffer()) : r.json();
