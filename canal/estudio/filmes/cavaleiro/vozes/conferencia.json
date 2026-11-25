@@ -38,8 +38,8 @@
   "3.2.01": {
     "voz": "malvar",
     "nota": 1.0,
-    "tentativas": 1,
-    "ouvido": "Brumal escondeu os rebeldes. Deu comida a eles, deu teto."
+    "tentativas": 4,
+    "ouvido": "Brumal escondeu os rebeldes. Deu comida a eles. Deu teto."
   },
   "ab.01": {
     "voz": "narrador",
@@ -160,5 +160,161 @@
     "nota": 1.0,
     "tentativas": 1,
     "ouvido": "Então tente viver!"
+  },
+  "2.4.02": {
+    "voz": "enferrujado",
+    "nota": 1.0,
+    "tentativas": 3,
+    "ouvido": "Seu pai é um bom homem. Mas está errado."
+  },
+  "2.4.04": {
+    "voz": "enferrujado",
+    "nota": 0.987,
+    "tentativas": 1,
+    "ouvido": "Armadura é para quem tem medo de morrer."
+  },
+  "2.4.07": {
+    "voz": "enferrujado",
+    "nota": 0.977,
+    "tentativas": 2,
+    "ouvido": "Ó, o capacete não é pra mim. É para que ninguém precise lembrar de mim."
+  },
+  "3.2.03": {
+    "voz": "enferrujado",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Há crianças em Brumal, meu Senhor."
+  },
+  "4.2.03": {
+    "voz": "enferrujado",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Ninguém vai queimar esta aldeia."
+  },
+  "4.3.02": {
+    "voz": "enferrujado",
+    "nota": 1.0,
+    "tentativas": 3,
+    "ouvido": "Vidas. Cada risco é alguém que eu ajudei a continuar vivo."
+  },
+  "4.3.04": {
+    "voz": "enferrujado",
+    "nota": 0.95,
+    "tentativas": 1,
+    "ouvido": "Até 312."
+  },
+  "5.4.05": {
+    "voz": "enferrujado",
+    "nota": 0.93,
+    "tentativas": 1,
+    "ouvido": "Ela enferrujou no dia em que o te obedecilha."
+  },
+  "5.4.09": {
+    "voz": "enferrujado",
+    "nota": 0.857,
+    "tentativas": 1,
+    "ouvido": "Nomais."
+  },
+  "6.1.03": {
+    "voz": "enferrujado",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Era mentira?"
+  },
+  "2.3.04": {
+    "voz": "lia",
+    "nota": 0.983,
+    "tentativas": 4,
+    "ouvido": "O cavaleiro de quê? Cadê seu cavalo? Por que você anda pelado?"
+  },
+  "2.3.05": {
+    "voz": "lia",
+    "nota": 0.969,
+    "tentativas": 1,
+    "ouvido": "Vou te chamar de cabeça de malde."
+  },
+  "2.4.01": {
+    "voz": "lia",
+    "nota": 0.981,
+    "tentativas": 1,
+    "ouvido": "Meu pai disse que você não usa a madura porque é pobre."
+  },
+  "2.4.03": {
+    "voz": "lia",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Então por que?"
+  },
+  "2.4.06": {
+    "voz": "lia",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "E o capacete. Você tem medo de quê?"
+  },
+  "4.3.01": {
+    "voz": "lia",
+    "nota": 0.968,
+    "tentativas": 3,
+    "ouvido": "Cabeça de Baldi O que são os riscos?"
+  },
+  "4.3.03": {
+    "voz": "lia",
+    "nota": 0.958,
+    "tentativas": 1,
+    "ouvido": "E vai arriscar até quando?"
+  },
+  "4.3.05": {
+    "voz": "lia",
+    "nota": 0.914,
+    "tentativas": 2,
+    "ouvido": "Fatum 13. Então..."
+  },
+  "5.5.01": {
+    "voz": "lia",
+    "nota": 0.984,
+    "tentativas": 1,
+    "ouvido": "E 139, 140, 141."
+  },
+  "5.5.02": {
+    "voz": "lia",
+    "nota": 0.976,
+    "tentativas": 5,
+    "ouvido": "Cabeça de Baldy. Todo mundo tá vivo! Você passou. Você passou muito das 312."
+  },
+  "6.4.05": {
+    "voz": "lia",
+    "nota": 0.987,
+    "tentativas": 1,
+    "ouvido": "Um, eu achei que você ia ser mais bonito."
+  },
+  "3.2.02": {
+    "voz": "malvar",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Quero que amanhã ninguém se lembre de que essa aldeia existiu."
+  },
+  "3.2.04": {
+    "voz": "malvar",
+    "nota": 1.0,
+    "tentativas": 3,
+    "ouvido": "Há crianças em todo lugar, capitão. Obedeça."
+  },
+  "5.4.03": {
+    "voz": "malvar",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Eu conheço essa espada."
+  },
+  "5.4.04": {
+    "voz": "malvar",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "Eu te dei essa espada. Ela brilhava."
+  },
+  "5.4.08": {
+    "voz": "malvar",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Faça. Você sempre obedeceu."
   }
 }
