@@ -4,69 +4,379 @@
   "vozes": {
     "narrador": {
       "papel": "Contador de histórias: homem maduro, voz grave, quente e calma, ritmo lento",
-      "busca": { "gender": "male", "age": "old", "use_cases": "narrative_story", "termos": ["narrador", "contador", "histórias", "grave", "storyteller", "deep"] },
-      "ajustes": { "stability": 0.55, "similarity_boost": 0.8, "style": 0.25, "use_speaker_boost": true, "speed": 0.9 },
-      "voice_id": null
+      "busca": {
+        "gender": "male",
+        "age": "old",
+        "use_cases": "narrative_story",
+        "termos": [
+          "narrador",
+          "contador",
+          "histórias",
+          "grave",
+          "storyteller",
+          "deep"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.55,
+        "similarity_boost": 0.8,
+        "style": 0.25,
+        "use_speaker_boost": true,
+        "speed": 0.9
+      },
+      "voice_id": null,
+      "local": {
+        "mistura": {
+          "pm_santa": 0.7,
+          "bm_george": 0.3
+        },
+        "tom": -6,
+        "velRef": 0.9,
+        "exagero": 0.4,
+        "cfg": 0.3,
+        "vel": 0.95,
+        "frase": "Era uma vez, num vale esquecido entre montanhas, um homem que caminhava sozinho pelas estradas. Ninguém sabia de onde ele vinha. E ninguém ousava perguntar.",
+        "pausa": 1.15
+      }
     },
     "enferrujado": {
       "papel": "Sir Dâmaso: homem de 45 anos, voz baixa, rouca e cansada, fala pouco e sem pressa",
-      "busca": { "gender": "male", "age": "middle_aged", "use_cases": "characters_animation", "termos": ["rouca", "grave", "cansado", "raspy", "gravelly"] },
-      "ajustes": { "stability": 0.6, "similarity_boost": 0.8, "style": 0.2, "use_speaker_boost": true, "speed": 0.88 },
-      "voice_id": null
+      "busca": {
+        "gender": "male",
+        "age": "middle_aged",
+        "use_cases": "characters_animation",
+        "termos": [
+          "rouca",
+          "grave",
+          "cansado",
+          "raspy",
+          "gravelly"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.6,
+        "similarity_boost": 0.8,
+        "style": 0.2,
+        "use_speaker_boost": true,
+        "speed": 0.88
+      },
+      "voice_id": null,
+      "local": {
+        "mistura": {
+          "pm_alex": 0.65,
+          "am_onyx": 0.35
+        },
+        "tom": -4.5,
+        "velRef": 0.88,
+        "exagero": 0.35,
+        "cfg": 0.35,
+        "vel": 0.95,
+        "frase": "Eu já andei por muitas estradas. Já vi muita coisa queimar. Hoje eu só quero chegar no fim do dia sem precisar sacar a espada.",
+        "pausa": 1.1
+      }
     },
     "lia": {
       "papel": "Menina de 9 anos, esperta, curiosa e teimosa",
-      "busca": { "gender": "female", "age": "young", "use_cases": "characters_animation", "termos": ["criança", "menina", "infantil", "child", "girl", "kid"] },
-      "ajustes": { "stability": 0.4, "similarity_boost": 0.75, "style": 0.45, "use_speaker_boost": true, "speed": 1.0 },
-      "voice_id": null
+      "busca": {
+        "gender": "female",
+        "age": "young",
+        "use_cases": "characters_animation",
+        "termos": [
+          "criança",
+          "menina",
+          "infantil",
+          "child",
+          "girl",
+          "kid"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.4,
+        "similarity_boost": 0.75,
+        "style": 0.45,
+        "use_speaker_boost": true,
+        "speed": 1
+      },
+      "voice_id": null,
+      "local": {
+        "mistura": {
+          "pf_dora": 0.85,
+          "af_sky": 0.15
+        },
+        "tom": 8,
+        "velRef": 1.05,
+        "exagero": 0.65,
+        "cfg": 0.5,
+        "vel": 1,
+        "frase": "Mãe, olha! Ele tem um balde na cabeça! Por que ele não tira? Eu quero ver o rosto dele. Deixa eu ir lá perguntar, por favor?"
+      }
     },
     "tome": {
       "papel": "Tomé, ferreiro de 40 anos: voz firme de homem simples, com medo pela família",
-      "busca": { "gender": "male", "age": "middle_aged", "use_cases": "conversational", "termos": ["natural", "firme", "simples"] },
-      "ajustes": { "stability": 0.45, "similarity_boost": 0.8, "style": 0.35, "use_speaker_boost": true, "speed": 1.0 },
-      "voice_id": null
+      "busca": {
+        "gender": "male",
+        "age": "middle_aged",
+        "use_cases": "conversational",
+        "termos": [
+          "natural",
+          "firme",
+          "simples"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.45,
+        "similarity_boost": 0.8,
+        "style": 0.35,
+        "use_speaker_boost": true,
+        "speed": 1
+      },
+      "voice_id": null,
+      "local": {
+        "mistura": {
+          "pm_alex": 0.8,
+          "em_alex": 0.2
+        },
+        "tom": 0,
+        "velRef": 1,
+        "exagero": 0.55,
+        "cfg": 0.45,
+        "vel": 0.95,
+        "frase": "Eu sou ferreiro, moço. Trabalho o ferro desde menino. A minha família é tudo o que eu tenho, e eu não vou deixar ninguém mexer com ela."
+      }
     },
     "brana": {
       "papel": "Brana, curandeira idosa: voz baixa, áspera e serena (também é a mulher do flashback)",
-      "busca": { "gender": "female", "age": "old", "use_cases": "narrative_story", "termos": ["idosa", "senhora", "avó", "old", "grandmother"] },
-      "ajustes": { "stability": 0.5, "similarity_boost": 0.8, "style": 0.35, "use_speaker_boost": true, "speed": 0.88 },
-      "voice_id": null
+      "busca": {
+        "gender": "female",
+        "age": "old",
+        "use_cases": "narrative_story",
+        "termos": [
+          "idosa",
+          "senhora",
+          "avó",
+          "old",
+          "grandmother"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.5,
+        "similarity_boost": 0.8,
+        "style": 0.35,
+        "use_speaker_boost": true,
+        "speed": 0.88
+      },
+      "voice_id": null,
+      "local": {
+        "mistura": {
+          "pf_dora": 0.7,
+          "bf_emma": 0.3
+        },
+        "tom": -2.5,
+        "velRef": 0.88,
+        "exagero": 0.45,
+        "cfg": 0.35,
+        "vel": 0.92,
+        "frase": "Senta aqui, menino. Deixa eu ver essa ferida. Eu já cuidei de muita gente nessa vida, e quase todas as dores têm remédio.",
+        "pausa": 1.1
+      }
     },
     "malvar": {
       "papel": "Barão Malvar: nobre de 60 anos, frio, arrogante, voz cortante",
-      "busca": { "gender": "male", "age": "old", "use_cases": "characters_animation", "termos": ["vilão", "frio", "autoritário", "villain", "cold"] },
-      "ajustes": { "stability": 0.55, "similarity_boost": 0.8, "style": 0.4, "use_speaker_boost": true, "speed": 0.92 },
-      "voice_id": null
+      "busca": {
+        "gender": "male",
+        "age": "old",
+        "use_cases": "characters_animation",
+        "termos": [
+          "vilão",
+          "frio",
+          "autoritário",
+          "villain",
+          "cold"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.55,
+        "similarity_boost": 0.8,
+        "style": 0.4,
+        "use_speaker_boost": true,
+        "speed": 0.92
+      },
+      "voice_id": null,
+      "local": {
+        "mistura": {
+          "pm_alex": 0.6,
+          "bm_lewis": 0.4
+        },
+        "tom": 0,
+        "velRef": 0.92,
+        "exagero": 0.5,
+        "cfg": 0.4,
+        "vel": 0.97,
+        "frase": "Esta terra é minha. Cada pedra, cada colheita, cada alma que respira neste vale. E quem esquece disso aprende do jeito mais difícil."
+      }
     },
     "raposa": {
       "papel": "Raposa, chefe dos bandidos: debochado, ameaçador, voz anasalada",
-      "busca": { "gender": "male", "age": "young", "use_cases": "characters_animation", "termos": ["bandido", "malandro", "deboche", "sarcastic"] },
-      "ajustes": { "stability": 0.35, "similarity_boost": 0.75, "style": 0.5, "use_speaker_boost": true, "speed": 1.0 },
-      "voice_id": null
+      "busca": {
+        "gender": "male",
+        "age": "young",
+        "use_cases": "characters_animation",
+        "termos": [
+          "bandido",
+          "malandro",
+          "deboche",
+          "sarcastic"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.35,
+        "similarity_boost": 0.75,
+        "style": 0.5,
+        "use_speaker_boost": true,
+        "speed": 1
+      },
+      "voice_id": null,
+      "local": {
+        "mistura": {
+          "pm_alex": 0.7,
+          "am_puck": 0.3
+        },
+        "tom": 2,
+        "velRef": 1.02,
+        "exagero": 0.7,
+        "cfg": 0.45,
+        "vel": 1,
+        "frase": "Ora, ora, olha só o que a estrada trouxe pra gente hoje. Pode ficar calminho, amigo. A gente só quer o que é seu."
+      }
     },
     "bandido1": {
       "papel": "Bandido rindo, voz rude",
-      "busca": { "gender": "male", "age": "middle_aged", "use_cases": "characters_animation", "termos": ["rude", "rouco"] },
-      "ajustes": { "stability": 0.35, "similarity_boost": 0.75, "style": 0.5, "use_speaker_boost": true, "speed": 1.0 },
-      "voice_id": null
+      "busca": {
+        "gender": "male",
+        "age": "middle_aged",
+        "use_cases": "characters_animation",
+        "termos": [
+          "rude",
+          "rouco"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.35,
+        "similarity_boost": 0.75,
+        "style": 0.5,
+        "use_speaker_boost": true,
+        "speed": 1
+      },
+      "voice_id": null,
+      "local": {
+        "mistura": {
+          "pm_santa": 0.65,
+          "am_fenrir": 0.35
+        },
+        "tom": -2.5,
+        "velRef": 1,
+        "exagero": 0.6,
+        "cfg": 0.45,
+        "vel": 1,
+        "frase": "Ei, vocês viram isso? Mais um pobre coitado perdido na estrada. Hoje o dia vai render, pode apostar."
+      }
     },
     "bandido2": {
       "papel": "Bandido assustado",
-      "busca": { "gender": "male", "age": "young", "use_cases": "conversational", "termos": ["jovem"] },
-      "ajustes": { "stability": 0.3, "similarity_boost": 0.75, "style": 0.5, "use_speaker_boost": true, "speed": 1.05 },
-      "voice_id": null
+      "busca": {
+        "gender": "male",
+        "age": "young",
+        "use_cases": "conversational",
+        "termos": [
+          "jovem"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.3,
+        "similarity_boost": 0.75,
+        "style": 0.5,
+        "use_speaker_boost": true,
+        "speed": 1.05
+      },
+      "voice_id": null,
+      "local": {
+        "mistura": {
+          "pm_alex": 0.7,
+          "am_echo": 0.3
+        },
+        "tom": 4.5,
+        "velRef": 1.08,
+        "exagero": 0.75,
+        "cfg": 0.5,
+        "vel": 1,
+        "frase": "Calma, calma, eu não quero problema! Eu só estou aqui porque me mandaram. Juro que eu não fiz nada!"
+      }
     },
     "soldado": {
       "papel": "Soldado do barão: voz militar, seca e mandona",
-      "busca": { "gender": "male", "age": "middle_aged", "use_cases": "characters_animation", "termos": ["militar", "soldado", "autoritário"] },
-      "ajustes": { "stability": 0.5, "similarity_boost": 0.8, "style": 0.35, "use_speaker_boost": true, "speed": 1.0 },
-      "voice_id": null
+      "busca": {
+        "gender": "male",
+        "age": "middle_aged",
+        "use_cases": "characters_animation",
+        "termos": [
+          "militar",
+          "soldado",
+          "autoritário"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.5,
+        "similarity_boost": 0.8,
+        "style": 0.35,
+        "use_speaker_boost": true,
+        "speed": 1
+      },
+      "voice_id": null,
+      "local": {
+        "mistura": {
+          "pm_alex": 0.6,
+          "am_michael": 0.4
+        },
+        "tom": -0.5,
+        "velRef": 1,
+        "exagero": 0.6,
+        "cfg": 0.5,
+        "vel": 1,
+        "frase": "Todos pra fora! Ordem do barão! Quem esconder comida ou ferro vai responder por isso. Andem logo!"
+      }
     },
     "aldeao": {
       "papel": "Aldeão aflito",
-      "busca": { "gender": "male", "age": "old", "use_cases": "conversational", "termos": ["simples", "aflito"] },
-      "ajustes": { "stability": 0.4, "similarity_boost": 0.75, "style": 0.4, "use_speaker_boost": true, "speed": 1.0 },
-      "voice_id": null
+      "busca": {
+        "gender": "male",
+        "age": "old",
+        "use_cases": "conversational",
+        "termos": [
+          "simples",
+          "aflito"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.4,
+        "similarity_boost": 0.75,
+        "style": 0.4,
+        "use_speaker_boost": true,
+        "speed": 1
+      },
+      "voice_id": null,
+      "local": {
+        "mistura": {
+          "pm_santa": 0.7,
+          "im_nicola": 0.3
+        },
+        "tom": 3,
+        "velRef": 1,
+        "exagero": 0.8,
+        "cfg": 0.5,
+        "vel": 0.97,
+        "frase": "Socorro! Eles estão vindo pela estrada do norte! Peguem as crianças e corram pra igreja, depressa!"
+      }
     }
-  }
+  },
+  "_comentarioLocal": "'local': dublagem sem chave (ferramentas/dublar.sh). mistura = timbres do Kokoro para a voz de referência, tom = semitons, frase = o que a referência fala; exagero/cfg/temperatura = Chatterbox (exagero alto = mais emoção, cfg baixo = mais pausado); vel = ritmo final."
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Produz um filme inteiro de ponta a ponta:
-# falas do roteiro -> vozes (ElevenLabs) -> vídeo completo -> arquivo para o PC -> texto do YouTube -> miniatura.
+# falas do roteiro -> vozes (dublagem local) -> vídeo completo -> arquivo para o PC -> texto do YouTube -> miniatura.
 # Uso: ferramentas/produzir.sh cavaleiro ../roteiros/01-o-cavaleiro-sem-armadura.md [--escala 10]
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -11,13 +11,9 @@ shift 2 || true
 echo "== falas"
 node ferramentas/roteiro.mjs "$roteiro" "filmes/$filme/falas.json"
 
-echo "== vozes"
-if node ferramentas/vozes.mjs testar "$filme"; then
-  node ferramentas/vozes.mjs escalar "$filme"
-  node ferramentas/vozes.mjs gerar "$filme"
-else
-  echo "Sem chave da ElevenLabs: o filme sai sem vozes (durações estimadas)."
-fi
+echo "== vozes (dublagem local, sem chave: Chatterbox + Kokoro, conferida pelo Whisper)"
+[ -d "filmes/$filme/vozes/refs" ] || ferramentas/dublar.sh referencias "$filme"
+ferramentas/dublar.sh gerar "$filme"
 
 echo "== vídeo"
 node ferramentas/montar.mjs "$filme" --tudo "$@"

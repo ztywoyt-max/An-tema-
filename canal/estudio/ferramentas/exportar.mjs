@@ -44,7 +44,7 @@ const filtro = fator > 1 ? ['-vf', `scale=384:216:flags=neighbor,scale=${w}:${h}
 const log = path.join(saida, `.x264-${filme}`);
 const comum = ['-i', fonte, ...filtro, '-c:v', 'libx264', '-preset', 'slow', '-tune', 'animation', '-b:v', `${videoKbps}k`,
   '-maxrate', `${videoKbps * 2}k`, '-bufsize', `${videoKbps * 4}k`, '-pix_fmt', 'yuv420p', '-profile:v', 'high',
-  '-g', '30', '-bf', '2', '-passlogfile', log];
+  '-g', '30', '-bf', '2', '-fps_mode', 'cfr', '-passlogfile', log];
 
 console.log(`exportando ${path.basename(fonte)}: ${(dur / 60).toFixed(1)} min, vídeo ${videoKbps} kbps, alvo ${alvoMiB} MiB`);
 execFileSync('ffmpeg', ['-v', 'error', '-y', ...comum, '-pass', '1', '-an', '-f', 'null', '-'], { stdio: 'inherit' });

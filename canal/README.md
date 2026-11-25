@@ -14,11 +14,13 @@ Projeto separado do jogo ANÁTEMA: vídeos longos de histórias originais, narra
 cd estudio && npm ci
 # 1. falas: extraídas do roteiro (narração e personagens)
 node ferramentas/roteiro.mjs ../roteiros/01-o-cavaleiro-sem-armadura.md filmes/cavaleiro/falas.json
-# 2. vozes (ElevenLabs): precisa da chave no ambiente (Network secret de api.elevenlabs.io,
-#    cabeçalho xi-api-key, ou variável ELEVENLABS_API_KEY)
-node ferramentas/vozes.mjs testar cavaleiro     # confere a chave
-node ferramentas/vozes.mjs escalar cavaleiro    # escolhe uma voz humana por personagem
-node ferramentas/vozes.mjs gerar cavaleiro      # um MP3 por fala (só o que mudou)
+# 2. vozes: dublagem local, sem chave nem conta (Chatterbox multilíngue, MIT, uso comercial).
+#    Cada personagem tem uma voz de referência (Kokoro, Apache) configurada em elenco.json -> "local".
+#    Cada frase é gerada e conferida pelo Whisper; se não bater com o roteiro, é gerada de novo.
+#    Precisa do Hugging Face liberado na rede do ambiente (huggingface.co e us.aws.cdn.hf.co).
+ferramentas/dublar.sh referencias cavaleiro     # vozes de referência (filmes/<filme>/vozes/refs)
+ferramentas/dublar.sh gerar cavaleiro           # um MP3 por fala (só o que mudou); ~15 s de CPU por s de fala
+#    (alternativa paga: ferramentas/vozes.mjs, pela ElevenLabs, com a chave salva no ambiente)
 # 3. vídeo: cada capítulo se ajusta sozinho à duração real das vozes
 node ferramentas/linha.mjs cavaleiro 1          # linha do tempo de um capítulo
 node render.mjs --filme cavaleiro --cap 1       # um capítulo (MP4 + legendas .srt)
@@ -39,7 +41,7 @@ mais de 1 GB), `saida/<filme>-youtube.txt` e `saida/<filme>-miniatura-a/b.jpg`.
 
 Sem vozes, as durações são estimadas e o filme sai sem falas (não há legendas nem caixas de texto:
 o dono não quer). Ao gerar as vozes, basta renderizar de novo: tudo se reajusta.
-A chave da ElevenLabs só vale em sessões abertas depois de salva no ambiente.
+O relatório da conferência de cada fala fica em `filmes/<filme>/vozes/conferencia.json`.
 
 ## Estúdio PS1
 
