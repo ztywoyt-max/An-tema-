@@ -152,7 +152,7 @@ async function gerar() {
       next_text: falas[i + 1]?.texto,
     };
     if (/turbo|flash|v3/.test(modelo)) corpo.language_code = 'pt';
-    const audio = await api('POST', `/v1/text-to-speech/${v.voice_id}?output_format=mp3_44100_192`, corpo, { binario: true });
+    const audio = await api('POST', `/v1/text-to-speech/${v.voice_id}?output_format=mp3_44100_128`, corpo, { binario: true });
     fs.writeFileSync(arq, audio);
     dur[f.id] = { dur: Number(duracaoMp3(arq).toFixed(3)), hash };
     salvarJson(arqDur, dur);

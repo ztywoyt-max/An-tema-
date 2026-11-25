@@ -98,7 +98,7 @@
 💬 **Bandido 2:** "...Que diabo é isso?"
 
 ### Cena 1.5: A luta
-**Plano:** cortes rápidos, em estilo de cena de luta de jogo: ele parte o arco de Raposa com a espada enferrujada, derruba o segundo bandido com o cabo e empurra o terceiro contra a carroça. Nenhum golpe é mortal.
+**Plano:** cortes rápidos, em estilo de cena de luta de jogo: ele parte o arco de Raposa com a espada enferrujada, derruba o segundo bandido com um soco da mão livre e faz o terceiro largar a tocha. Nenhum golpe é mortal.
 **Som:** pancadas secas, madeira quebrando, um grito curto.
 
 > **NARRAÇÃO:** Não foi uma luta. Foi uma lição.
