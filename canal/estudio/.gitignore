@@ -1,3 +1,4 @@
 node_modules/
 saida/
 .voz
+__pycache__/
