@@ -35,7 +35,7 @@ function texRosto() {
     // sobrancelhas grossas
     for (const s of [-1, 1])
       for (let i = 3; i <= 12; i++) {
-        const yy = 21 - (i > 5 && i < 10 ? 1 : 0);
+        const yy = 20 - (i > 5 && i < 10 ? 1 : 0);
         cabelo(C + s * i, yy, 0.75);
         cabelo(C + s * i, yy + 1, 0.85);
       }
@@ -43,13 +43,15 @@ function texRosto() {
     for (const s of [-1, 1]) {
       const ex = C + s * 8;
       for (let x = ex - 3; x <= ex + 3; x++) {
-        px(x, 25, [60, 40, 30]); // pálpebra
+        px(x, 24, [60, 40, 30]); // pálpebra
+        px(x, 25, [232, 226, 214]);
         px(x, 26, [228, 220, 208]);
         px(x, 27, [212, 202, 190]);
       }
-      for (const [x, y] of [[ex, 26], [ex + 1, 26], [ex, 27], [ex + 1, 27]]) px(x, y, [70, 46, 28]); // íris castanha
-      px(ex, 26, [16, 10, 8]);
-      px(ex + 1, 26, [250, 250, 244]); // brilho
+      for (let y = 25; y <= 27; y++) for (const x of [ex - 1, ex, ex + 1]) px(x, y, [78, 50, 30]); // íris castanha
+      px(ex, 26, [14, 9, 7]);
+      px(ex, 25, [20, 12, 9]);
+      px(ex + 1, 25, [252, 252, 246]); // brilho
       for (let x = ex - 3; x <= ex + 3; x++) px(x, 28, T.mul(PELE, 0.82));
     }
     // nariz
@@ -71,17 +73,28 @@ function texRosto() {
   });
 }
 
+// malha preta limpa, com nervuras discretas (sem a "sujeira" da textura de pano)
+function texMalha(nome, w = 32, h = 32) {
+  return T.textura(`malha-preta-${nome}`, w, h, (px) => {
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        const k = x % 3 === 0 ? 0.9 : 1;
+        px(x, y, T.mul([44, 42, 48], k));
+      }
+  });
+}
+
 export default function ({ cena, camera, luzes, motor }) {
-  const preto = [30, 28, 32];
+  const preto = [40, 38, 44];
   const p = criarPersonagem({
     pele: PELE,
-    forte: 1.05,
+    forte: 0.95,
     rosto: { idade: 'adulto', cabelo: 'curto', corCabelo: CASTANHO, barba: 'cheia', corBarba: CASTANHO, semente: 7 },
-    torso: R.torsoRoupa({ tipo: 'camisa', cor: preto, decote: null, tom: PELE }),
-    braco: R.membroRoupa({ cor: preto }),
-    antebraco: R.membroRoupa({ cor: preto }),
-    pelve: R.panoCor(preto, 93),
-    coxa: R.membroRoupa({ cor: preto }),
+    torso: texMalha('torso', 64, 64),
+    braco: texMalha('braco'),
+    antebraco: texMalha('braco'),
+    pelve: texMalha('pelve'),
+    coxa: texMalha('perna'),
   });
   p.sombra.visible = false;
   cena.add(p.raiz);
@@ -100,7 +113,8 @@ export default function ({ cena, camera, luzes, motor }) {
   lg.computeVertexNormals();
   cab.children[0].geometry = lg;
   cab.children[0].material = p.mRosto;
-  cab.scale.set(1.04, 0.95, 1.02);
+  cab.scale.set(1.12, 1.03, 1.1);
+  for (const o of [p.j.ombroE, p.j.ombroD]) o.children[0].scale.multiplyScalar(0.84);
   cab.children[2].visible = false; // calota original (parecia touca)
   cab.children[3].visible = false; // o queixo torneado já tem a barba na textura
   // cabelo com volume arredondado e um pouco bagunçado
@@ -138,41 +152,73 @@ export default function ({ cena, camera, luzes, motor }) {
   oculos.position.set(0, 0.125, 0.112);
   p.cabecaMalha.add(oculos);
   // gola preta cobrindo o pescoço (gola alta)
-  const gola = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.09, 0.09, 10), material({ mapa: R.panoCor(preto, 95) }));
-  gola.position.y = 0.04;
+  p.j.cabeca.position.y = 0.04; // pescoço mais curto: o queixo encosta na gola
+  const gola = new THREE.Mesh(new THREE.CylinderGeometry(0.074, 0.092, 0.075, 10), material({ mapa: texMalha('gola') }));
+  gola.position.y = 0.025;
+  p.j.pescoco.children[0].visible = false;
   p.j.pescoco.add(gola);
-  // luzes de fundo desfocadas (lâmpadas quentes distantes)
-  const aura = O.halo(0xb85a28, 2.4, 0.32); // brilho quente atrás da cabeça
-  aura.position.set(-0.1, 1.85, -1.6);
-  cena.add(aura);
-  const bokeh = [[-0.9, 2.2, -2.2, 0.7], [0.8, 2.4, -2.6, 0.9], [1.1, 1.5, -2.0, 0.6], [-1.2, 1.4, -2.4, 0.8], [0.2, 2.7, -3.0, 0.7], [-0.4, 1.2, -2.8, 0.6]].map(([x, y, z, t]) => {
-    const h = O.halo(0xffa850, t, 0.34);
-    h.position.set(x, y, z);
-    cena.add(h);
-    return h;
-  });
+  // variante b: segurando um livro aberto (deixa claro que ele é o narrador)
+  const v = new URLSearchParams(location.search).get('v') ?? 'a';
+  let livro = null;
+  if (v === 'b') {
+    livro = new THREE.Group();
+    const mCapa = material({ cor: 0x5a2a1c });
+    const tp = T.textura('pagina-livro', 16, 20, (px, ler, w, h) => {
+      for (let y = 0; y < h; y++)
+        for (let x = 0; x < w; x++) px(x, y, y > 3 && y < h - 3 && x > 2 && x < w - 2 && y % 3 === 0 && (x * 7 + y) % 5 !== 0 ? [120, 96, 70] : [214, 198, 166]);
+    });
+    const mPag = material({ mapa: tp });
+    for (const sd of [-1, 1]) {
+      const lado = new THREE.Group();
+      lado.rotation.z = sd * 0.18;
+      lado.add(new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.012, 0.27).translate(sd * 0.1, 0, 0), mCapa));
+      lado.add(new THREE.Mesh(new THREE.BoxGeometry(0.185, 0.03, 0.25).translate(sd * 0.095, 0.02, 0), mPag));
+      livro.add(lado);
+    }
+    livro.scale.setScalar(0.78);
+    cena.add(livro);
+  }
+  const FUNDO = 0x5e1c1c; // vinho liso, a cor da marca
 
   return {
     duracao: 2,
     atualizar() {
       parado(p, 0.4);
-      p.raiz.rotation.set(0, -0.32, 0);
-      p.j.cabeca.rotation.set(-0.04, 0.26, 0.03);
-      luzes.nevoa(0x1a1214, 5, 14);
-      luzes.ambiente(0x5a4a48, 0x141010);
-      luzes.direcional([0.45, -0.25, 0.85], 0x9a8ad0, 0.9); // contraluz frio que recorta os ombros
+      p.raiz.rotation.set(0, 0, 0);
+      p.j.cabeca.rotation.set(-0.03, 0, 0.04); // de frente, cabeça levemente inclinada
+      if (v === 'b') {
+        // o giro do ombro (y) vira o antebraço para dentro, até as bordas do livro
+        p.j.ombroE.rotation.set(-0.35, -0.55, 0.04);
+        p.j.cotoveloE.rotation.set(-1.25, 0, 0);
+        p.j.ombroD.rotation.set(-0.35, 0.55, -0.04);
+        p.j.cotoveloD.rotation.set(-1.25, 0, 0);
+        // o livro fica entre as mãos, aberto para quem assiste
+        p.raiz.updateMatrixWorld(true);
+        const a = p.maoE.getWorldPosition(new THREE.Vector3());
+        const b = p.maoD.getWorldPosition(new THREE.Vector3());
+        livro.position.copy(a).add(b).multiplyScalar(0.5).add(new THREE.Vector3(0, 0.02, 0.02));
+        livro.rotation.set(0.55, 0, 0);
+      }
+      luzes.nevoa(FUNDO, 60, 120); // a névoa só pinta o fundo liso
+      luzes.ambiente(0x9a8c88, 0x2a2224);
+      luzes.direcional([0.0, -0.35, -0.94], 0xfff0e0, 0.55); // luz frontal suave
       luzes.pontos([
-        { pos: [-0.45, 1.9, 0.95], cor: 0xffd4a8, intensidade: 1.6, alcance: 3.0 }, // luz principal quente
-        { pos: [0.6, 1.7, 0.6], cor: 0xffa060, intensidade: 0.4, alcance: 1.8 },
-        { pos: [0.5, 1.9, -0.6], cor: 0xd8a070, intensidade: 0.9, alcance: 1.4 }, // contraluz quente no cabelo
+        { pos: [-0.5, 2.0, 0.9], cor: 0xffe2c0, intensidade: 1.15, alcance: 3.0 }, // luz principal
+        { pos: [0.55, 1.9, -0.5], cor: 0xffb080, intensidade: 0.9, alcance: 1.5 }, // recorte no cabelo e ombros
+        { pos: [-0.55, 1.6, -0.5], cor: 0xffb080, intensidade: 0.7, alcance: 1.4 },
       ]);
       const cab = p.j.cabeca.localToWorld(new THREE.Vector3(0, 0.1, 0));
       camera.fov = 28;
-      camera.position.set(cab.x + 0.04, cab.y - 0.05, cab.z + 1.22);
-      camera.lookAt(cab.x, cab.y - 0.075, cab.z);
+      if (v === 'b') {
+        camera.position.set(cab.x, cab.y - 0.19, cab.z + 1.8);
+        camera.lookAt(cab.x, cab.y - 0.25, cab.z);
+      } else {
+        camera.position.set(cab.x, cab.y + 0.01, cab.z + 1.22);
+        camera.lookAt(cab.x, cab.y - 0.01, cab.z);
+      }
       camera.updateProjectionMatrix();
-      motor.efeitos.uVinheta.value = 0.7;
-      motor.efeitos.uExposicao.value = 1.12;
+      motor.efeitos.uVinheta.value = 0.45;
+      motor.efeitos.uExposicao.value = 1.1;
     },
   };
 }
