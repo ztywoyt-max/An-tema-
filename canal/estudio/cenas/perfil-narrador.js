@@ -1,181 +1,178 @@
-// Foto de perfil do canal: "O Contador", o narrador de todas as histórias.
-// Figura encapuzada, máscara dourada com olhos acesos, auréola, livro aberto que brilha.
-// Renderizar quadrada: ?res=400x400 e --escala 2 (800x800).
+// Foto de perfil do canal: o Narrador. Simples e humano: roupa preta, óculos, cabelo e barba castanhos.
+// Renderizar quadrada: ?res=400x400 e --escala 2 (800x800). Rosto em textura de 128 px (mais detalhe no retrato).
 import * as THREE from 'three';
 import * as O from '../motor/objetos.js';
 import * as T from '../motor/texturas.js';
 import * as R from '../motor/roupas.js';
 import { material } from '../motor/ps1.js';
-import { criarPersonagem, parado, aplicar } from '../motor/personagem.js';
+import { criarPersonagem, parado } from '../motor/personagem.js';
 
-// máscara dourada (frente em u=0.5)
-function texMascara() {
-  const r = T.fazerRuido(171);
-  return T.textura('mascara-ouro', 64, 64, (px, ler, w, h) => {
+const PELE = [196, 150, 116];
+const CASTANHO = [86, 56, 34];
+
+// rosto detalhado que envolve a cabeça (frente em x=64)
+function texRosto() {
+  const r = T.fazerRuido(211);
+  return T.textura('rosto-narrador', 128, 64, (px, ler, w, h) => {
     const C = w / 2;
     for (let y = 0; y < h; y++)
       for (let x = 0; x < w; x++) {
         const dx = Math.abs(x - C);
-        let c = T.mul([214, 168, 70], 0.8 + T.fbm(r, x / 5, y / 5, 13, 2) * 0.35);
-        if (dx > 12) c = T.mul(c, 0.82);
-        if (dx < 2 && y > 22 && y < 40) c = T.mul(c, 1.25); // nariz
-        if ((x + y) % 7 === 0 && T.fbm(r, x, y, 64, 1) > 0.7) c = T.mix(c, [255, 236, 170], 0.6); // brilho
-        px(x, y, c);
+        let k = 0.93 + T.fbm(r, x / 6, y / 6, 21, 2) * 0.1;
+        if (dx > 15) k *= 0.9;
+        if (dx > 22) k *= 0.88;
+        if (y > 30 && dx > 8 && dx < 14) k *= 1.04; // maçãs do rosto
+        px(x, y, T.mul(PELE, k));
       }
-    // olhos amendoados e vazios
-    for (const s of [-1, 1])
-      for (let y = 20; y <= 26; y++)
-        for (let x = 0; x < w; x++) {
-          const ex = C + s * 8, d = Math.abs(x - ex) / 5 + Math.abs(y - 23) / 3;
-          if (d < 1) px(x, y, [6, 4, 10]);
-          else if (d < 1.3) px(x, y, [120, 80, 30]);
-        }
-    // boca fechada, serena
-    for (let x = C - 4; x <= C + 4; x++) px(x, 46, [110, 76, 30]);
-    // linhas de ornamento na testa
-    for (let x = C - 10; x <= C + 10; x++) if (x % 2 === 0) px(x, 10, [255, 230, 150]);
-    for (let y = 11; y < 17; y++) px(C, y, [255, 230, 150]);
-  });
-}
-
-function texPagina() {
-  return T.textura('pagina', 16, 20, (px, ler, w, h) => {
+    const cabelo = (x, y, f = 1) => px(x, y, T.mul(CASTANHO, f * (0.8 + T.fbm(r, x / 1.3, y / 3.5, 98, 1) * 0.45)));
+    // cabelo: franja levemente bagunçada, laterais e nuca
     for (let y = 0; y < h; y++)
       for (let x = 0; x < w; x++) {
-        let c = [236, 222, 186];
-        if (y > 3 && y < h - 3 && x > 2 && x < w - 2 && y % 3 === 0 && (x * 7 + y) % 5 !== 0) c = [150, 120, 80]; // linhas de texto
-        px(x, y, c);
+        const dx = Math.abs(x - C);
+        const linha = 11 + Math.round(Math.sin(x * 0.7) * 1.2) + (dx > 12 ? 2 : 0);
+        if (y < linha || (dx > 23 && y < 34) || dx > 36) cabelo(x, y, dx > 36 ? 0.85 : 1);
       }
+    // sobrancelhas grossas
+    for (const s of [-1, 1])
+      for (let i = 3; i <= 12; i++) {
+        const yy = 21 - (i > 5 && i < 10 ? 1 : 0);
+        cabelo(C + s * i, yy, 0.75);
+        cabelo(C + s * i, yy + 1, 0.85);
+      }
+    // olhos
+    for (const s of [-1, 1]) {
+      const ex = C + s * 8;
+      for (let x = ex - 3; x <= ex + 3; x++) {
+        px(x, 25, [60, 40, 30]); // pálpebra
+        px(x, 26, [228, 220, 208]);
+        px(x, 27, [212, 202, 190]);
+      }
+      for (const [x, y] of [[ex, 26], [ex + 1, 26], [ex, 27], [ex + 1, 27]]) px(x, y, [70, 46, 28]); // íris castanha
+      px(ex, 26, [16, 10, 8]);
+      px(ex + 1, 26, [250, 250, 244]); // brilho
+      for (let x = ex - 3; x <= ex + 3; x++) px(x, 28, T.mul(PELE, 0.82));
+    }
+    // nariz
+    for (let y = 27; y < 37; y++) { px(C + 1, y, T.mul(PELE, 0.84)); px(C + 2, y, T.mul(PELE, 0.9)); }
+    for (const x of [C - 2, C + 3]) px(x, 37, T.mul(PELE, 0.62));
+    px(C, 37, T.mul(PELE, 0.78));
+    // barba cheia, aparada, com bigode; boca com leve sorriso
+    for (let y = 30; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        const dx = Math.abs(x - C);
+        const naBarba = (y >= 39 && dx <= 17) || (y >= 33 && dx >= 12 && dx <= 24) || (y >= 38 && y <= 39 && dx <= 7);
+        const boca = y >= 41 && y <= 42 && dx <= 4;
+        if (naBarba && !boca) cabelo(x, y, y > 52 ? 0.85 : 1);
+      }
+    for (let x = C - 4; x <= C + 4; x++) px(x, 41, [150, 84, 74]);
+    for (let x = C - 3; x <= C + 3; x++) px(x, 42, [170, 100, 88]);
+    px(C - 5, 40, [150, 84, 74]);
+    px(C + 5, 40, [150, 84, 74]); // cantos levemente para cima
   });
 }
 
 export default function ({ cena, camera, luzes, motor }) {
-  const vinho = [74, 16, 28], escuro = [38, 8, 16];
+  const preto = [30, 28, 32];
   const p = criarPersonagem({
-    pele: R.TONS.palido,
-    forte: 1.15,
-    rosto: { idade: 'adulto', cabelo: 'careca', semente: 3 },
-    chapeu: 'capuz',
-    corChapeu: vinho,
-    torso: R.torsoRoupa({ tipo: 'tunica', cor: escuro, decote: null, corCinto: [180, 140, 60] }),
-    braco: R.membroRoupa({ cor: vinho }),
-    antebraco: R.membroRoupa({ cor: vinho }),
-    pelve: R.panoCor(escuro, 91),
-    saia: { cor: escuro, comp: 1.0 },
-    capa: { cor: vinho, comp: 1.4 },
+    pele: PELE,
+    forte: 1.05,
+    rosto: { idade: 'adulto', cabelo: 'curto', corCabelo: CASTANHO, barba: 'cheia', corBarba: CASTANHO, semente: 7 },
+    torso: R.torsoRoupa({ tipo: 'camisa', cor: preto, decote: null, tom: PELE }),
+    braco: R.membroRoupa({ cor: preto }),
+    antebraco: R.membroRoupa({ cor: preto }),
+    pelve: R.panoCor(preto, 93),
+    coxa: R.membroRoupa({ cor: preto }),
   });
   p.sombra.visible = false;
   cena.add(p.raiz);
-  // troca o rosto por um vazio escuro com a máscara dourada
+  // rosto em alta (para retrato), cabeça mais arredondada
+  p.mRosto.uniforms.uMapa.value = texRosto();
   const cab = p.cabecaMalha;
-  cab.children[0].visible = false; // rosto
-  cab.children[1].visible = false; // nariz
-  p.j.pescoco.children[0].material = material({ cor: 0x0a0408 }); // pescoço na sombra do capuz
-  const vazio = new THREE.Mesh(new THREE.IcosahedronGeometry(0.1, 1), material({ cor: 0x050308, semLuz: true }));
-  vazio.position.set(0, 0.11, 0);
-  cab.add(vazio);
-  const mg = new THREE.CylinderGeometry(0.098, 0.088, 0.24, 10, 3, true, -Math.PI * 0.32, Math.PI * 0.64);
-  mg.translate(0, 0.115, 0.012);
-  const pm = mg.attributes.position;
-  for (let i = 0; i < pm.count; i++) {
-    const y = pm.getY(i);
-    // contorno oval: estreita no queixo e na testa
-    const k = y < 0.01 ? 0.45 : y < 0.09 ? 0.85 : y < 0.17 ? 1.0 : 0.82;
-    pm.setX(i, pm.getX(i) * k);
-    if (y < 0.01) pm.setY(i, y - 0.025);
-    if (Math.abs(pm.getX(i)) < 0.02) pm.setZ(i, pm.getZ(i) + 0.012); // nariz
+  // cabeça torneada (perfil de crânio, maçãs e maxilar) no lugar do cilindro de 8 lados
+  const H = 0.235;
+  const perfil = [[0.0, 0.0], [0.045, 0.008], [0.072, 0.03], [0.088, 0.06], [0.097, 0.1], [0.1, 0.135], [0.098, 0.17], [0.09, 0.2], [0.072, 0.222], [0.04, 0.233], [0.001, 0.236]];
+  const lg = new THREE.LatheGeometry(perfil.map(([r, y]) => new THREE.Vector2(r, y)), 16);
+  lg.rotateY(Math.PI);
+  const pl = lg.attributes.position, ul = lg.attributes.uv;
+  for (let i = 0; i < pl.count; i++) ul.setY(i, pl.getY(i) / H);
+  lg.scale(1, 1, 1.12);
+  lg.translate(0, -0.005, 0);
+  lg.computeVertexNormals();
+  cab.children[0].geometry = lg;
+  cab.children[0].material = p.mRosto;
+  cab.scale.set(1.04, 0.95, 1.02);
+  cab.children[2].visible = false; // calota original (parecia touca)
+  cab.children[3].visible = false; // o queixo torneado já tem a barba na textura
+  // cabelo com volume arredondado e um pouco bagunçado
+  const mCab = material({ mapa: R.pelagem(CASTANHO, 45) });
+  const topo = new THREE.Mesh(new THREE.IcosahedronGeometry(0.108, 1), mCab);
+  topo.scale.set(1.0, 0.52, 1.08);
+  topo.position.set(0, 0.215, -0.012);
+  cab.add(topo);
+  for (const [x, z, r] of [[-0.05, 0.06, 0.035], [0.02, 0.075, 0.032], [0.06, 0.05, 0.03]]) {
+    const mecha = new THREE.Mesh(new THREE.IcosahedronGeometry(r, 0), mCab);
+    mecha.position.set(x, 0.225, z);
+    cab.add(mecha);
   }
-  mg.computeVertexNormals();
-  const mascara = new THREE.Mesh(mg, material({ mapa: texMascara(), duplo: true, brilhoProprio: 0.05 }));
-  cab.add(mascara);
-  const olhos = [-1, 1].map((s) => {
-    const o = O.halo(0xffd890, 0.06, 1);
-    cab.add(o);
-    o.position.set(s * 0.038, 0.142, 0.115);
-    return o;
-  });
-  // auréola dourada atrás da cabeça
-  const aureola = new THREE.Group();
-  aureola.add(new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.016, 4, 32), material({ cor: 0xffd070, semLuz: true, nevoa: false })));
-  aureola.add(new THREE.Mesh(new THREE.TorusGeometry(0.29, 0.006, 3, 32), material({ cor: 0xffe8b0, semLuz: true, nevoa: false })));
-  for (let i = 0; i < 12; i++) {
-    const a = (i / 12) * Math.PI * 2;
-    const raio = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.07, 0.01), material({ cor: 0xffd070, semLuz: true, nevoa: false }));
-    raio.position.set(Math.cos(a) * 0.4, Math.sin(a) * 0.4, 0);
-    raio.rotation.z = a - Math.PI / 2;
-    aureola.add(raio);
-  }
-  const brilhoAureola = O.halo(0xffb040, 1.4, 0.35);
-  aureola.add(brilhoAureola);
-  cena.add(aureola);
-  // livro aberto nas mãos, com as páginas brilhando
-  const livro = new THREE.Group();
-  const mCapa = material({ cor: 0x4a1a18 });
-  const mPag = material({ mapa: texPagina(), semLuz: true, brilhoProprio: 0.2 });
+  // óculos de armação redonda escura
+  const mArm = material({ cor: 0x141214, brilhoProprio: 0.02 });
+  const oculos = new THREE.Group();
   for (const s of [-1, 1]) {
-    const lado = new THREE.Group();
-    lado.rotation.z = s * 0.22;
-    lado.add(new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.012, 0.27).translate(s * 0.1, 0, 0), mCapa));
-    lado.add(new THREE.Mesh(new THREE.BoxGeometry(0.185, 0.03, 0.25).translate(s * 0.095, 0.02, 0), mPag));
-    livro.add(lado);
+    const aro = new THREE.Mesh(new THREE.TorusGeometry(0.026, 0.0045, 4, 14), mArm);
+    aro.position.set(s * 0.036, 0, 0);
+    oculos.add(aro);
+    const lente = new THREE.Mesh(new THREE.CircleGeometry(0.024, 12), material({ cor: 0xbcd4e8, transparente: true, opacidade: 0.14, semLuz: true, depthWrite: false }));
+    lente.position.set(s * 0.036, 0, 0.001);
+    oculos.add(lente);
+    const reflexo = new THREE.Mesh(new THREE.PlaneGeometry(0.01, 0.016), material({ cor: 0xffffff, transparente: true, opacidade: 0.45, semLuz: true, depthWrite: false }));
+    reflexo.position.set(s * 0.036 - 0.009, 0.008, 0.002);
+    reflexo.rotation.z = 0.5;
+    oculos.add(reflexo);
+    const haste = new THREE.Mesh(new THREE.BoxGeometry(0.004, 0.004, 0.1), mArm);
+    haste.position.set(s * 0.064, 0.004, -0.05);
+    oculos.add(haste);
   }
-  const luzLivro = O.halo(0xffd890, 0.9, 0.6);
-  luzLivro.position.y = 0.12;
-  livro.add(luzLivro);
-  p.j.tronco.add(livro);
-  livro.position.set(0, 0.16, 0.36);
-  livro.rotation.x = -0.55;
-  // páginas e faíscas flutuando
-  const tp = texPagina();
-  const paginas = Array.from({ length: 7 }, () => {
-    const m = new THREE.Mesh(new THREE.PlaneGeometry(0.1, 0.13), material({ mapa: tp, semLuz: true, duplo: true, brilhoProprio: 0.1 }));
-    cena.add(m);
-    return m;
+  const ponte = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.004, 0.004), mArm);
+  ponte.position.y = 0.006;
+  oculos.add(ponte);
+  oculos.position.set(0, 0.125, 0.112);
+  p.cabecaMalha.add(oculos);
+  // gola preta cobrindo o pescoço (gola alta)
+  const gola = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.09, 0.09, 10), material({ mapa: R.panoCor(preto, 95) }));
+  gola.position.y = 0.04;
+  p.j.pescoco.add(gola);
+  // luzes de fundo desfocadas (lâmpadas quentes distantes)
+  const aura = O.halo(0xb85a28, 2.4, 0.32); // brilho quente atrás da cabeça
+  aura.position.set(-0.1, 1.85, -1.6);
+  cena.add(aura);
+  const bokeh = [[-0.9, 2.2, -2.2, 0.7], [0.8, 2.4, -2.6, 0.9], [1.1, 1.5, -2.0, 0.6], [-1.2, 1.4, -2.4, 0.8], [0.2, 2.7, -3.0, 0.7], [-0.4, 1.2, -2.8, 0.6]].map(([x, y, z, t]) => {
+    const h = O.halo(0xffa850, t, 0.34);
+    h.position.set(x, y, z);
+    cena.add(h);
+    return h;
   });
-  const faiscas = Array.from({ length: 16 }, (_, i) => {
-    const f = O.halo(i % 2 ? 0xffd070 : 0xffa040, 0.04 + (i % 3) * 0.02, 0.9);
-    cena.add(f);
-    return f;
-  });
-  const fundo = O.halo(0x3a2a80, 6, 0.5);
-  fundo.position.set(0, 1.6, -3);
-  cena.add(fundo);
 
   return {
     duracao: 2,
-    atualizar(t) {
+    atualizar() {
       parado(p, 0.4);
-      aplicar(p, { ombroE: [-0.95, 0, -0.25], cotoveloE: [-1.15, 0, 0], ombroD: [-0.95, 0, 0.25], cotoveloD: [-1.15, 0, 0] });
-      p.j.cabeca.rotation.x = 0.12;
-      if (p.capa) p.capa.rotation.x = 0.2;
-      p.raiz.updateMatrixWorld(true);
-      const c = p.j.cabeca.localToWorld(new THREE.Vector3(0, 0.12, -0.16));
-      aureola.position.copy(c);
-      const lb = livro.localToWorld(new THREE.Vector3(0, 0.15, 0));
-      paginas.forEach((m, i) => {
-        const a = i * 0.9 + 0.4, f = (0.15 + i * 0.13) % 1;
-        m.position.set(lb.x + Math.cos(a) * (0.35 + f * 0.25), lb.y + 0.15 + f * 0.75, lb.z + Math.sin(a) * 0.2 - 0.1);
-        m.rotation.set(f * 2 + i, a, f * 3);
-      });
-      faiscas.forEach((s, i) => {
-        const f = (0.3 + i * 0.113) % 1;
-        s.position.set(lb.x + Math.sin(i * 2.7) * 0.6, lb.y + f * 1.1, lb.z - 0.3 + Math.cos(i * 1.9) * 0.3);
-        s.material.opacity = 0.9 * (1 - f * 0.6);
-      });
-      luzes.nevoa(0x0c0818, 5, 14);
-      luzes.ambiente(0x2a2448, 0x08060c);
-      luzes.direcional([0.3, -0.3, 0.9], 0x6a5ab0, 0.6); // contraluz frio
+      p.raiz.rotation.set(0, -0.32, 0);
+      p.j.cabeca.rotation.set(-0.04, 0.26, 0.03);
+      luzes.nevoa(0x1a1214, 5, 14);
+      luzes.ambiente(0x5a4a48, 0x141010);
+      luzes.direcional([0.45, -0.25, 0.85], 0x9a8ad0, 0.9); // contraluz frio que recorta os ombros
       luzes.pontos([
-        { pos: [lb.x, lb.y + 0.12, lb.z + 0.05], cor: 0xffcf80, intensidade: 1.7, alcance: 1.3 }, // o livro ilumina de baixo
-        { pos: [c.x, c.y, c.z - 0.1], cor: 0xffb050, intensidade: 1.2, alcance: 0.9 },
+        { pos: [-0.45, 1.9, 0.95], cor: 0xffd4a8, intensidade: 1.6, alcance: 3.0 }, // luz principal quente
+        { pos: [0.6, 1.7, 0.6], cor: 0xffa060, intensidade: 0.4, alcance: 1.8 },
+        { pos: [0.5, 1.9, -0.6], cor: 0xd8a070, intensidade: 0.9, alcance: 1.4 }, // contraluz quente no cabelo
       ]);
-      const alvo = p.j.cabeca.localToWorld(new THREE.Vector3(0, 0.02, 0));
-      camera.fov = 32;
-      camera.position.set(alvo.x + 0.15, alvo.y - 0.3, alvo.z + 2.0);
-      camera.lookAt(alvo.x, alvo.y - 0.1, alvo.z);
+      const cab = p.j.cabeca.localToWorld(new THREE.Vector3(0, 0.1, 0));
+      camera.fov = 28;
+      camera.position.set(cab.x + 0.04, cab.y - 0.05, cab.z + 1.22);
+      camera.lookAt(cab.x, cab.y - 0.075, cab.z);
       camera.updateProjectionMatrix();
-      motor.efeitos.uVinheta.value = 0.8;
-      motor.efeitos.uExposicao.value = 1.2;
+      motor.efeitos.uVinheta.value = 0.7;
+      motor.efeitos.uExposicao.value = 1.12;
     },
   };
 }
