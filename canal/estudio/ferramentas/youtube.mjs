@@ -37,6 +37,19 @@ TAGS
 ${info.tags.join(', ')}
 
 DURAÇÃO TOTAL: ${mmss(t)}
+
+COMO POSTAR (no PC)
+1. Abra studio.youtube.com com a conta do canal e clique em Criar > Enviar vídeos.
+2. Escolha o arquivo ${filme}-youtube.mp4.
+3. Título: copie o TÍTULO lá de cima. Descrição: copie o bloco DESCRIÇÃO inteiro, com os horários
+   (eles viram os capítulos do vídeo sozinhos).
+4. Miniatura: Enviar arquivo > ${filme}-miniatura-a.jpg. Se o botão estiver bloqueado, confirme o telefone
+   em youtube.com/verify (uma vez só). Opcional: em "Testar e comparar", envie a A e a B e o YouTube
+   escolhe a que dá mais cliques.
+5. Público: "Não, não é conteúdo para crianças".
+6. Conteúdo alterado: "Não" (é uma animação de ficção, sem pessoas reais nem fatos reais).
+7. Clique em Mostrar mais: cole as TAGS, idioma do vídeo Português (Brasil), categoria Filmes e animação.
+8. Avance até Visibilidade e escolha Público (ou Programar, para sair num dia e hora certos).
 `;
 const saida = path.join(raiz, 'saida', `${filme}-youtube.txt`);
 fs.writeFileSync(saida, texto);
