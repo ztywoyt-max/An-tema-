@@ -49,13 +49,16 @@ def salvar(p, d):
 
 
 def normalizar(s):
+    from num2words import num2words
+    s = re.sub(r'\d+', lambda m: ' ' + num2words(int(m.group()), lang='pt_BR') + ' ', s)
     s = unicodedata.normalize('NFD', s.lower())
     s = ''.join(c for c in s if unicodedata.category(c) != 'Mn')
     return re.sub(r'[^a-z ]+', ' ', s).split()
 
 
 def parecido(a, b):
-    return difflib.SequenceMatcher(None, normalizar(a), normalizar(b)).ratio()
+    """Semelhança letra a letra (um nome escrito diferente pelo Whisper pesa pouco; palavra trocada pesa)."""
+    return difflib.SequenceMatcher(None, ' '.join(normalizar(a)), ' '.join(normalizar(b)), autojunk=False).ratio()
 
 
 def texto_para_fala(t):
@@ -106,10 +109,12 @@ class Dublador:
         self.tts = ChatterboxMultilingualTTS.from_pretrained('cpu')
         self.asr = WhisperModel('small', device='cpu', compute_type='int8')
         self.ref_atual = None
+        self.nomes = ''
 
     def transcrever(self, a, sr):
         a16 = librosa.resample(a, orig_sr=sr, target_sr=16000)
-        segs, _ = self.asr.transcribe(a16, language='pt', beam_size=5, word_timestamps=True, vad_filter=False)
+        segs, _ = self.asr.transcribe(a16, language='pt', beam_size=5, word_timestamps=True, vad_filter=False,
+                                      initial_prompt=self.nomes or None)
         segs = list(segs)
         texto = ' '.join(s.text.strip() for s in segs)
         palavras = [p for s in segs for p in (s.words or [])]
@@ -196,7 +201,7 @@ def dublar_frase(d, texto, ref, loc, semente, tentativas):
         pontos = nota - (0 if ok_ritmo else 0.25)
         if melhor is None or pontos > melhor[0]:
             melhor = (pontos, nota, recortar(a, sr, palavras), sr, ouvido, k + 1)
-        if nota >= 0.95 and ok_ritmo:
+        if nota >= 0.93 and ok_ritmo:
             break
     return melhor[1:]
 
@@ -228,6 +233,7 @@ def gerar(filme, cap=None, so=None, refazer=False, tentativas=4):
         return
     print(f'{len(pendentes)} falas para dublar')
     d = Dublador()
+    d.nomes = elenco.get('nomesProprios', '')
     t0 = time.time()
     relatorio = ler(pv / 'conferencia.json', {})
     # agrupa por voz para preparar a referência uma vez só

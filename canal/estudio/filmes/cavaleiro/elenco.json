@@ -378,5 +378,6 @@
       }
     }
   },
-  "_comentarioLocal": "'local': dublagem sem chave (ferramentas/dublar.sh). mistura = timbres do Kokoro para a voz de referência, tom = semitons, frase = o que a referência fala; exagero/cfg/temperatura = Chatterbox (exagero alto = mais emoção, cfg baixo = mais pausado); vel = ritmo final."
+  "_comentarioLocal": "'local': dublagem sem chave (ferramentas/dublar.sh). mistura = timbres do Kokoro para a voz de referência, tom = semitons, frase = o que a referência fala; exagero/cfg/temperatura = Chatterbox (exagero alto = mais emoção, cfg baixo = mais pausado); vel = ritmo final.",
+  "nomesProprios": "Sir Dâmaso, Pedralva, Brumal, Barão Malvar, Brana, Tomé, Lia, Raposa."
 }
