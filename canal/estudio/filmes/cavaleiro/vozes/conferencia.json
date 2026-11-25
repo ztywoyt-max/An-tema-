@@ -44,19 +44,19 @@
   "ab.01": {
     "voz": "narrador",
     "nota": 1.0,
-    "tentativas": 4,
-    "ouvido": "Dizem que nas estradas do Vale de Pedralva anda um homem que não usa armadura."
+    "tentativas": 1,
+    "ouvido": "Dizem que, nas estradas do Vale de Pedralva, anda um homem que não usa armadura."
   },
   "1.2.01": {
     "voz": "raposa",
-    "nota": 1.0,
+    "nota": 0.983,
     "tentativas": 4,
-    "ouvido": "Desce da carroça ferreiro. Devagar! E deixa a bolsa no banco."
+    "ouvido": "Desce da carroça, Ferreiro. Devagar. E deixe a bolsa no banco."
   },
   "4.1.01": {
     "voz": "soldado",
     "nota": 1.0,
-    "tentativas": 3,
+    "tentativas": 1,
     "ouvido": "Por ordem do Barão Malvar, o Tributo de Pedralva dobrou."
   },
   "1.2.02": {
@@ -67,14 +67,14 @@
   },
   "ab.02": {
     "voz": "narrador",
-    "nota": 1.0,
-    "tentativas": 4,
-    "ouvido": "Nem cota de malha! Nem couro Nem camisa!"
+    "nota": 0.973,
+    "tentativas": 5,
+    "ouvido": "Nem Cota de Mália. Nem couro. Nem camisa."
   },
   "ab.03": {
     "voz": "narrador",
     "nota": 1.0,
-    "tentativas": 6,
+    "tentativas": 3,
     "ouvido": "Só uma cueca de linho. Um capacete enferrujado. E uma espada que um dia já foi bonita."
   },
   "3.4.02": {
@@ -316,5 +316,647 @@
     "nota": 1.0,
     "tentativas": 1,
     "ouvido": "Faça. Você sempre obedeceu."
+  },
+  "ab.04": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "No metal do capacete, há centenas de riscos. Ninguém sabe o que eles contam."
+  },
+  "ab.05": {
+    "voz": "narrador",
+    "nota": 0.952,
+    "tentativas": 1,
+    "ouvido": "E ninguém nunca viu o host dele."
+  },
+  "ab.06": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Esta é a história do último risco."
+  },
+  "1.1.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Tomé, o ferreiro de Pedralva, tinha prometido a esposa que chegariam antes do anoitecer."
+  },
+  "1.1.02": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Não chegaram."
+  },
+  "1.1.03": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "A Neblina desceu cedo naquela noite, como se o Vale quisesse esconder alguma coisa."
+  },
+  "1.2.04": {
+    "voz": "narrador",
+    "nota": 0.971,
+    "tentativas": 1,
+    "ouvido": "Tália apertou o bebê contra o peito."
+  },
+  "1.2.05": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "E foi então que, lá no fundo da estrada, alguém começou a se aproximar."
+  },
+  "1.3.01": {
+    "voz": "narrador",
+    "nota": 0.981,
+    "tentativas": 1,
+    "ouvido": "Primeiro veio o som, metal raspando nas pedras, no ritmo lento, sem pressa nenhuma."
+  },
+  "1.3.02": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Depois, a silhueta."
+  },
+  "1.3.03": {
+    "voz": "narrador",
+    "nota": 0.96,
+    "tentativas": 1,
+    "ouvido": "Um homem alto de peis descalços, vestindo apenas uma cueca de lima encardida."
+  },
+  "1.3.04": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Na cabeça, um elmo fechado, tomado pela ferrugem."
+  },
+  "1.3.07": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "O homem não respondeu. Também não parou."
+  },
+  "1.4.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "A flecha entrou fundo. Qualquer homem teria caído."
+  },
+  "1.4.02": {
+    "voz": "narrador",
+    "nota": 0.825,
+    "tentativas": 6,
+    "ouvido": "Ele sonhou para baixo. Segurou-as, tch. E a Hancô."
+  },
+  "1.5.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "Não foi uma luta. Foi uma lição."
+  },
+  "1.5.02": {
+    "voz": "narrador",
+    "nota": 0.963,
+    "tentativas": 2,
+    "ouvido": "Ele não matou nenhum deles. Parecia ter tomado cuidado para não matar."
+  },
+  "1.5.03": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Em poucos segundos, os três corriam para dentro da floresta e a neblina os engoliu."
+  },
+  "1.6.04": {
+    "voz": "narrador",
+    "nota": 0.981,
+    "tentativas": 1,
+    "ouvido": "Ele olhou para mulher, para o bebê e para o ferreiro."
+  },
+  "1.6.05": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 3,
+    "ouvido": "Contou-os em silêncio. Um, dois... Três."
+  },
+  "1.6.06": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "E seguiu a carroça até o amanhecer."
+  },
+  "2.1.01": {
+    "voz": "narrador",
+    "nota": 0.965,
+    "tentativas": 2,
+    "ouvido": "Pedralva era pequena. Centro e poucas almas, um oinho, uma ponte e um iuque nunca secava."
+  },
+  "2.1.02": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Naquela manhã, ninguém trabalhou direito."
+  },
+  "2.1.03": {
+    "voz": "narrador",
+    "nota": 0.955,
+    "tentativas": 2,
+    "ouvido": "Todo mundo queria ver o homem quase nu que tinha levado uma flecha no peito, no peito... E continuado andando."
+  },
+  "2.2.01": {
+    "voz": "narrador",
+    "nota": 0.962,
+    "tentativas": 5,
+    "ouvido": "Ofereceram Gama. Ele recusou."
+  },
+  "2.2.02": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "Ofereceram comida. Ele aceitou, mas nunca comeu na frente de ninguém."
+  },
+  "2.2.03": {
+    "voz": "narrador",
+    "nota": 0.959,
+    "tentativas": 1,
+    "ouvido": "Em troca, consertava circas, carregava pedras e não obedia nada."
+  },
+  "2.2.04": {
+    "voz": "narrador",
+    "nota": 0.933,
+    "tentativas": 1,
+    "ouvido": "Dormia-lo, seu herói sentado, como quem não quer se acostumar com lugar nenhum."
+  },
+  "2.3.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Só uma pessoa em Pedralva não tinha medo dele."
+  },
+  "2.3.02": {
+    "voz": "narrador",
+    "nota": 0.984,
+    "tentativas": 2,
+    "ouvido": "Lia, a filha mais velha do ferio. Nove anos, muitas perguntas e nenhuma vontade de esperar a resposta."
+  },
+  "2.4.05": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 3,
+    "ouvido": "Lia pensou nisso por um bom tempo. Depois fez a pergunta que ninguém em Pedralva tinha coragem de fazer."
+  },
+  "2.5.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Brana, a curandeira, também estava olhando."
+  },
+  "2.5.02": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 3,
+    "ouvido": "Mas não para o homem. Para a espada."
+  },
+  "2.6.01": {
+    "voz": "narrador",
+    "nota": 0.988,
+    "tentativas": 2,
+    "ouvido": "Naquela noite, Lia não conseguiu dormir. Descapou de casa e espiou pela festa do celeiro."
+  },
+  "2.6.02": {
+    "voz": "narrador",
+    "nota": 0.946,
+    "tentativas": 5,
+    "ouvido": "De o homem, riscar o capacete. Uma vez. Duas, três."
+  },
+  "2.6.03": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "E como era Teimosa, contou todos os outros também."
+  },
+  "2.6.04": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "299."
+  },
+  "3.1.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Vinte anos antes, aquele homem tinha nome."
+  },
+  "3.1.02": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "Sir Dâmaso. O Capitão Dourado."
+  },
+  "3.1.03": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Dono da armadura mais bonita do reino e da espada mais rápida também."
+  },
+  "3.1.04": {
+    "voz": "narrador",
+    "nota": 0.988,
+    "tentativas": 2,
+    "ouvido": "Diziam que ele nunca tinha perdido uma luta. E nunca tinha desobedicido uma ordem."
+  },
+  "3.2.05": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 4,
+    "ouvido": "Dâmaso, hesitou."
+  },
+  "3.2.06": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Só por um instante."
+  },
+  "3.2.07": {
+    "voz": "narrador",
+    "nota": 0.971,
+    "tentativas": 1,
+    "ouvido": "Depois fiz o que sempre tinha feito."
+  },
+  "3.3.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Brumal queimou a noite inteira."
+  },
+  "3.3.02": {
+    "voz": "narrador",
+    "nota": 0.972,
+    "tentativas": 1,
+    "ouvido": "312 pessoas moravam ali."
+  },
+  "3.4.04": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Ele achou que era o desespero falando."
+  },
+  "3.4.05": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Não era."
+  },
+  "3.5.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "Ele tentou morrer. Muitas vezes."
+  },
+  "3.5.02": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 6,
+    "ouvido": "O corpo sempre se fechava. A dor ficava."
+  },
+  "3.5.03": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Então, entendeu que armadura nenhuma fazia mais sentido?"
+  },
+  "3.5.04": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "Armadura serve para proteger uma vida. A dele não precisava de proteção."
+  },
+  "3.5.05": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Precisava de um fim."
+  },
+  "3.5.06": {
+    "voz": "narrador",
+    "nota": 0.973,
+    "tentativas": 3,
+    "ouvido": "Ficou só com duas coisas, a espada, que nunca mais o impou."
+  },
+  "3.5.07": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "E o capacete para que ninguém nunca mais visse o rosto do homem que queimou Brumal."
+  },
+  "3.5.08": {
+    "voz": "narrador",
+    "nota": 0.95,
+    "tentativas": 1,
+    "ouvido": "Dizem que a fulgem é sangue que não sai."
+  },
+  "3.5.09": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "E, a partir daquele dia, ele começou a contar."
+  },
+  "4.1.05": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Brumal."
+  },
+  "4.1.06": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Fazia vinte anos que ele não ouvia esse nome em voz alta."
+  },
+  "4.2.04": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Foi a primeira vez que Pedralva ouviu a voz dele falando com todos."
+  },
+  "4.2.05": {
+    "voz": "narrador",
+    "nota": 0.946,
+    "tentativas": 1,
+    "ouvido": "E ninguém teve coragem de discordar-nos."
+  },
+  "4.3.06": {
+    "voz": "narrador",
+    "nota": 0.991,
+    "tentativas": 2,
+    "ouvido": "Ele virou o capacente para ela, surpreso. Ela deu de ombros."
+  },
+  "4.3.07": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 4,
+    "ouvido": "Era teimosa. Já tinha contado."
+  },
+  "4.3.09": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 3,
+    "ouvido": "Ele não tinha contado a ninguém sobre o número. A Ninguém Além de Lia."
+  },
+  "4.3.10": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Naquela noite, ele não dormiu."
+  },
+  "5.1.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 3,
+    "ouvido": "O Barão não mandou cinco soldados. Mandou 60."
+  },
+  "5.1.02": {
+    "voz": "narrador",
+    "nota": 0.96,
+    "tentativas": 2,
+    "ouvido": "Eu veio junto."
+  },
+  "5.2.02": {
+    "voz": "narrador",
+    "nota": 0.967,
+    "tentativas": 2,
+    "ouvido": "Os soldados raíram. Como os bandidos tinham redo."
+  },
+  "5.2.03": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Pararam de rir mais rápido."
+  },
+  "5.3.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Cada golpe que ele recebia era um golpe que não chegava a uma casa."
+  },
+  "5.3.02": {
+    "voz": "narrador",
+    "nota": 0.979,
+    "tentativas": 1,
+    "ouvido": "Cada flecha nas costas de li, era uma flecha que não acertava uma criança."
+  },
+  "5.3.03": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "Ele não lutava para vencer. Lutava para ser o lugar onde a violência terminava."
+  },
+  "5.3.04": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "Pedralva tinha molhado os telhados. Pedralva tinha aprendido."
+  },
+  "5.4.01": {
+    "voz": "narrador",
+    "nota": 0.992,
+    "tentativas": 2,
+    "ouvido": "Malvar parou a dois passos dele. Olhou o homem de cima abaixo."
+  },
+  "5.4.02": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 4,
+    "ouvido": "E então, olhou a espada."
+  },
+  "5.4.06": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "A espada polida do Barão quebrou como galho seco."
+  },
+  "5.4.07": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 3,
+    "ouvido": "A enferrujada, não."
+  },
+  "5.5.03": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Pela conta da menina, a dívida estava paga, havia muito tempo."
+  },
+  "5.5.04": {
+    "voz": "narrador",
+    "nota": 0.968,
+    "tentativas": 1,
+    "ouvido": "Ele espelou sentir alguma coisa."
+  },
+  "5.5.05": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Qualquer coisa."
+  },
+  "6.1.01": {
+    "voz": "narrador",
+    "nota": 0.925,
+    "tentativas": 3,
+    "ouvido": "Corte-se-fechão. Como sempre."
+  },
+  "6.1.02": {
+    "voz": "narrador",
+    "nota": 0.967,
+    "tentativas": 3,
+    "ouvido": "312. Ele tinha passado das 312. E nada."
+  },
+  "6.2.05": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 3,
+    "ouvido": "Ele não disse nada. Não havia nada que pudesse ser dito."
+  },
+  "6.3.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Pela primeira vez em 20 anos, uma ferida ficou aberta."
+  },
+  "6.4.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Não havia nada de terrível debaixo do capacete."
+  },
+  "6.4.02": {
+    "voz": "narrador",
+    "nota": 0.938,
+    "tentativas": 3,
+    "ouvido": "Seu homem, eu... Com rugas, com barba grisada, com olhos de quem não dorme direito a 20 anos."
+  },
+  "6.4.03": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Ele nunca escondeu o rosto por ser feio."
+  },
+  "6.4.04": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Escondia porque alguém, em algum lugar, ainda poderia reconhecê-lo."
+  },
+  "6.4.06": {
+    "voz": "narrador",
+    "nota": 0.917,
+    "tentativas": 2,
+    "ouvido": "E Dâmaso Rio."
+  },
+  "6.4.07": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Fazia tanto tempo que ele quase não reconheceu o som."
+  },
+  "6.5.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "O capacete ficou pendurado na porta da Casa de Brana."
+  },
+  "6.5.02": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "299 riscos."
+  },
+  "6.5.03": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Ninguém nunca mais acrescentou nenhum."
+  },
+  "6.5.04": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Porque algumas dívidas não se pagam contando."
+  },
+  "6.5.05": {
+    "voz": "narrador",
+    "nota": 0.959,
+    "tentativas": 1,
+    "ouvido": "Elas acabam quando alguém decide que você não deve mais matar."
+  },
+  "6.6.01": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "Dizem que, nas estradas do Vale de Pedralva, anda um homem que não usa armadura."
+  },
+  "6.6.02": {
+    "voz": "narrador",
+    "nota": 0.96,
+    "tentativas": 1,
+    "ouvido": "Mas agora ele usa a camisa."
+  },
+  "6.6.03": {
+    "voz": "narrador",
+    "nota": 1.0,
+    "tentativas": 1,
+    "ouvido": "E qualquer um pode ver o rosto dele."
+  },
+  "1.2.03": {
+    "voz": "raposa",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "Então a gente leva o ferro. E vê o que mais serve."
+  },
+  "1.3.06": {
+    "voz": "raposa",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "Volta pro buraco de onde saiu. Pelado. Isso aqui não é da sua conta."
+  },
+  "4.1.03": {
+    "voz": "soldado",
+    "nota": 1.0,
+    "tentativas": 3,
+    "ouvido": "Então, o barão vem buscar pessoalmente. Na Lua Nova."
+  },
+  "4.1.04": {
+    "voz": "soldado",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "E ele não costuma voltar de mãos vazias. Pergunte a Brumal."
+  },
+  "5.2.01": {
+    "voz": "soldado",
+    "nota": 1.0,
+    "tentativas": 2,
+    "ouvido": "Um homem pelado numa ponte. É isso que Pedralva tem?"
+  },
+  "1.6.01": {
+    "voz": "tome",
+    "nota": 1.0,
+    "tentativas": 4,
+    "ouvido": "Eu, eu não sei como agradecer. Qual é o seu nome, Senhor?"
+  },
+  "1.6.03": {
+    "voz": "tome",
+    "nota": 1.0,
+    "tentativas": 6,
+    "ouvido": "Pedralva fica logo depois do Rio. O Senhor vem com a gente. Por favor."
+  },
+  "4.1.02": {
+    "voz": "tome",
+    "nota": 0.973,
+    "tentativas": 3,
+    "ouvido": "Dobrou? A colhida foi pela metade. Não temos nem o de antes."
+  },
+  "4.2.02": {
+    "voz": "tome",
+    "nota": 0.988,
+    "tentativas": 3,
+    "ouvido": "Fugir para onde? Com as Crianças. No inverno?"
   }
 }

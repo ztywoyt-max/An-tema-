@@ -8,6 +8,7 @@ conferida pelo Whisper: se a transcrição não bater com o roteiro, ela é gera
   ferramentas/dublar.sh referencias cavaleiro          cria/atualiza as vozes de referência (vozes/refs/*.wav)
   ferramentas/dublar.sh gerar cavaleiro [--cap 1]      um MP3 por fala (só o que mudou) + duracoes.json
   ferramentas/dublar.sh gerar cavaleiro --so ab.01,c1.03 --refazer
+  ferramentas/dublar.sh gerar cavaleiro --so 1.4.02 --refazer --variar 1 --tentativas 8   (outra leitura)
 
 A configuração de cada voz fica em filmes/<filme>/elenco.json, na chave "local" de cada personagem.
 O Chatterbox põe uma marca d'água inaudível (Perth) em todo áudio gerado; ela continua ligada.
@@ -206,7 +207,7 @@ def dublar_frase(d, texto, ref, loc, semente, tentativas):
     return melhor[1:]
 
 
-def gerar(filme, cap=None, so=None, refazer=False, tentativas=4):
+def gerar(filme, cap=None, so=None, refazer=False, tentativas=4, variar=0):
     pasta = RAIZ / 'filmes' / filme
     elenco = ler(pasta / 'elenco.json')
     falas = ler(pasta / 'falas.json')
@@ -240,7 +241,7 @@ def gerar(filme, cap=None, so=None, refazer=False, tentativas=4):
     pendentes.sort(key=lambda x: (x[0]['voz'], falas.index(x[0])))
     for i, (f, loc, ref, h) in enumerate(pendentes, 1):
         texto = texto_para_fala(f['texto'])
-        semente = 1000 + int(h[:6], 16) % 997
+        semente = 1000 + int(h[:6], 16) % 997 + variar * 104729
         partes, notas, ouvidos, n = [], [], [], 0
         sr = d.tts.sr
         for j, (frase, pausa) in enumerate(frases(texto)):
@@ -275,9 +276,11 @@ if __name__ == '__main__':
     ap.add_argument('--cap')
     ap.add_argument('--so', help='ids (ou nomes de voz, em "referencias") separados por vírgula')
     ap.add_argument('--refazer', action='store_true')
+    ap.add_argument('--tentativas', type=int, default=4, help='tentativas por frase até passar na conferência')
+    ap.add_argument('--variar', type=int, default=0, help='troca a semente (outra leitura da mesma fala)')
     a = ap.parse_args()
     so = set(a.so.split(',')) if a.so else None
     if a.comando == 'referencias':
         referencias(a.filme, so)
     else:
-        gerar(a.filme, a.cap, so, a.refazer)
+        gerar(a.filme, a.cap, so, a.refazer, a.tentativas, a.variar)
