@@ -176,8 +176,9 @@ export function lanterna() {
   return { grupo: g, chama };
 }
 
-/** Carroça de madeira com sacos e caixas. Frente para +z. */
-export function carroca(alea = ALEA_PADRAO) {
+/** Carroça de madeira com sacos e caixas. Frente para +z.
+ *  op.puxada: varais erguidos (com cavalo); op.lanternaNaFrente: lanterna no poste da frente; op.banco */
+export function carroca(alea = ALEA_PADRAO, op = {}) {
   const g = new THREE.Group();
   const mMad = material({ mapa: T.madeira(31) });
   const mMadEsc = material({ mapa: T.madeira(33, [74, 54, 38]) });
@@ -191,19 +192,23 @@ export function carroca(alea = ALEA_PADRAO) {
       g.add(new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.5, 0.07).translate(s * 0.76, 1.0, z), mMadEsc));
     }
     // varais (para o animal puxar)
-    const varal = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, 2.2).translate(0, 0, 1.1), mMadEsc);
+    const varal = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, 2.4).translate(0, 0, 1.2), mMadEsc);
     varal.position.set(s * 0.45, 0.72, 1.3);
-    varal.rotation.x = 0.28;
+    varal.rotation.x = op.puxada ? -0.08 : 0.28;
     g.add(varal);
   }
   g.add(new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.35, 0.05).translate(0, 0.98, -1.29), mMad));
   // rodas
   const mRoda = material({ mapa: T.madeira(35, [86, 62, 42]) });
+  const rodas = [];
   for (const s of [-1, 1]) {
-    const roda = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.09, 10, 1), mRoda);
-    roda.rotation.z = Math.PI / 2;
+    const roda = new THREE.Group();
     roda.position.set(s * 0.86, 0.55, 0.1);
+    const disco = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.09, 10, 1), mRoda);
+    disco.rotation.z = Math.PI / 2;
+    roda.add(disco);
     g.add(roda);
+    rodas.push(roda);
     const cubo = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.2, 6, 1), mMadEsc);
     cubo.rotation.z = Math.PI / 2;
     cubo.position.set(s * 0.88, 0.55, 0.1);
@@ -212,28 +217,89 @@ export function carroca(alea = ALEA_PADRAO) {
   g.add(new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.08, 0.08).translate(0, 0.55, 0.1), mMadEsc));
   // carga: sacos e caixas
   const mSaco = material({ mapa: T.pano([150, 128, 96], 87, 'saco') });
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < (op.banco ? 4 : 5); i++) {
     const saco = new THREE.Mesh(malhaComRuido(new THREE.IcosahedronGeometry(0.3, 0), alea, 0.1), mSaco);
     saco.scale.set(1, 0.7, 1.2);
     saco.position.set((alea() - 0.5) * 0.8, 1.02 + alea() * 0.1, -0.9 + i * 0.42);
     g.add(saco);
   }
   const caixa = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 0.5), mMadEsc);
-  caixa.position.set(0.35, 1.05, 0.7);
+  caixa.position.set(0.35, 1.05, op.banco ? -0.3 : 0.7);
   caixa.rotation.y = 0.3;
   g.add(caixa);
-  // poste da lanterna no canto de trás
+  // poste da lanterna (atrás, ou na frente ao lado do condutor)
+  const zp = op.lanternaNaFrente ? 1.25 : -1.25, dir = op.lanternaNaFrente ? 1 : -1;
+  const xp = op.lanternaDireita ? 0.7 : -0.7;
   const poste = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.2, 0.06).translate(0, 0.6, 0), mMadEsc);
-  poste.position.set(-0.7, 0.8, -1.25);
+  poste.position.set(xp, 0.8, zp);
   g.add(poste);
-  const braco = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.4).translate(0, 0, -0.2), mMadEsc);
-  braco.position.set(-0.7, 1.95, -1.25);
+  const braco = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.4).translate(0, 0, dir * 0.2), mMadEsc);
+  braco.position.set(xp, 1.95, zp);
   g.add(braco);
   const lant = lanterna();
-  lant.grupo.position.set(-0.7, 1.6, -1.6);
+  lant.grupo.position.set(xp, 1.6, zp + dir * 0.35);
   g.add(lant.grupo);
-  const fio = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.06, 0.01).translate(0, 1.92, -1.6), mMadEsc);
-  fio.position.x = -0.7;
+  const fio = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.06, 0.01).translate(0, 1.92, zp + dir * 0.35), mMadEsc);
+  fio.position.x = xp;
   g.add(fio);
-  return { grupo: g, lanterna: lant };
+  if (op.banco) {
+    g.add(new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.08, 0.36).translate(0, 1.05, 1.0), mMad));
+    for (const x of [-0.55, 0.55]) g.add(new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.22, 0.3).translate(x, 0.93, 1.0), mMadEsc));
+  }
+  // gira as rodas conforme a distância percorrida
+  const girar = (dist) => rodas.forEach((r) => (r.rotation.x = dist / 0.55));
+  return { grupo: g, lanterna: lant, rodas, girar };
+}
+
+/** Tronco caído atravessando a estrada. Comprimento ao longo de x. */
+export function troncoCaido(comp = 4.2) {
+  const g = new THREE.Group();
+  const m = material({ mapa: T.casca(), repete: [3, 1] });
+  const geo = new THREE.CylinderGeometry(0.22, 0.28, comp, 7, 3);
+  geo.rotateZ(Math.PI / 2);
+  const t = new THREE.Mesh(geo, m);
+  t.position.y = 0.24;
+  g.add(t);
+  for (const [x, a] of [[-1.2, 0.8], [0.6, -0.9], [1.5, 0.5]]) {
+    const galho = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.06, 0.9, 4).translate(0, 0.45, 0), m);
+    galho.position.set(x, 0.3, 0);
+    galho.rotation.set(a * 0.6, 0, a);
+    g.add(galho);
+  }
+  const tampa = material({ mapa: T.madeira(37, [140, 110, 78]) });
+  for (const s of [-1, 1]) {
+    const c = new THREE.Mesh(new THREE.CircleGeometry(s > 0 ? 0.22 : 0.28, 7).rotateY((s * Math.PI) / 2), tampa);
+    c.position.set((s * comp) / 2, 0.24, 0);
+    g.add(c);
+  }
+  return g;
+}
+
+/** Fogo: sprites aditivos tremulando. atualizar(t) anima. Retorna { grupo, atualizar }. */
+export function fogo(tamanho = 0.35, cor = 0xff8a3a) {
+  const g = new THREE.Group();
+  const nucleo = halo(0xffd28a, tamanho * 0.9, 0.9);
+  const chama = halo(cor, tamanho * 1.6, 0.8);
+  const brilho = halo(0xff7a30, tamanho * 6, 0.18);
+  g.add(brilho, chama, nucleo);
+  const fagulhas = [];
+  for (let i = 0; i < 4; i++) {
+    const f = halo(0xffb060, tamanho * 0.25, 0.9);
+    g.add(f);
+    fagulhas.push(f);
+  }
+  const atualizar = (t, semente = 0) => {
+    const n = (k) => Math.sin(t * k + semente) * 0.5 + 0.5;
+    chama.scale.set(tamanho * (1.4 + 0.3 * n(13)), tamanho * (1.8 + 0.5 * n(9.7)), 1);
+    chama.position.y = tamanho * 0.3;
+    nucleo.scale.setScalar(tamanho * (0.8 + 0.2 * n(17)));
+    brilho.material.opacity = 0.14 + 0.06 * n(7.3);
+    fagulhas.forEach((f, i) => {
+      const fase = (t * (0.9 + i * 0.23) + i * 0.37 + semente) % 1;
+      f.position.set(Math.sin(i * 7 + t * 3) * tamanho * 0.4, fase * tamanho * 3, Math.cos(i * 5 + t * 2) * tamanho * 0.3);
+      f.material.opacity = 0.9 * (1 - fase);
+    });
+  };
+  atualizar(0);
+  return { grupo: g, atualizar };
 }

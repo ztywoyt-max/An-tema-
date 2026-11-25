@@ -52,6 +52,21 @@ export function tituloCapitulo(ctx, numero, nome) {
   ctx.fillRect(cx - 2, cy + 16, 4, 4);
 }
 
+/** Título grande do filme (ou "Fim"), com subtítulo opcional. */
+export function tituloFilme(ctx, nome, sub) {
+  const cx = RES.w / 2, cy = RES.h / 2;
+  const linhas = nome.split('\n');
+  const tam = linhas.length > 1 ? 26 : 34;
+  linhas.forEach((l, i) => {
+    texto(ctx, l, cx, cy + 6 + (i - (linhas.length - 1) / 2) * (tam + 2), { fonte: FONTE_TITULO, tamanho: tam, cor: '#ddd0b4', alinhar: 'center' });
+  });
+  const base = cy + 6 + ((linhas.length - 1) / 2) * (tam + 2) + 10;
+  ctx.fillStyle = '#6e2a22';
+  ctx.fillRect(cx - 60, base, 120, 1);
+  ctx.fillRect(cx - 2, base - 2, 4, 4);
+  if (sub) texto(ctx, sub, cx, base + 16, { tamanho: 8, cor: '#9c8a70', alinhar: 'center', espaco: 2 });
+}
+
 /**
  * Caixa de diálogo estilo RPG de PS1, com efeito de máquina de escrever.
  * progresso: 0..1 (quanto do texto já apareceu).

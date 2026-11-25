@@ -36,6 +36,7 @@ uniform int uPLQtd;
 uniform float uNevoaPerto, uNevoaLonge;
 uniform float uSemLuz, uComNevoa, uPrender, uBrilhoProprio;
 uniform vec2 uRepete;
+uniform vec2 uDesloc;
 varying vec3 vUvW;
 varying vec3 vLuz;
 varying float vNevoa;
@@ -57,7 +58,7 @@ void main() {
   #ifdef USE_COLOR
     luz *= color;
   #endif
-  vLuz = min(luz, vec3(1.8)) + vec3(uBrilhoProprio);
+  vLuz = min(luz, vec3(1.45)) + vec3(uBrilhoProprio);
 
   vec4 vista = viewMatrix * mundo;
   float prof = length(vista.xyz);
@@ -71,7 +72,7 @@ void main() {
     clip.xyz = ndc * clip.w;
   }
   gl_Position = clip;
-  vUvW = vec3(uv * uRepete * clip.w, clip.w);
+  vUvW = vec3((uv * uRepete + uDesloc) * clip.w, clip.w);
 }
 `;
 
@@ -120,6 +121,7 @@ export function material(op = {}) {
       uPrender: { value: op.prender === false ? 0 : 1 },
       uBrilhoProprio: { value: op.brilhoProprio ?? 0 },
       uRepete: { value: new THREE.Vector2(...(op.repete ?? [1, 1])) },
+      uDesloc: { value: new THREE.Vector2(0, 0) },
     },
   });
   return m;

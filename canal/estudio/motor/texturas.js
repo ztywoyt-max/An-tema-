@@ -13,7 +13,7 @@ export function aleatorio(semente = 1) {
 }
 
 // Ruído de valor 2D que se repete (tileable) com período p.
-function fazerRuido(semente) {
+export function fazerRuido(semente) {
   const tab = new Map();
   const h = (x, y) => {
     const k = x * 73856093 ^ y * 19349663 ^ semente * 83492791;
@@ -36,7 +36,7 @@ function fazerRuido(semente) {
   };
 }
 
-function fbm(r, x, y, p, oitavas = 3) {
+export function fbm(r, x, y, p, oitavas = 3) {
   let v = 0, amp = 0.5, tot = 0, f = 1;
   for (let i = 0; i < oitavas; i++) {
     v += r(x * f, y * f, p * f) * amp;
@@ -86,9 +86,9 @@ export function textura(nome, w, h, desenho, op = {}) {
   return t;
 }
 
-const mix = (a, b, t) => a.map((v, i) => v + ((b[i] ?? 255) - v) * t);
-const mul = (a, k) => [a[0] * k, a[1] * k, a[2] * k, a[3] ?? 255];
-const clamp = (v, a = 0, b = 1) => Math.min(Math.max(v, a), b);
+export const mix = (a, b, t) => a.map((v, i) => v + ((b[i] ?? 255) - v) * t);
+export const mul = (a, k) => [a[0] * k, a[1] * k, a[2] * k, a[3] ?? 255];
+export const clamp = (v, a = 0, b = 1) => Math.min(Math.max(v, a), b);
 
 // ---------- Pele e corpo ----------
 
@@ -475,4 +475,114 @@ export function vidroLanterna() {
         px(x, y, c);
       }
   });
+}
+
+// ---------- Aldeia ----------
+
+export function paredePedra(semente = 101, cor = [118, 112, 104]) {
+  const r = fazerRuido(semente);
+  const alea = aleatorio(semente);
+  return textura(`parede-${semente}-${cor}`, 64, 64, (px, ler, w, h) => {
+    const alt = 8;
+    for (let lin = 0; lin < h / alt; lin++) {
+      const desl = (lin % 2) * 6;
+      let x0 = -desl;
+      while (x0 < w) {
+        const larg = 9 + Math.floor(alea() * 8);
+        const tom = 0.8 + alea() * 0.35;
+        for (let y = lin * alt; y < lin * alt + alt; y++)
+          for (let x = x0; x < x0 + larg; x++) {
+            const borda = y === lin * alt || x === x0;
+            let c = mul(cor, tom * (0.9 + fbm(r, x / 3, y / 3, 21, 2) * 0.2));
+            if (borda) c = mul(c, 0.55);
+            if (y === lin * alt + 1 && !borda) c = mul(c, 1.12);
+            if (fbm(r, x / 5 + 40, y / 5, 13, 2) > 0.7) c = mix(c, [70, 84, 56], 0.45); // musgo
+            px(x, y, c);
+          }
+        x0 += larg;
+      }
+    }
+  });
+}
+
+export function palha(semente = 103) {
+  const r = fazerRuido(semente);
+  return textura(`palha-${semente}`, 64, 64, (px, ler, w, h) => {
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        const fio = fbm(r, x / 1.2, y / 7, 53, 2);
+        let c = mix([118, 96, 58], [168, 140, 86], fio);
+        if (y % 16 === 15) c = mul(c, 0.6); // camadas
+        if (fbm(r, x / 6 + 9, y / 6, 11, 2) > 0.65) c = mix(c, [80, 74, 52], 0.5); // palha velha
+        px(x, y, c);
+      }
+  });
+}
+
+export function agua(semente = 107) {
+  const r = fazerRuido(semente);
+  return textura(`agua-${semente}`, 64, 64, (px, ler, w, h) => {
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        const n = fbm(r, x / 8, y / 3, 8, 3);
+        let c = mix([30, 46, 54], [64, 88, 96], n);
+        if (fbm(r, x / 2, y / 1, 32, 2) > 0.74) c = mix(c, [150, 170, 172], 0.5); // reflexos
+        px(x, y, c);
+      }
+  });
+}
+
+export function feno(semente = 109) {
+  const r = fazerRuido(semente);
+  return textura(`feno-${semente}`, 32, 32, (px, ler, w, h) => {
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        const n = fbm(r, x / 1.5, y / 1.5, 21, 2);
+        let c = mix([150, 120, 62], [200, 170, 96], n);
+        if (n < 0.3) c = mul(c, 0.7);
+        px(x, y, c);
+      }
+  });
+}
+
+export function terraBatida(semente = 113) {
+  const r = fazerRuido(semente);
+  return textura(`terra-batida-${semente}`, 64, 64, (px, ler, w, h) => {
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        const n = fbm(r, x / 9, y / 9, 7, 3);
+        let c = mix([84, 70, 54], [116, 98, 74], n);
+        if (fbm(r, x / 2 + 40, y / 2, 32, 1) > 0.8) c = mix(c, [140, 132, 120], 0.6); // pedrinhas
+        if (fbm(r, x / 7 + 90, y / 7, 9, 2) > 0.68) c = mix(c, [58, 70, 40], 0.55); // mato
+        px(x, y, c);
+      }
+  });
+}
+
+/** Céu: gradiente com nuvens, em tons de cinza (a cor vem do material). */
+export function nuvens(semente = 127) {
+  const r = fazerRuido(semente);
+  return textura(`nuvens-${semente}`, 256, 128, (px, ler, w, h) => {
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        const n = fbm(r, x / 28, y / 14, 9, 4);
+        const a = clamp((n - 0.42) * 2.2);
+        const g = 150 + a * 105 - (y / h) * 30;
+        px(x, y, [g, g, g, 255]);
+      }
+  });
+}
+
+export function fumaca() {
+  const r = fazerRuido(131);
+  return textura('fumaca', 32, 32, (px, ler, w, h) => {
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        const dx = (x + 0.5 - w / 2) / (w / 2), dy = (y + 0.5 - h / 2) / (h / 2);
+        const d = Math.sqrt(dx * dx + dy * dy);
+        const n = fbm(r, x / 4, y / 4, 8, 2);
+        const a = clamp(1 - d - (0.5 - n) * 0.6) * 220;
+        px(x, y, [255, 255, 255, a]);
+      }
+  }, { prender: true });
 }

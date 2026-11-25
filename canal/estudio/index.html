@@ -22,25 +22,46 @@ const fontes = [
 await Promise.all(fontes.map(async (f) => { await f.load(); document.fonts.add(f); }));
 
 const params = new URLSearchParams(location.search);
-const nome = params.get('cena') ?? 'cap1-estrada';
-const mod = await import(`./cenas/${nome}.js`);
-
 const motor = new Motor(document.getElementById('tela'));
 const cena = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(50, RES.w / RES.h, 0.1, 300);
-const roteiro = await mod.default({ THREE, motor, cena, camera, luzes, hud: motor.hudCtx });
+const ctx = { THREE, motor, cena, camera, luzes, hud: motor.hudCtx };
+
+let roteiro;
+const nomeFilme = params.get('filme');
+if (nomeFilme) {
+  // filme completo (ou um capítulo): planos sincronizados com as falas
+  const { montarFilme } = await import('./motor/filme.js');
+  const base = `./filmes/${nomeFilme}`;
+  const mod = await import(`${base}/filme.js`);
+  const falas = await (await fetch(`${base}/falas.json`)).json();
+  const rd = await fetch(`${base}/vozes/duracoes.json`);
+  const duracoes = rd.ok ? await rd.json() : {};
+  const f = await montarFilme(ctx, mod, { cap: params.get('cap') ?? '1', falas, duracoes });
+  const { mixar } = await import('./motor/audio.js');
+  roteiro = { duracao: f.duracao, fps: 30, atualizar: () => {}, quadroFilme: f.quadro, linha: f.linha, audio: (de, ate) => mixar(f.linha, base, de, ate) };
+} else {
+  // cena solta
+  const mod = await import(`./cenas/${params.get('cena') ?? 'cap1-estrada'}.js`);
+  roteiro = await mod.default(ctx);
+}
 
 function quadro(t) {
   global.uTempo.value = t;
-  roteiro.atualizar(t);
-  motor.desenhar(cena, camera);
+  if (roteiro.quadroFilme) roteiro.quadroFilme(t);
+  else {
+    roteiro.atualizar(t);
+    motor.desenhar(cena, camera);
+  }
 }
 
 window.estudio = {
   duracao: roteiro.duracao,
   fps: roteiro.fps ?? 30,
   res: RES,
+  linha: roteiro.linha ? JSON.parse(JSON.stringify(roteiro.linha, (k, v) => (typeof v === 'function' ? undefined : v))) : null,
   quadro(t) { quadro(t); return motor.lerQuadro(); },
+  audio: roteiro.audio,
   pronto: true,
 };
 
