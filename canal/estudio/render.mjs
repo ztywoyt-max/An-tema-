@@ -2,12 +2,13 @@
 // Renderiza no Estúdio PS1: uma cena solta ou um capítulo de um filme, em vídeo (MP4) ou quadros (PNG).
 //
 //   node render.mjs cap1-estrada                         cena solta -> saida/cap1-estrada.mp4
-//   node render.mjs --filme cavaleiro --cap 1            capítulo -> saida/cavaleiro-cap1.mp4 (+ .srt, + áudio)
+//   node render.mjs --filme cavaleiro --cap 1            capítulo -> saida/cavaleiro-cap1.mp4 (com áudio)
 //   node render.mjs --filme cavaleiro --cap 1 --quadros 3,10   quadros soltos em PNG
 //   node render.mjs ... --de 3 --ate 8                   só um trecho
 //   node render.mjs ... --escala 10                      4K (o YouTube comprime menos)
 //   node render.mjs teste-elenco --q vista=rostos        parâmetros extras para a cena
 //   node render.mjs ... --sem-audio                      não gera nem mistura áudio
+//   node render.mjs ... --legendas                       também salva as legendas .srt
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -119,7 +120,7 @@ if (quadros) {
     fs.rmSync(soVideo);
   } else fs.renameSync(soVideo, final);
   console.log(`vídeo salvo: ${final}`);
-  if (linha) {
+  if (linha && tem('legendas')) {
     const srt = final.replace(/\.mp4$/, '.srt');
     fs.writeFileSync(srt, legendasSrt(linha, -de));
     console.log(`legendas: ${srt}`);

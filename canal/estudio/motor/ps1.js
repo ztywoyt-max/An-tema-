@@ -6,7 +6,15 @@ import * as THREE from 'three';
 
 THREE.ColorManagement.enabled = false;
 
-export const RES = { w: 384, h: 216 }; // 16:9; ampliado 5x vira 1920x1080 sem borrar
+// 16:9; ampliado 5x vira 1920x1080 sem borrar. ?res=640x360 aumenta (usado na miniatura).
+export const RES = (() => {
+  const r = new URLSearchParams(globalThis.location?.search ?? '').get('res');
+  if (r) {
+    const [w, h] = r.split('x').map(Number);
+    if (w > 0 && h > 0) return { w, h };
+  }
+  return { w: 384, h: 216 };
+})();
 export const MAX_LUZES = 8;
 
 // Uniformes compartilhados por todos os materiais (luzes, neblina, resolução).

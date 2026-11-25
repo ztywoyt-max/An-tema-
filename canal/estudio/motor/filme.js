@@ -61,7 +61,8 @@ export async function montarFilme(ctx, mod, { cap, falas, duracoes }) {
       else if (p.tela.tipo === 'titulo') H.tituloFilme(hud, p.tela.texto, p.tela.sub);
       else if (p.tela.tipo === 'fim') H.tituloFilme(hud, 'Fim');
     } else {
-      const f = p.falasT.find((x) => x.voz !== 'narrador' && tl >= x.t0 - 0.1 && tl <= x.t1 + 0.6);
+      // caixas de diálogo com o texto das falas: só se o filme pedir (o padrão é só a voz)
+      const f = mod.caixasDeDialogo ? p.falasT.find((x) => x.voz !== 'narrador' && tl >= x.t0 - 0.1 && tl <= x.t1 + 0.6) : null;
       if (f && !p.semDialogo) {
         const prog = (tl - f.t0) / Math.max(0.3, (f.t1 - f.t0) * 0.75);
         H.dialogo(hud, f.personagem ?? f.voz, f.texto, prog);

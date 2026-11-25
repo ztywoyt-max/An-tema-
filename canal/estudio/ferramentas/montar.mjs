@@ -28,7 +28,8 @@ for (const cap of caps) {
     continue;
   }
   console.log(`capítulo ${cap}: renderizando...`);
-  const r = spawnSync('node', [path.join(raiz, 'render.mjs'), '--filme', filme, '--cap', String(cap), '--escala', escala], { stdio: ['ignore', 'ignore', 'inherit'] });
+  const extra = args.includes('--legendas') ? ['--legendas'] : [];
+  const r = spawnSync('node', [path.join(raiz, 'render.mjs'), '--filme', filme, '--cap', String(cap), '--escala', escala, ...extra], { stdio: ['ignore', 'ignore', 'inherit'] });
   if (r.status !== 0) {
     console.error(`falhou no capítulo ${cap}`);
     process.exit(1);
@@ -67,6 +68,9 @@ for (const cap of caps) {
   }
   desloc += dur(v);
 }
-fs.writeFileSync(final.replace(/\.mp4$/, '.srt'), blocos.join('\n'));
+if (blocos.length) {
+  fs.writeFileSync(final.replace(/\.mp4$/, '.srt'), blocos.join('\n'));
+  console.log(`legendas: ${final.replace(/\.mp4$/, '.srt')}`);
+}
 console.log(`filme completo: ${final} (${(desloc / 60).toFixed(1)} min)`);
-console.log(`legendas: ${final.replace(/\.mp4$/, '.srt')}`);
+if (desloc > 25 * 60) console.warn(`ATENÇÃO: o filme passou de 25 minutos (${(desloc / 60).toFixed(1)} min). O limite combinado é 25.`);

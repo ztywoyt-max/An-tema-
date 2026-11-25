@@ -24,6 +24,9 @@ node ferramentas/montar.mjs "$filme" --tudo "$@"
 
 echo "== YouTube"
 node ferramentas/youtube.mjs "$filme"
-node render.mjs miniatura --quadros 0.5 >/dev/null
-ffmpeg -v error -y -i saida/miniatura-0.5s.png -vf "scale=1280:720:flags=area" -q:v 2 "saida/$filme-miniatura.jpg"
-echo "pronto: saida/$filme-completo.mp4, .srt, -youtube.txt e -miniatura.jpg"
+# duas miniaturas (A e B) para o "Testar e comparar" do YouTube, em 1280x720
+for v in a b; do
+  node render.mjs miniatura --q "res=640x360&v=$v" --escala 2 --quadros 0.5 >/dev/null
+  ffmpeg -v error -y -i saida/miniatura-0.5s.png -q:v 2 "saida/$filme-miniatura-$v.jpg"
+done
+echo "pronto: saida/$filme-completo.mp4, -youtube.txt e -miniatura-a/b.jpg"

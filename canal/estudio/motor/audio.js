@@ -498,8 +498,6 @@ export async function mixar(linha, base, de = 0, ate = linha.duracao) {
         console.warn('voz não tocou:', f.id, e.message);
       }
     }
-    // sem voz gravada: bipes de texto, como nos jogos da época (só falas de personagens)
-    if (!tocou && f.voz !== 'narrador') for (let t = f.abs; t < f.abs + (f.fimAbs - f.abs) * 0.75; t += 0.075) EFEITOS.blip(m, T(t));
     if (tocou) ativas.push([T(f.abs), T(f.fimAbs)]);
   }
 
