@@ -137,7 +137,7 @@ uniform sampler2D tCena;
 uniform sampler2D tHud;
 uniform float uHudOpac;
 uniform vec2 uRes;
-uniform float uVinheta, uExposicao, uFade;
+uniform float uVinheta, uExposicao, uFade, uSepia, uGrao;
 uniform vec3 uFadeCor;
 varying vec2 vUv;
 const float bayer[16] = float[](0.0, 8.0, 2.0, 10.0, 12.0, 4.0, 14.0, 6.0, 3.0, 11.0, 1.0, 9.0, 15.0, 7.0, 13.0, 5.0);
@@ -146,6 +146,12 @@ void main() {
   vec2 q = vUv - 0.5;
   q.x *= uRes.x / uRes.y;
   c *= clamp(1.0 - uVinheta * dot(q, q), 0.0, 1.0);
+  // lembrança: tons dourados e desbotados
+  float lum = dot(c, vec3(0.299, 0.587, 0.114));
+  vec3 sep = vec3(lum * 1.12 + 0.06, lum * 0.95 + 0.03, lum * 0.68);
+  c = mix(c, sep, uSepia);
+  float g = fract(sin(dot(gl_FragCoord.xy + uFade * 17.0 + uGrao, vec2(12.9898, 78.233))) * 43758.5453);
+  c += (g - 0.5) * 0.06 * step(0.001, uGrao);
   c = mix(c, uFadeCor, uFade);
   vec4 h = texture2D(tHud, vUv);
   c = mix(c, h.rgb, h.a * uHudOpac);
@@ -195,6 +201,8 @@ export class Motor {
         uVinheta: { value: 0.35 },
         uExposicao: { value: 1 },
         uFade: { value: 0 },
+        uSepia: { value: 0 },
+        uGrao: { value: 0 },
         uFadeCor: { value: new THREE.Color(0, 0, 0) },
       },
       depthTest: false,

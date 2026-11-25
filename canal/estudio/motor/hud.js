@@ -2,7 +2,8 @@
 import { RES } from './ps1.js';
 
 export const FONTE_TITULO = '"Jacquard 12"';
-export const FONTE_TEXTO = '"Pixelify Sans"';
+export const FONTE_TEXTO = '"Jersey 15"'; // nítida em 15 px (a Pixelify confundia B com G)
+export const FONTE_PEQUENA = '"Pixelify Sans"';
 
 const temp = document.createElement('canvas');
 temp.width = RES.w;
@@ -44,7 +45,7 @@ const ROMANOS = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'
 /** Tela de capítulo: "CAPÍTULO I" pequeno e o nome grande, com ornamento. */
 export function tituloCapitulo(ctx, numero, nome) {
   const cx = RES.w / 2, cy = RES.h / 2;
-  texto(ctx, `CAPÍTULO ${ROMANOS[numero] ?? numero}`, cx, cy - 20, { tamanho: 8, cor: '#9c8a70', alinhar: 'center', espaco: 2 });
+  texto(ctx, `CAPÍTULO ${ROMANOS[numero] ?? numero}`, cx, cy - 20, { fonte: FONTE_PEQUENA, tamanho: 8, cor: '#9c8a70', alinhar: 'center', espaco: 2 });
   texto(ctx, nome, cx, cy + 10, { fonte: FONTE_TITULO, tamanho: 30, cor: '#ddd0b4', alinhar: 'center' });
   ctx.fillStyle = '#6e2a22';
   const w = Math.max(60, medir(nome, FONTE_TITULO, 30) * 0.8);
@@ -64,7 +65,7 @@ export function tituloFilme(ctx, nome, sub) {
   ctx.fillStyle = '#6e2a22';
   ctx.fillRect(cx - 60, base, 120, 1);
   ctx.fillRect(cx - 2, base - 2, 4, 4);
-  if (sub) texto(ctx, sub, cx, base + 16, { tamanho: 8, cor: '#9c8a70', alinhar: 'center', espaco: 2 });
+  if (sub) texto(ctx, sub, cx, base + 16, { fonte: FONTE_PEQUENA, tamanho: 8, cor: '#9c8a70', alinhar: 'center', espaco: 2 });
 }
 
 /**
@@ -72,7 +73,7 @@ export function tituloFilme(ctx, nome, sub) {
  * progresso: 0..1 (quanto do texto já apareceu).
  */
 export function dialogo(ctx, falante, fala, progresso = 1) {
-  const x = 20, w = RES.w - 40, h = 50, y = RES.h - h - 12;
+  const x = 20, w = RES.w - 40, h = 52, y = RES.h - h - 10;
   ctx.fillStyle = 'rgba(8, 6, 10, 0.78)';
   ctx.fillRect(x, y, w, h);
   ctx.fillStyle = '#8a7a60';
@@ -84,14 +85,14 @@ export function dialogo(ctx, falante, fala, progresso = 1) {
   ctx.fillRect(x + 2, y + 2, w - 4, 1);
   let ty = y + 15;
   if (falante) {
-    texto(ctx, falante, x + 8, ty, { tamanho: 10, cor: '#c9a35a', contorno: null });
-    ty += 13;
+    texto(ctx, falante, x + 8, ty, { tamanho: 15, cor: '#c9a35a', contorno: null });
+    ty += 14;
   }
   const visivel = fala.slice(0, Math.floor(fala.length * Math.min(Math.max(progresso, 0), 1)));
-  const linhas = quebrar(visivel, fala, w - 16, 11);
+  const linhas = quebrar(visivel, fala, w - 16, 15);
   for (const l of linhas) {
-    texto(ctx, l, x + 8, ty, { tamanho: 11, cor: '#e8dcc4', contorno: null });
-    ty += 12;
+    texto(ctx, l, x + 8, ty, { tamanho: 15, cor: '#e8dcc4', contorno: null });
+    ty += 14;
   }
 }
 

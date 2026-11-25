@@ -410,6 +410,33 @@ const EFEITOS = {
     m.ruidoFiltrado(t, dur, { tipo: 'lowpass', freq: 350, vol: 0.5, ataque: 0.3, solta: 0.3 });
     m.ruidoFiltrado(t, dur, { freq: 180, q: 4, vol: 0.3, ataque: 0.3, solta: 0.3 });
   },
+  trovao(m, t, op, r) {
+    m.ruidoFiltrado(t, 2.6, { tipo: 'lowpass', freq: 180, vol: 0.9, ataque: 0.05, solta: 1.8 });
+    m.ruidoFiltrado(t, 0.25, { tipo: 'lowpass', freq: 1200, vol: 0.5, ataque: 0.005, solta: 0.3 });
+    for (let i = 0; i < 4; i++) m.tambor(t + 0.1 + r() * 0.8, { vol: 0.35, freq: 50 + r() * 20, destino: m.bus.efeitos });
+  },
+  respingo(m, t) {
+    m.ruidoFiltrado(t, 0.35, { tipo: 'lowpass', freq: 1800, freq2: 400, vol: 0.6, ataque: 0.005, solta: 0.4 });
+    m.tambor(t, { vol: 0.3, freq: 80, destino: m.bus.efeitos });
+  },
+  chiado(m, t) {
+    m.ruidoFiltrado(t, 1.0, { tipo: 'highpass', freq: 3000, vol: 0.35, ataque: 0.01, solta: 0.8 });
+  },
+  metal(m, t, op, r) {
+    for (const [f, a, d] of [[1240, 0.5, 0.6], [1870, 0.35, 0.5], [2930, 0.25, 0.35], [4120, 0.15, 0.25]]) {
+      const o = m.ctx.createOscillator();
+      o.frequency.value = f * (0.97 + r() * 0.06);
+      const e = m.env(t, 0.002, 0, d, a * 0.5);
+      o.connect(e).connect(m.bus.efeitos);
+      o.start(t);
+      o.stop(t + d + 0.05);
+    }
+    m.ruidoFiltrado(t, 0.04, { tipo: 'highpass', freq: 2500, vol: 0.5, ataque: 0.001, solta: 0.05 });
+  },
+  metalQuebra(m, t, op, r) {
+    EFEITOS.metal(m, t, op, r);
+    for (let i = 0; i < 4; i++) m.ruidoFiltrado(t + 0.02 + i * 0.015, 0.01, { freq: 3000 + r() * 3000, q: 3, vol: 0.5, ataque: 0.001, solta: 0.04 });
+  },
   blip(m, t) {
     const o = m.ctx.createOscillator();
     o.type = 'square';

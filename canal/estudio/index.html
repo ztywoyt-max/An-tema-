@@ -18,6 +18,8 @@ import { Motor, RES, luzes, global } from './motor/ps1.js';
 const fontes = [
   new FontFace('Jacquard 12', 'url(./node_modules/@fontsource/jacquard-12/files/jacquard-12-latin-400-normal.woff2)'),
   new FontFace('Pixelify Sans', 'url(./node_modules/@fontsource/pixelify-sans/files/pixelify-sans-latin-400-normal.woff2)'),
+  new FontFace('Jersey 10', 'url(./node_modules/@fontsource/jersey-10/files/jersey-10-latin-400-normal.woff2)'),
+  new FontFace('Jersey 15', 'url(./node_modules/@fontsource/jersey-15/files/jersey-15-latin-400-normal.woff2)'),
 ];
 await Promise.all(fontes.map(async (f) => { await f.load(); document.fonts.add(f); }));
 

@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "@fontsource/jacquard-12": "^5.3.0",
+    "@fontsource/jersey-10": "^5.2.5",
+    "@fontsource/jersey-15": "^5.2.5",
     "@fontsource/pixelify-sans": "^5.3.0",
     "three": "^0.170.0"
   },

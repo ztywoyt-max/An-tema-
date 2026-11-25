@@ -37,6 +37,8 @@ export const figurinos = {
       antebraco: R.membroRoupa({ cor: [104, 72, 60] }),
       pelve: R.panoCor([104, 72, 60], 65),
       saia: { cor: [96, 66, 54], comp: 0.86 },
+      coxa: R.membroRoupa({ cor: [70, 52, 44] }),
+      canela: R.membroRoupa({ cor: [70, 52, 44] }),
       pe: R.panoCor([52, 38, 28], 63),
       bebe: true,
     }),
@@ -68,6 +70,8 @@ export const figurinos = {
       antebraco: R.membroRoupa({ cor: [92, 92, 96], corte: 0.7, tom: TONS.palido }),
       pelve: R.panoCor([84, 84, 88], 69),
       saia: { cor: [84, 84, 88], comp: 0.88 },
+      coxa: R.membroRoupa({ cor: [60, 58, 60] }),
+      canela: R.membroRoupa({ cor: [60, 58, 60] }),
       mao: { D: 'bengala' },
       maos: R.peleQueimada(TONS.palido),
     }),
@@ -184,3 +188,63 @@ figurinos.aldeao = (semente = 1) => {
     canela: R.membroRoupa({ cor: calca, corte: 0.3, baixo: [60, 44, 30] }), pe: R.panoCor([52, 38, 28], 63),
   });
 };
+
+// ---------- flashback (vinte anos antes) ----------
+const OURO = [200, 158, 70];
+figurinos.damaso = (op = {}) =>
+  criarPersonagem({
+    pele: TONS.curtido,
+    forte: 1.08,
+    capaceteNovo: !op.semArmadura || op.capaceteNovo,
+    torso: op.semArmadura ? undefined : R.torsoRoupa({ tipo: 'armadura', cor: OURO }),
+    braco: op.semArmadura ? undefined : R.membroRoupa({ cor: OURO, metal: true }),
+    antebraco: op.semArmadura ? undefined : R.membroRoupa({ cor: OURO, metal: true }),
+    pelve: op.semArmadura ? undefined : R.membroRoupa({ cor: [180, 140, 64], metal: true }),
+    coxa: op.semArmadura ? undefined : R.membroRoupa({ cor: OURO, metal: true }),
+    canela: op.semArmadura ? undefined : R.membroRoupa({ cor: OURO, metal: true }),
+    pe: op.semArmadura ? undefined : R.metal([170, 134, 60], 81),
+    capa: op.semArmadura ? undefined : { cor: [214, 208, 196], comp: 1.2 },
+    mao: { D: op.espadaRuim ? 'espada' : 'espadaDourada' },
+  });
+
+figurinos.malvarJovem = () =>
+  criarPersonagem({
+    pele: TONS.claro,
+    forte: 1.05,
+    rosto: { idade: 'adulto', cabelo: 'curto', corCabelo: [54, 40, 32], barba: 'curta', corBarba: [60, 44, 34], olhos: [50, 60, 70], semente: 15 },
+    torso: R.torsoRoupa({ tipo: 'tunica', cor: [92, 26, 32], decote: 'redondo', tom: TONS.claro, corCinto: [180, 140, 60] }),
+    braco: R.membroRoupa({ cor: [92, 26, 32] }),
+    antebraco: R.membroRoupa({ cor: [92, 26, 32] }),
+    pelve: R.panoCor([40, 32, 30], 85),
+    coxa: R.membroRoupa({ cor: [40, 32, 30] }),
+    canela: R.membroRoupa({ cor: [40, 32, 30], corte: 0.2, baixo: [50, 36, 26] }),
+    pe: R.panoCor([44, 32, 24], 63),
+    capa: { cor: [120, 30, 36], comp: 1.3 },
+  });
+
+figurinos.branaJovem = () =>
+  criarPersonagem({
+    pele: TONS.claro,
+    feminino: true,
+    forte: 0.9,
+    rosto: { idade: 'adulto', feminino: true, cabelo: 'longo', corCabelo: [60, 40, 28], olhos: [70, 80, 90], semente: 13 },
+    torso: R.torsoRoupa({ tipo: 'vestido', cor: [120, 112, 100], decote: 'redondo', tom: TONS.claro }),
+    braco: R.membroRoupa({ cor: [120, 112, 100] }),
+    antebraco: R.membroRoupa({ cor: [120, 112, 100], corte: 0.45, tom: TONS.claro }),
+    pelve: R.panoCor([110, 102, 92], 87),
+    saia: { cor: [110, 102, 92], comp: 0.86 },
+    maos: R.peleQueimada(TONS.claro, 143),
+  });
+
+// ---------- o rosto (Capítulo VI) ----------
+// Dâmaso sem o capacete: um homem cansado, de barba grisalha. Com camisa, no fim.
+figurinos.damasoRosto = (op = {}) =>
+  criarPersonagem({
+    pele: TONS.curtido,
+    forte: 1.08,
+    rosto: { idade: 'velho', cabelo: 'longo', corCabelo: [92, 86, 80], barba: 'cheia', corBarba: [132, 126, 118], olhos: [60, 70, 80], semente: 29 },
+    torso: op.camisa ? R.torsoRoupa({ tipo: 'camisa', cor: [196, 186, 160], decote: 'v', tom: TONS.curtido }) : undefined,
+    braco: op.camisa ? R.membroRoupa({ cor: [196, 186, 160] }) : undefined,
+    antebraco: op.camisa ? R.membroRoupa({ cor: [196, 186, 160], corte: 0.45, tom: TONS.curtido }) : undefined,
+    espada: !op.espadaNasCostas,
+  });

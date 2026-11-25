@@ -8,10 +8,16 @@ import { LAYOUT } from '../../cenarios/estrada.js';
 export const cenarios = {
   estrada: () => import('../../cenarios/estrada.js'),
   pedralva: () => import('../../cenarios/pedralva.js'),
+  castelo: () => import('../../cenarios/castelo.js'),
+  brumal: () => import('../../cenarios/brumal.js'),
 };
 
 import { S, cam, L, balanco, somar, sairDe } from './util.js';
 import { planos2 } from './cap2.js';
+import { planos3 } from './cap3.js';
+import { planos4 } from './cap4.js';
+import { planos5 } from './cap5.js';
+import { planos6 } from './cap6.js';
 
 // caminho do Enferrujado na estrada (x segue a curva)
 const xHeroi = (c, z) => 0.3 + c.curva(z) * 0.9;
@@ -570,7 +576,7 @@ const planos01 = [
   },
 ];
 
-export const planos = [...planos01, ...planos2];
+export const planos = [...planos01, ...planos2, ...planos3, ...planos4, ...planos5, ...planos6];
 
 // depois que o tronco foi empurrado para fora da estrada
 function fimDoTronco(c) {
@@ -578,3 +584,23 @@ function fimDoTronco(c) {
   c.tronco.rotation.y = 0.98;
   c.estado.tochaPos = c.mundo(c.cena, [2.3, 0.12, -5.4]);
 }
+
+// Texto de publicação no YouTube (usado por ferramentas/youtube.mjs).
+export const publicacao = {
+  titulo: 'O Cavaleiro Que Não Usava Armadura',
+  alternativos: ['Ele Riscava Uma Marca Para Cada Vida Salva', 'O Homem Que Não Podia Morrer', '312'],
+  descricao: `Nas estradas do Vale de Pedralva anda um homem que não usa armadura. Só uma cueca de linho, um capacete enferrujado e uma espada que um dia já foi bonita. No metal do capacete há centenas de riscos, e ninguém sabe o que eles contam.
+
+Uma história original sobre culpa, perdão e o peso de uma promessa. Dê o play, apague a luz e escute até o fim.`,
+  capitulos: {
+    0: 'Abertura',
+    1: 'Capítulo I · A Estrada',
+    2: 'Capítulo II · Pedralva',
+    3: 'Capítulo III · Brumal',
+    4: 'Capítulo IV · O Aviso',
+    5: 'Capítulo V · A Noite do Fogo',
+    6: 'Capítulo VI · O Rosto',
+  },
+  rodape: 'Se essa história te tocou, deixe nos comentários: você teria perdoado?',
+  tags: ['história medieval', 'história narrada', 'cavaleiro', 'conto', 'história com final emocionante', 'ps1', 'gráfico de ps1', 'retrô', 'história de redenção', 'animação low poly', 'contos medievais', 'histórias para ouvir'],
+};

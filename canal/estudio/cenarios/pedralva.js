@@ -5,7 +5,7 @@ import * as O from '../motor/objetos.js';
 import * as A from '../motor/aldeia.js';
 import * as T from '../motor/texturas.js';
 import { material, luzes, ruido1, lerp } from '../motor/ps1.js';
-import { parado, poseBase } from '../motor/personagem.js';
+import { parado, poseBase, aplicar, POSES } from '../motor/personagem.js';
 import { figurinos } from '../filmes/cavaleiro/elenco3d.js';
 import { cavalo, cavaloAndar } from '../motor/animais.js';
 export { cavaloAndar };
@@ -16,9 +16,11 @@ export const CLIMAS = {
   dia: { nevoa: [0x9aa2a8, 16, 95], ceu: [0x6c88a8, 0xc0c8cc], amb: [0xa0a8b4, 0x464036], dir: [[0.4, -0.75, -0.5], 0xfff0d8, 0.6], janelas: 0, fumaca: 0x9a9a9a },
   entardecer: { nevoa: [0xa88470, 12, 80], ceu: [0x50607e, 0xf0a070], amb: [0x8a7488, 0x3a2a24], dir: [[0.85, -0.28, -0.45], 0xffb070, 1.0], janelas: 0.3, fumaca: 0xb09080 },
   anoitecer: { nevoa: [0x3c3e52, 6, 50], ceu: [0x22283e, 0x7a5a6a], amb: [0x505870, 0x16161c], dir: [[0.6, -0.3, -0.6], 0x9a80a0, 0.25], janelas: 1, fumaca: 0x504a54 },
-  noite: { nevoa: [0x161c28, 4, 36], ceu: [0x0c1018, 0x1a2230], amb: [0x2c3a52, 0x0b0d12], dir: [[0.25, -0.55, 0.8], 0x7286b4, 0.45], janelas: 1, fumaca: 0x303440 },
+  noite: { nevoa: [0x182030, 5, 40], ceu: [0x0c1018, 0x1c2434], amb: [0x384a68, 0x101218], dir: [[0.25, -0.55, 0.8], 0x8094c0, 0.6], janelas: 1, fumaca: 0x303440 },
   cinzaVento: { nevoa: [0x6c727a, 8, 60], ceu: [0x50565e, 0x7a8088], amb: [0x8a929c, 0x2a2a2c], dir: [[0.3, -0.8, -0.3], 0xc8ccd0, 0.25], janelas: 0.2, fumaca: 0x6a6a6a },
-  noiteChuva: { nevoa: [0x0e121a, 3, 28], ceu: [0x06080c, 0x10141c], amb: [0x222c3c, 0x08090c], dir: [[0.2, -0.6, 0.7], 0x5a6a8a, 0.3], janelas: 1, fumaca: 0x202428 },
+  noiteChuva: { nevoa: [0x141a24, 4, 32], ceu: [0x080a10, 0x161c28], amb: [0x2e3a50, 0x0c0d12], dir: [[0.2, -0.6, 0.7], 0x6a7a9a, 0.35], janelas: 1, fumaca: 0x202428 },
+  nascente: { nevoa: [0xe8c0a0, 16, 100], ceu: [0x78a4d8, 0xffd4a0], amb: [0xdcc4b8, 0x5a4a40], dir: [[0.05, -0.3, -0.95], 0xffe0b0, 1.1], janelas: 0, fumaca: 0xe0c8c0 },
+  madrugada: { nevoa: [0x4c4a5c, 6, 55], ceu: [0x2a3050, 0x9a7a8a], amb: [0x6a7080, 0x1a1a20], dir: [[0.1, -0.3, 0.95], 0xc0a0b0, 0.4], janelas: 0.6, fumaca: 0x504a54 },
   amanhecerRosa: { nevoa: [0xc09aa0, 10, 70], ceu: [0x6a78a0, 0xf4b0a0], amb: [0xb09aa8, 0x3a3034], dir: [[0.1, -0.3, 0.95], 0xffc8a0, 0.9], janelas: 0.1, fumaca: 0xc0a8a8 },
   manhaClara: { nevoa: [0xb8c4cc, 20, 110], ceu: [0x5a88c0, 0xd8e0e4], amb: [0xb0bcc8, 0x50483c], dir: [[0.3, -0.7, -0.5], 0xfff4e0, 0.75], janelas: 0, fumaca: 0xb0b0b0 },
 };
@@ -125,7 +127,7 @@ export default function pedralva({ camera }) {
   pos(A.poco(), 2.5, -16.5);
   const mesa = pos(A.mesa(), ...LUGAR.mesa, 0.3);
   pos(A.banco(), LUGAR.mesa[0] - 0.1, LUGAR.mesa[1] + 0.75, 0.3);
-  for (const [x, z] of [[-5.2, -9], [-5.6, -9.6], [5.2, -10.4], [-4.8, -19], [4.5, -23], [9.5, -9.5]]) pos(A.barril(), x, z, alea() * 3);
+  for (const [x, z] of [[-5.2, -9], [-4.9, -9.7], [5.2, -10.4], [-4.8, -19], [4.5, -23], [9.5, -9.5], [-1.35, -6.25]]) pos(A.barril(), x, z, alea() * 3);
   for (const [x, z] of [[-13.5, -3.8], [-9.5, -2.8], [-14, -9.5]]) pos(A.monteFeno(0.9 + alea() * 0.3), x, z, alea() * 3);
   for (const [x, z] of [[-12, -2.6], [-9.8, -10.2]]) pos(A.fardo(), x, z, alea() * 3);
   const galinhas = [];
@@ -170,6 +172,120 @@ export default function pedralva({ camera }) {
   vela.add(chamaVela.grupo);
   cena.add(vela);
 
+  // soldados do barão a cavalo
+  const cavaleiros = Array.from({ length: 5 }, (_, i) => {
+    const cv = cavalo({ cor: [[70, 50, 36], [96, 70, 48], [40, 34, 30], [110, 84, 58], [60, 44, 34]][i], crina: [30, 24, 20] });
+    const sela = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.12, 0.6), material({ cor: 0x3a2a20 }));
+    sela.position.set(0, 0.36, 0.05);
+    cv.j.corpo.add(sela);
+    const s = figurinos.soldado({ semente: 90 + i, arma: 'lanca', barba: i % 2 ? 'cheia' : 'curta' });
+    cv.j.corpo.add(s.raiz);
+    s.raiz.position.set(0, -0.28, 0.05);
+    cena.add(cv.raiz);
+    return { cavalo: cv, soldado: s };
+  });
+  // fogueira da praça
+  const fogueira = new THREE.Group();
+  const mLenha = material({ mapa: T.casca(), repete: [1, 1] });
+  for (let i = 0; i < 4; i++) {
+    const l = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 1.1, 5).rotateZ(Math.PI / 2), mLenha);
+    l.rotation.y = (i * Math.PI) / 4;
+    l.position.y = 0.12;
+    fogueira.add(l);
+  }
+  const fogoFogueira = O.fogo(0.7, 0xff8a30);
+  fogoFogueira.grupo.position.y = 0.45;
+  fogueira.add(fogoFogueira.grupo);
+  fogueira.position.set(-1, 0, -14.5);
+  cena.add(fogueira);
+  // barricada de carroças na saída da ponte
+  const barricada = [0, 1].map((i) => {
+    const cr = O.carroca(alea, {});
+    cr.grupo.position.set(i ? 1.3 : -1.1, 0, -7.0 - i * 0.4);
+    cr.grupo.rotation.y = Math.PI / 2 + (i ? 0.2 : -0.15);
+    cr.grupo.traverse((o) => { if (o.material?.uniforms?.uEmissivo && o.parent === cr.lanterna.grupo) o.visible = false; });
+    cr.lanterna.grupo.visible = false;
+    cena.add(cr.grupo);
+    return cr.grupo;
+  });
+  const balde = () => {
+    const b = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.1, 0.24, 7).translate(0, -0.14, 0), material({ mapa: T.madeira(73, [100, 76, 52]), repete: [2, 1] }));
+    return b;
+  };
+  const baldes = Array.from({ length: 4 }, balde);
+
+  // chuva: riscos de 1 pixel caindo em volta da câmera
+  const N_CHUVA = 900;
+  const geoChuva = new THREE.BufferGeometry();
+  const posChuva = new Float32Array(N_CHUVA * 6);
+  geoChuva.setAttribute('position', new THREE.BufferAttribute(posChuva, 3));
+  const chuva = new THREE.LineSegments(geoChuva, new THREE.LineBasicMaterial({ color: 0x9aa8c0, transparent: true, opacity: 0.4, fog: false }));
+  chuva.frustumCulled = false;
+  cena.add(chuva);
+  const semChuva = Array.from({ length: N_CHUVA }, () => [alea() * 16 - 8, alea() * 10, alea() * 16 - 8, 0.8 + alea() * 0.4]);
+  // fila de tochas descendo o vale (a serpente de fogo)
+  const serpente = Array.from({ length: 26 }, (_, i) => {
+    const f = O.fogo(0.18 + (i % 3) * 0.03);
+    cena.add(f.grupo);
+    return f;
+  });
+  // o exército na outra margem
+  const exercito = Array.from({ length: 18 }, (_, i) => {
+    const s = figurinos.soldado({ semente: 120 + i, arma: i % 3 === 0 ? 'tocha' : 'lanca', barba: i % 2 ? 'curta' : 'cheia' });
+    cena.add(s.raiz);
+    return s;
+  });
+  const fogosExercito = exercito.map((s) => (s.tocha ? O.fogo(0.13) : null));
+  fogosExercito.forEach((f) => f && cena.add(f.grupo));
+  // o barão e seu cavalo negro
+  const malvar = figurinos.malvar();
+  cena.add(malvar.raiz);
+  const cavaloBarao = cavalo({ cor: [36, 30, 28], crina: [20, 18, 16] });
+  const selaB = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.12, 0.6), material({ cor: 0x5a1a1e }));
+  selaB.position.set(0, 0.36, 0.05);
+  cavaloBarao.j.corpo.add(selaB);
+  cena.add(cavaloBarao.raiz);
+  // lanças e flechas que ficam cravadas nele; ponta quebrada da espada do barão
+  const lancasCravadas = [0, 1].map(() => {
+    const g = new THREE.Group();
+    g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 1.3, 5).translate(0, 0.65, 0), material({ mapa: T.madeira(97, [86, 62, 40]) })));
+    return g;
+  });
+  const flechasCravadas = [0, 1, 2].map(() => {
+    const g = new THREE.Group();
+    g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.5, 4).translate(0, 0.25, 0), material({ cor: 0x8a6a48 })));
+    g.add(new THREE.Mesh(new THREE.PlaneGeometry(0.035, 0.1).translate(0, 0.44, 0), material({ cor: 0xd8d0c0, duplo: true })));
+    return g;
+  });
+  const pontaQuebrada = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.028, 0.42, 4).rotateY(Math.PI / 4).scale(1, 1, 0.32), material({ cor: 0xb8bcc4, brilhoProprio: 0.1 }));
+  cena.add(pontaQuebrada);
+  const respingo = O.halo(0xc8d8e0, 1.6, 0.7);
+  cena.add(respingo);
+
+  // Capítulo VI: o rosto, o capacete avulso, o corte na mão, a atadura
+  const rosto = figurinos.damasoRosto();
+  const final = figurinos.damasoRosto({ camisa: true, espadaNasCostas: true });
+  const espadaCostas = figurinos.enferrujado().espada;
+  espadaCostas.removeFromParent();
+  final.j.tronco.add(espadaCostas);
+  espadaCostas.position.set(0.05, 0.3, -0.17);
+  espadaCostas.rotation.set(0, 0, 2.5);
+  cena.add(rosto.raiz, final.raiz);
+  const elmo = figurinos.enferrujado({ marcas: 299 }).capacete;
+  elmo.removeFromParent();
+  cena.add(elmo);
+  const corte = new THREE.Mesh(new THREE.PlaneGeometry(0.05, 0.012), material({ cor: 0x7a1010, duplo: true }));
+  cena.add(corte);
+  const gota = O.halo(0xa01818, 0.05, 1);
+  gota.material.blending = THREE.NormalBlending;
+  cena.add(gota);
+  const atadura = new THREE.Mesh(new THREE.BoxGeometry(0.085, 0.07, 0.055), material({ mapa: T.pano([210, 200, 180], 157) }));
+  cena.add(atadura);
+  const prego = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.06), material({ cor: 0x2a2624 }));
+  cena.add(prego);
+  const barrilPonte = A.barril();
+  cena.add(barrilPonte);
+
   // personagens
   const heroi = figurinos.enferrujado({ marcas: 299 });
   const lia = figurinos.lia();
@@ -188,9 +304,9 @@ export default function pedralva({ camera }) {
 
   const atores = { heroi, lia, brana, tome, dalia };
   const c = {
-    cena, altura, ceu, casas, carroca, cavalo: cav, pao, vela, chamaVela, casaBrana, celeiro, moinho, mesa, ponte, rio, pedraCarga, pedrasSoltas, galinhas, aldeoes, postos,
+    cena, altura, ceu, casas, carroca, rosto, final, elmo, corte, gota, atadura, prego, barrilPonte, chuva, serpente, exercito, fogosExercito, malvar, cavaloBarao, lancasCravadas, flechasCravadas, pontaQuebrada, respingo, cavaleiros, fogueira, fogoFogueira, barricada, baldes, cavalo: cav, pao, vela, chamaVela, casaBrana, celeiro, moinho, mesa, ponte, rio, pedraCarga, pedrasSoltas, galinhas, aldeoes, postos,
     atores, ...atores,
-    vozes: { lia, brana, tome },
+    vozes: { lia, brana, tome, aldeao: aldeoes[0], soldado: cavaleiros[0].soldado, malvar, enferrujado: rosto },
     estado: {},
   };
   c.pos = (ator, x, z, rotY) => {
@@ -218,6 +334,29 @@ export default function pedralva({ camera }) {
     aldeoes.forEach((a) => (a.raiz.visible = comAldeoes));
   };
 
+  // soldado montado: posição/rotação do cavalo, passo e pose de cavaleiro
+  c.cavaleiro = (i, x, z, rotY, t, vel = 0, fase = 0) => {
+    const k = cavaleiros[i];
+    k.cavalo.raiz.visible = true;
+    k.cavalo.raiz.position.set(x, Math.abs(z) < 5.2 && Math.abs(x) < 1.5 ? 0.48 : 0, z);
+    k.cavalo.raiz.rotation.set(0, rotY, 0);
+    cavaloAndar(k.cavalo, fase, vel, t + i);
+    parado(k.soldado, t + i);
+    aplicar(k.soldado, POSES.montado);
+    return k;
+  };
+
+  // a fila de tochas descendo a estrada do vale: k de 0 (longe) a 1 (chegando à ponte)
+  c.serpentePos = (k, t) => {
+    serpente.forEach((f, i) => {
+      const z = 60 - k * 46 + i * 1.7 + Math.sin(t * 2 + i) * 0.1;
+      const x = Math.sin(z * 0.05) * 3 * Math.min(1, (z - 5) / 20) + (i % 2 ? 0.7 : -0.7);
+      f.grupo.visible = z > 6.5;
+      f.grupo.position.set(x, 1.7 + Math.sin(t * 5 + i * 1.3) * 0.04, z);
+    });
+  };
+  c.relampago = (t, momentos) => momentos.reduce((v, m) => Math.max(v, t >= m && t < m + 0.5 ? (t < m + 0.08 ? 1 : t < m + 0.16 ? 0.3 : t < m + 0.22 ? 0.85 : Math.max(0, 1 - (t - m - 0.22) * 4)) : 0), 0);
+
   c.preparar = (t) => {
     const e = c.estado;
     e.clima = 'dia';
@@ -225,6 +364,33 @@ export default function pedralva({ camera }) {
     e.vento = 0.6;
     c.mostrar('aldeoes');
     pedraCarga.visible = false;
+    for (const o of [rosto.raiz, final.raiz, elmo, corte, gota, atadura, prego, barrilPonte]) o.visible = false;
+    if (elmo.parent !== cena) cena.add(elmo);
+    if (corte.parent !== cena) cena.add(corte);
+    if (atadura.parent !== cena) cena.add(atadura);
+    elmo.rotation.set(0, 0, 0);
+    elmo.scale.setScalar(1);
+    rosto.raiz.rotation.set(0, 0, 0);
+    parado(rosto, t);
+    final.raiz.rotation.set(0, 0, 0);
+    parado(final, t);
+    c.vozes.soldado = cavaleiros[0].soldado;
+    e.chuva = 0;
+    e.relampago = 0;
+    chuva.visible = false;
+    serpente.forEach((f) => (f.grupo.visible = false));
+    exercito.forEach((s) => { s.raiz.visible = false; s.raiz.rotation.set(0, 0, 0); parado(s, t + s.raiz.id); });
+    malvar.raiz.visible = false;
+    malvar.espada.userData.lamina.forEach((m) => (m.visible = true));
+    cavaloBarao.raiz.visible = false;
+    if (malvar.raiz.parent !== cena) cena.add(malvar.raiz);
+    for (const o of [...lancasCravadas, ...flechasCravadas]) { o.visible = false; if (o.parent) o.parent.remove(o); }
+    pontaQuebrada.visible = false;
+    respingo.visible = false;
+    cavaleiros.forEach((k) => (k.cavalo.raiz.visible = false));
+    fogueira.visible = false;
+    barricada.forEach((b) => (b.visible = false));
+    baldes.forEach((b) => { b.visible = false; if (b.parent) b.parent.remove(b); });
     pao.visible = false;
     vela.visible = false;
     carroca.grupo.visible = false;
@@ -257,9 +423,11 @@ export default function pedralva({ camera }) {
     chamines.forEach((f, i) => f.atualizar(t + i * 1.3, c.estado.vento ?? 0.6));
     galinhas.forEach((g) => g.userData.atualizar(t));
     chamaVela.atualizar(t, 5);
+    fogoFogueira.atualizar(t, 11);
   };
 
-  const tmp = new THREE.Color();
+  cena.updateMatrixWorld(true);
+  const janelasMundo = casas.flatMap((casa) => (casa.userData.janelasPos ?? []).map((v) => casa.localToWorld(v.clone())));
   c.luz = (t) => {
     const e = c.estado;
     const k = CLIMAS[e.clima] ?? CLIMAS.dia;
@@ -271,7 +439,50 @@ export default function pedralva({ camera }) {
     lua.visible = e.clima === 'noite';
     for (const casa of casas) for (const mj of casa.userData.janelas) mj.uniforms.uEmissivo.value.set(0xffa040).multiplyScalar(k.janelas * (0.8 + 0.2 * ruido1(t * 3 + casa.id)));
     chamines.forEach((f) => f.grupo.children.forEach((s) => s.material.color.set(k.fumaca)));
-    luzes.pontos((e.luzes ?? []).map((l) => ({ ...l, intensidade: l.intensidade * (l.tremula ? 1 + (ruido1(t * 6, l.tremula) - 0.5) * 0.35 : 1) })));
+    const pts = (e.luzes ?? []).map((l) => ({ ...l, intensidade: l.intensidade * (l.tremula ? 1 + (ruido1(t * 6, l.tremula) - 0.5) * 0.35 : 1) }));
+    // janelas acesas iluminam a rua (as mais próximas da câmera)
+    if (k.janelas > 0.5) {
+      janelasMundo
+        .map((p) => ({ p, d: p.distanceTo(camera.position) }))
+        .sort((a, b) => a.d - b.d)
+        .slice(0, 8 - pts.length > 3 ? 3 : Math.max(0, 8 - pts.length))
+        .forEach(({ p }, i) => pts.push({ pos: p, cor: 0xffa050, intensidade: 0.9 * k.janelas * (0.9 + 0.1 * ruido1(t * 2 + i)), alcance: 5 }));
+    }
+    // chuva e relâmpagos
+    if (e.chuva > 0) {
+      chuva.visible = true;
+      chuva.material.opacity = 0.4 * e.chuva;
+      const cp = camera.position;
+      for (let i = 0; i < N_CHUVA; i++) {
+        const [x, y0, z, v] = semChuva[i];
+        const y = ((((y0 - t * 9 * v) % 10) + 10) % 10) - 4 + cp.y;
+        const px = cp.x + x + y * 0.08, pz = cp.z + z;
+        posChuva.set([px, y, pz, px + 0.03, y + 0.38, pz], i * 6);
+      }
+      geoChuva.attributes.position.needsUpdate = true;
+    }
+    if (e.relampago > 0) {
+      luzes.ambiente(new THREE.Color(k.amb[0]).lerp(new THREE.Color(0xd8e0ff), e.relampago * 0.8).getHex(), k.amb[1]);
+      luzes.nevoa(new THREE.Color(k.nevoa[0]).lerp(new THREE.Color(0x8890a8), e.relampago * 0.7).getHex(), k.nevoa[1], k.nevoa[2]);
+      ceu.userData.cores(new THREE.Color(k.ceu[0]).lerp(new THREE.Color(0xb0b8d8), e.relampago).getHex(), new THREE.Color(k.ceu[1]).lerp(new THREE.Color(0xc8d0e8), e.relampago).getHex());
+    }
+    // tochas do exército
+    exercito.forEach((s, i) => {
+      const f = fogosExercito[i];
+      if (!f) return;
+      f.grupo.visible = s.raiz.visible;
+      if (!s.raiz.visible) return;
+      f.grupo.position.copy(c.mundo(s.tocha, [0, 0.55, 0]));
+      f.atualizar(t, i);
+    });
+    exercito
+      .filter((s, i) => s.raiz.visible && fogosExercito[i])
+      .map((s) => fogosExercito[exercito.indexOf(s)].grupo.position)
+      .sort((a, b) => a.distanceTo(camera.position) - b.distanceTo(camera.position))
+      .slice(0, Math.max(0, 8 - pts.length))
+      .forEach((p) => pts.push({ pos: p, cor: 0xff9040, intensidade: 1.1, alcance: 6.5 }));
+    serpente.forEach((f, i) => f.grupo.visible && f.atualizar(t, i));
+    luzes.pontos(pts);
   };
 
   return c;

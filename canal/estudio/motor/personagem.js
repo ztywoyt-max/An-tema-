@@ -162,8 +162,8 @@ export function bebe() {
 // ---------------- cabeça ----------------
 
 function cabecaCapacete(j, op) {
-  const mElmo = material({ mapa: T.capacete(op.marcas ?? 299) });
-  const mTopo = material({ mapa: T.ferrugem(71, 'topo-elmo') });
+  const mElmo = material({ mapa: op.capaceteNovo ? T.capaceteNovo() : T.capacete(op.marcas ?? 299), brilhoProprio: op.capaceteNovo ? 0.06 : 0 });
+  const mTopo = op.capaceteNovo ? material({ mapa: R.metal([200, 160, 76], 79), brilhoProprio: 0.06 }) : material({ mapa: T.ferrugem(71, 'topo-elmo') });
   const g = new THREE.CylinderGeometry(0.142, 0.152, 0.33, 8, 2);
   g.rotateY(Math.PI);
   g.translate(0, 0.105, 0);
@@ -481,6 +481,13 @@ export const POSES = {
   martelarBaixo: { ombroD: [-0.9, 0, 0.1], cotoveloD: [-0.2, 0, 0], ombroE: [-0.9, 0, -0.1], cotoveloE: [-0.2, 0, 0], tronco: [0.45, 0, 0], joelhoE: [0.3, 0, 0], joelhoD: [0.3, 0, 0], altura: -0.08 },
   recusar: { cabeca: [0, 0, 0] },
   oferecer: { ombroD: [-1.2, 0, 0.1], cotoveloD: [-0.4, 0, 0] },
+  montado: { pernaE: [-1.25, 0, 0.55], joelhoE: [1.1, 0, 0], pernaD: [-1.25, 0, -0.55], joelhoD: [1.1, 0, 0], ombroE: [-0.5, 0, -0.1], cotoveloE: [-0.8, 0, 0], ombroD: [-0.4, 0, 0.15], cotoveloD: [-0.6, 0, 0], altura: -0.3 },
+  arremessar: { ombroD: [-2.9, 0, -0.2], cotoveloD: [-0.6, 0, 0], tronco: [-0.15, 0.3, 0] },
+  arremessarFim: { ombroD: [-1.0, 0, 0.2], cotoveloD: [-0.1, 0, 0], tronco: [0.3, -0.3, 0] },
+  segurarFilho: { ombroE: [-0.7, 0, -0.35], cotoveloE: [-1.2, -0.3, 0], ombroD: [-0.7, 0, 0.35], cotoveloD: [-1.2, 0.3, 0] },
+  abracarJoelhos: { pernaE: [-1.9, 0, 0.1], joelhoE: [2.2, 0, 0], pernaD: [-1.9, 0, -0.1], joelhoD: [2.2, 0, 0], tornozeloE: [-0.3, 0, 0], tornozeloD: [-0.3, 0, 0], altura: -0.84, tronco: [0.3, 0, 0], ombroE: [-0.95, 0, -0.25], cotoveloE: [-0.95, 0, 0], ombroD: [-0.95, 0, 0.25], cotoveloD: [-0.95, 0, 0] },
+  darDeOmbros: { ombroE: [0, 0, -0.25], ombroD: [0, 0, 0.25], cotoveloE: [-0.6, 0, 0], cotoveloD: [-0.6, 0, 0], cabeca: [0, 0, 0.15] },
+  agachar: { pernaE: [-1.3, 0, 0], joelhoE: [1.9, 0, 0], pernaD: [-0.6, 0, 0], joelhoD: [1.9, 0, 0], altura: -0.48, tronco: [0.4, 0, 0], ombroD: [-0.9, 0, 0.1] },
   bengala: { ombroD: [-0.25, 0, 0.12], cotoveloD: [-0.5, 0, 0], tronco: [0.2, 0, 0], cabeca: [-0.15, 0, 0] },
 };
 

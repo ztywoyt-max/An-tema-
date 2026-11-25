@@ -208,6 +208,27 @@ export function ferrugem(semente = 11, nome = 'ferrugem') {
  * Capacete fechado (elmo) enferrujado com a fenda dos olhos e os riscos da contagem.
  * Frente em u=0.5. marcas = quantos riscos.
  */
+/** O mesmo elmo, vinte anos antes: aço polido com frisos dourados, sem ferrugem e sem riscos. */
+export function capaceteNovo(semente = 17) {
+  const r = fazerRuido(semente);
+  return textura(`capacete-novo-${semente}`, 256, 128, (px, ler, w, h) => {
+    const meio = w / 2, e = 2;
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        let c = mul([178, 180, 186], 0.86 + fbm(r, x / 20, y / 6, 13, 2) * 0.22);
+        if (y < 3 * e || (y > h * 0.27 && y < h * 0.27 + 2 * e) || y > h - 5 * e) c = [210, 170, 80]; // frisos de ouro
+        if (Math.abs(x - meio) <= e) c = [222, 182, 90];
+        px(x, y, c);
+      }
+    const fy0 = Math.round(h * 0.36), fy1 = fy0 + 3 * e;
+    for (let y = fy0; y <= fy1; y++)
+      for (let x = Math.round(w * 0.34); x <= Math.round(w * 0.66); x++) if (Math.abs(x - meio) > e) px(x, y, y === fy0 || y === fy1 ? [40, 34, 28] : [8, 6, 6]);
+    for (let i = 0; i < 4; i++)
+      for (let j = 0; j < 3; j++)
+        for (let a = 0; a < e; a++) for (let b = 0; b < e; b++) px(w * 0.56 + i * 3 * e + a, h * 0.6 + j * 4 * e + b, [14, 10, 8]);
+  });
+}
+
 export function capacete(marcas = 299, semente = 13) {
   const r = fazerRuido(semente);
   const alea = aleatorio(semente);

@@ -54,12 +54,11 @@ export const planos2 = [
     atualizar(c, P, { camera }) {
       c.estado.clima = 'manhaNublada';
       c.mostrar('heroi', 'tome', 'dalia', 'aldeoes');
-      const z = lerp(26, 10, P.k);
+      const z = lerp(17, 7.5, P.k);
       carroChegando(c, z, 1, P.t);
-      caminhar(c.heroi, [0.2, z + 3.2], [0.2, z + 3.1], 0);
       c.pos(c.heroi, 0.2, z + 3.4, Math.PI);
       andar(c.heroi, ((26 - z) / 1.44) * Math.PI * 2, { peso: 0.7, bracoD: 0.3 });
-      cam(camera, somar(L([10, 3.6, 17], [8, 3.0, 13.5], S(0, 1, P.k)), balanco(P.t, 0.03)), [-1, 1.2, -9], 50);
+      cam(camera, somar(L([15, 4.8, 23], [13, 4.2, 20], S(0, 1, P.k)), balanco(P.t, 0.03)), [-2, 0.6, -6], 50);
     },
   },
   {
@@ -68,7 +67,7 @@ export const planos2 = [
       c.estado.clima = 'manhaNublada';
       c.mostrar('aldeoes');
       olharTodos(c, 0, 0, S(0.4, 1.8, P.t));
-      cam(camera, [-4.5, 1.65, -19.5], [0.5, 1.3, -11], 46);
+      cam(camera, [-2.6, 1.9, -20.2], [0.5, 1.2, -11], 46);
     },
   },
   {
@@ -80,7 +79,7 @@ export const planos2 = [
       caminhar(c.heroi, [0.3, -5.6], [0.3, -11.5], P.k, { peso: 0.7, bracoD: 0.3 });
       const hz = c.heroi.raiz.position.z;
       olharTodos(c, 0.3, hz, 1);
-      cam(camera, [-2.4, 1.45, -13.4], [0.3, 1.5, hz], 44);
+      cam(camera, [-3.4, 1.5, -13.0], [0.3, 1.5, hz], 44);
     },
   },
   {
@@ -148,13 +147,13 @@ export const planos2 = [
       c.pos(h, -13.1, -6.5, Math.PI / 2);
       parado(h, P.t * 0.5);
       aplicar(h, POSES.sentadoChao);
-      aplicar(h, { ombroD: [-0.5, 0, 0.3], cotoveloD: [-0.9, 0, 0], cabeca: [0.25, 0, 0] });
-      h.espada.rotation.x = 1.7;
+      aplicar(h, { cabeca: [0.25, 0, 0], ombroD: [-0.15, 0, 0.1] });
+      h.espada.rotation.x = Math.PI / 2;
       c.vela.visible = true;
       c.pos(c.vela, -12.4, -5.6);
       const pv = c.mundo(c.vela, [0, 0.22, 0]);
       c.estado.luzes = [{ pos: v3(pv), cor: 0xffa848, intensidade: 1.1, alcance: 3.6, tremula: 4 }];
-      cam(camera, L([-5.6, 1.35, -5.4], [-6.8, 1.25, -5.8], S(0, 1, P.k)), [-12.6, 0.7, -6.4], 44);
+      cam(camera, L([-8.9, 1.3, -5.7], [-9.7, 1.15, -6.0], S(0, 1, P.k)), [-12.8, 0.6, -6.4], 46);
     },
   },
   {
@@ -163,14 +162,13 @@ export const planos2 = [
       c.mostrar('heroi', 'lia', 'aldeoes');
       carregarPedra(c, (P.t / 6) % 1, P.t);
       const l = c.lia;
-      c.pos(l, 5.0, -10.9);
-      c.virarPara(l, 3.8, -7.2);
+      c.pos(l, -1.85, -6.65);
+      c.virarPara(l, 3.5, -7.4);
       parado(l, P.t);
       const espia = 0.5 + 0.5 * Math.sin(P.t * 0.9);
-      l.raiz.position.x = 5.0 - 0.18 * espia;
-      l.j.tronco.rotation.z = 0.35 * espia;
-      l.j.cabeca.rotation.z = -0.15 * espia;
-      cam(camera, [6.6, 0.95, -12.8], [3.8, 0.9, -8.0], 44);
+      l.j.tronco.rotation.z = -0.35 * espia;
+      l.j.cabeca.rotation.z = 0.15 * espia;
+      cam(camera, [-3.1, 1.05, -6.95], [3.0, 0.9, -7.4], 44);
     },
   },
   {
@@ -199,7 +197,8 @@ export const planos2 = [
       andar(c.lia, P.t * 9, { amplitude: 0.7, peso: 0 });
       c.lia.j.cabeca.rotation.x = -0.4;
       const cab = c.cabecaDe(c.lia, 0.05);
-      cam(camera, [cab.x + Math.cos(ang + 0.6) * 0.8, cab.y + 0.05, cab.z + Math.sin(ang + 0.6) * 0.8], v3(cab), 40);
+      const dx = h.x - cab.x, dz = h.z - cab.z, d = Math.hypot(dx, dz) || 1;
+      cam(camera, [cab.x + (dx / d) * 0.75 - (dz / d) * 0.35, cab.y + 0.12, cab.z + (dz / d) * 0.75 + (dx / d) * 0.35], [cab.x, cab.y - 0.02, cab.z], 40);
     },
   },
   {
@@ -238,7 +237,7 @@ export const planos2 = [
       h.maoD.add(c.pedraCarga);
       c.pedraCarga.visible = true;
       c.pedraCarga.position.set(0, -0.05, 0.08);
-      cam(camera, [-1.6, 1.25, -8.2], [-5.0, 1.0, -5.4], 46);
+      cam(camera, [-3.4, 1.2, -7.6], [-5.1, 0.95, -5.5], 48);
     },
   },
   dialogoCerca('2.4b', ['2.4.02'], 'heroi'),
@@ -253,7 +252,7 @@ export const planos2 = [
       c.pos(h, -5.0, -5.05, Math.PI);
       parado(h, P.t);
       const cab = c.cabecaDe(h, 0);
-      cam(camera, [cab.x + 0.7, 0.95, cab.z + 1.9], [cab.x, cab.y - 0.1, cab.z], 42);
+      cam(camera, [cab.x - 0.55, 0.95, cab.z - 1.9], [cab.x, cab.y - 0.1, cab.z], 42);
     },
   },
   {
@@ -266,7 +265,7 @@ export const planos2 = [
       c.lia.j.cabeca.rotation.x = -0.2;
       c.pos(c.heroi, -5.0, -5.05, Math.PI);
       parado(c.heroi, P.t);
-      cam(camera, L([-0.6, 1.5, -10.4], [-1.2, 1.4, -9.6], S(0, 1, P.k)), [-5.1, 1.0, -5.6], 46);
+      cam(camera, L([-2.2, 1.35, -3.0], [-2.7, 1.3, -3.4], S(0, 1, P.k)), [-5.1, 0.9, -5.9], 44);
     },
   },
   dialogoCerca('2.4f', ['2.4.06'], 'lia'),
@@ -275,7 +274,7 @@ export const planos2 = [
     id: '2.5a', cap: 2, cenario: 'pedralva', falas: ['2.5.01'], antes: 0.6, depois: 0.6, musica: 'tensao', ambiente: ['vento'],
     atualizar(c, P, { camera }) {
       c.estado.clima = 'anoitecer';
-      c.mostrar('heroi', 'brana', 'aldeoes');
+      c.mostrar('heroi', 'brana');
       const b = c.brana;
       c.pos(b, 5.2, -12.9);
       c.virarPara(b, -3, -8);
@@ -318,7 +317,7 @@ export const planos2 = [
     sons: () => [{ t: 2.6, som: 'pancada' }],
     atualizar(c, P, { camera }) {
       c.estado.clima = 'anoitecer';
-      c.mostrar('brana', 'aldeoes');
+      c.mostrar('brana');
       const b = c.brana;
       if (P.t < 1.0) {
         c.pos(b, 5.2, -12.9);
@@ -337,6 +336,7 @@ export const planos2 = [
       c.mostrar('lia', 'heroi');
       caminhar(c.lia, [-5.6, -10.4], [-8.25, -6.45], S(0, P.dur - 0.5, P.t), { amplitude: 0.8, peso: 0.5 });
       aplicar(c.lia, { tronco: [0.3, 0, 0] });
+      c.estado.luzes.push({ pos: [-8.3, 1.0, -6.55], cor: 0xffb060, intensidade: 0.9, alcance: 2.2, tremula: 2 });
       cam(camera, [-3.2, 2.3, -2.4], [-8.4, 0.8, -7.0], 46);
     },
   },
@@ -368,7 +368,7 @@ export const planos2 = [
       l.j.cabeca.rotation.y = 0.3;
       c.estado.luzes.push({ pos: [-8.5, 0.95, -6.55], cor: 0xffb060, intensidade: 1.0, alcance: 1.1, tremula: 2 });
       const cab = c.cabecaDe(l, 0.04);
-      cam(camera, [cab.x + 0.55, cab.y + 0.02, cab.z + 0.3], v3(cab), 34);
+      cam(camera, [cab.x - 0.12, cab.y + 0.03, cab.z + 0.62], [cab.x - 0.08, cab.y, cab.z], 34);
     },
   },
   {

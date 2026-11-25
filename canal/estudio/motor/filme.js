@@ -47,6 +47,9 @@ export async function montarFilme(ctx, mod, { cap, falas, duracoes }) {
     if (fi > 0) fade = Math.max(fade, 1 - suave(0, fi, tl));
     if (fo > 0) fade = Math.max(fade, suave(p.duracao - fo, p.duracao, tl));
     motor.efeitos.uFade.value = fade;
+    motor.efeitos.uFadeCor.value.set(p.fadeCor ?? 0x000000);
+    motor.efeitos.uSepia.value = typeof p.sepia === 'function' ? p.sepia(P) : p.sepia ?? 0;
+    motor.efeitos.uGrao.value = 0; // granulação desligada: ruído a cada quadro estraga a compressão do vídeo
 
     // interface: telas de título e caixas de diálogo
     H.limpar(hud);

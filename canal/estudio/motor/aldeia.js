@@ -46,8 +46,9 @@ function telhado(w, d, alt, m, beiral = 0.35) {
 export function casa(op = {}) {
   const { w = 5, d = 4, h = 2.6, altTelhado = 1.8, semente = 1 } = op;
   const g = new THREE.Group();
-  const mPar = material({ mapa: T.paredePedra(101 + (semente % 3)), repete: [w / 2.5, h / 2.5] });
-  const mParLado = material({ mapa: T.paredePedra(101 + (semente % 3)), repete: [d / 2.5, h / 2.5] });
+  const texPar = op.parede === 'palha' ? T.palha(103 + (semente % 2)) : op.parede === 'madeira' ? T.madeira(41 + (semente % 3), [104, 76, 52]) : T.paredePedra(101 + (semente % 3));
+  const mPar = material({ mapa: texPar, repete: [w / 2.5, h / 2.5] });
+  const mParLado = material({ mapa: texPar, repete: [d / 2.5, h / 2.5] });
   const mPalha = material({ mapa: T.palha(103 + (semente % 2)), repete: [w / 3, 1.5] });
   const mMad = material({ mapa: T.madeira(31 + (semente % 4), [86, 62, 42]) });
   // paredes
@@ -77,6 +78,7 @@ export function casa(op = {}) {
     g.add(caixa(1.3, 0.14, 0.12, mMad, porta.position.x, 1.95, d / 2 + 0.02));
   }
   const nj = op.janelas ?? 1;
+  const janelasPos = [];
   for (let i = 0; i < nj; i++) {
     const mJ = material({ cor: 0x1a120c, emissivo: 0x000000 });
     const x = (op.portaX ?? -w * 0.2) + 1.6 + i * 1.5;
@@ -86,8 +88,10 @@ export function casa(op = {}) {
     g.add(caixa(0.06, 0.62, 0.08, mMad, x, 1.55, d / 2 + 0.03));
     g.add(caixa(0.76, 0.06, 0.08, mMad, x, 1.88, d / 2 + 0.03), caixa(0.76, 0.06, 0.08, mMad, x, 1.22, d / 2 + 0.03));
     janelas.push(mJ);
+    janelasPos.push(new THREE.Vector3(x, 1.55, d / 2 + 0.45));
   }
   g.userData.janelas = janelas;
+  g.userData.janelasPos = janelasPos;
   if (op.chamine !== false) {
     const cx = w * 0.3;
     g.add(caixa(0.55, altTelhado + 1.1, 0.55, mParLado, cx, h + altTelhado * 0.5, -d * 0.12));
@@ -368,4 +372,35 @@ export function ceu() {
   malha.userData.seguir = (cam) => malha.position.copy(cam.position);
   malha.userData.cores(0x8090a0, 0xa0a8b0);
   return malha;
+}
+
+/** Estandarte: mastro com pano (cor) e um emblema simples. atualizar(t) balança o pano. */
+export function estandarte(cor = [112, 34, 38], alt = 3) {
+  const g = new THREE.Group();
+  g.add(caixa(0.05, alt, 0.05, material({ mapa: T.madeira(67, [80, 60, 40]) }), 0, alt / 2, 0));
+  const tex = T.textura(`estandarte-${cor}`, 32, 48, (px, ler, w, h) => {
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        let c = cor.map((v) => v * (0.85 + ((x + y) % 2) * 0.05));
+        const dx = x - w / 2, dy = y - h * 0.4;
+        if (Math.abs(dx) + Math.abs(dy) < 8 && Math.abs(dx) + Math.abs(dy) > 5) c = [210, 170, 80]; // losango dourado
+        if (y > h - 6 && (x % 6) < 3) c = c.map((v) => v * 0.6); // franja
+        px(x, y, c);
+      }
+  });
+  const geo = new THREE.PlaneGeometry(0.7, 1.0, 4, 1);
+  geo.translate(0.37, 0, 0);
+  const pano = new THREE.Mesh(geo, material({ mapa: tex, duplo: true }));
+  pano.position.y = alt - 0.55;
+  g.add(pano);
+  const base = geo.attributes.position.array.slice();
+  g.userData.atualizar = (t) => {
+    const p = geo.attributes.position;
+    for (let i = 0; i < p.count; i++) {
+      const x = base[i * 3];
+      p.setZ(i, Math.sin(t * 3 + x * 5) * 0.08 * x);
+    }
+    p.needsUpdate = true;
+  };
+  return g;
 }
