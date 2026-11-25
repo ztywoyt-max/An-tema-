@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Estúdio PS1</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; }
+  canvas { width: 100vw; height: 56.25vw; max-height: 100vh; max-width: 177.78vh; image-rendering: pixelated; }
+</style>
+<script type="importmap">{ "imports": { "three": "./node_modules/three/build/three.module.js" } }</script>
+</head>
+<body>
+<canvas id="tela"></canvas>
+<script type="module">
+import * as THREE from 'three';
+import { Motor, RES, luzes, global } from './motor/ps1.js';
+
+const fontes = [
+  new FontFace('Jacquard 12', 'url(./node_modules/@fontsource/jacquard-12/files/jacquard-12-latin-400-normal.woff2)'),
+  new FontFace('Pixelify Sans', 'url(./node_modules/@fontsource/pixelify-sans/files/pixelify-sans-latin-400-normal.woff2)'),
+];
+await Promise.all(fontes.map(async (f) => { await f.load(); document.fonts.add(f); }));
+
+const params = new URLSearchParams(location.search);
+const nome = params.get('cena') ?? 'cap1-estrada';
+const mod = await import(`./cenas/${nome}.js`);
+
+const motor = new Motor(document.getElementById('tela'));
+const cena = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, RES.w / RES.h, 0.1, 300);
+const roteiro = await mod.default({ THREE, motor, cena, camera, luzes, hud: motor.hudCtx });
+
+function quadro(t) {
+  global.uTempo.value = t;
+  roteiro.atualizar(t);
+  motor.desenhar(cena, camera);
+}
+
+window.estudio = {
+  duracao: roteiro.duracao,
+  fps: roteiro.fps ?? 30,
+  res: RES,
+  quadro(t) { quadro(t); return motor.lerQuadro(); },
+  pronto: true,
+};
+
+if (!params.has('render')) {
+  const t0 = performance.now();
+  const laco = () => {
+    quadro(((performance.now() - t0) / 1000) % roteiro.duracao);
+    requestAnimationFrame(laco);
+  };
+  laco();
+}
+</script>
+</body>
+</html>
