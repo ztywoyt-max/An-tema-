@@ -8,7 +8,7 @@ conferida pelo Whisper: se a transcrição não bater com o roteiro, ela é gera
   ferramentas/dublar.sh referencias cavaleiro          cria/atualiza as vozes de referência (vozes/refs/*.wav)
   ferramentas/dublar.sh gerar cavaleiro [--cap 1]      um MP3 por fala (só o que mudou) + duracoes.json
   ferramentas/dublar.sh gerar cavaleiro --so ab.01,c1.03 --refazer
-  ferramentas/dublar.sh gerar cavaleiro --so 1.4.02 --refazer --variar 1 --tentativas 8   (outra leitura)
+  ferramentas/dublar.sh gerar cavaleiro --so 1.4.02 --refazer --variar 1 --tentativas 8 --exigir 0.97 --ouvido medium   (outra leitura, conferida com rigor)
 
 A configuração de cada voz fica em filmes/<filme>/elenco.json, na chave "local" de cada personagem.
 O Chatterbox põe uma marca d'água inaudível (Perth) em todo áudio gerado; ela continua ligada.
@@ -103,12 +103,12 @@ def tom_medio(a, sr):
 # ---------------------------------------------------------------- geração (Chatterbox + conferência)
 
 class Dublador:
-    def __init__(self):
+    def __init__(self, ouvido='small'):
         from chatterbox.mtl_tts import ChatterboxMultilingualTTS
         from faster_whisper import WhisperModel
         torch.set_num_threads(os.cpu_count() or 4)
         self.tts = ChatterboxMultilingualTTS.from_pretrained('cpu')
-        self.asr = WhisperModel('small', device='cpu', compute_type='int8')
+        self.asr = WhisperModel(ouvido, device='cpu', compute_type='int8')
         self.ref_atual = None
         self.nomes = ''
 
@@ -190,7 +190,7 @@ def para_mp3(a, sr, destino, vel=1.0):
         subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', t.name, *filtro, '-ar', '44100', '-ac', '1', '-b:a', '128k', str(destino)], check=True)
 
 
-def dublar_frase(d, texto, ref, loc, semente, tentativas):
+def dublar_frase(d, texto, ref, loc, semente, tentativas, exigir=0.93):
     melhor = None
     for k in range(tentativas):
         a, sr = d.falar(texto, ref, loc, semente=semente + k * 7919)
@@ -202,12 +202,12 @@ def dublar_frase(d, texto, ref, loc, semente, tentativas):
         pontos = nota - (0 if ok_ritmo else 0.25)
         if melhor is None or pontos > melhor[0]:
             melhor = (pontos, nota, recortar(a, sr, palavras), sr, ouvido, k + 1)
-        if nota >= 0.93 and ok_ritmo:
+        if nota >= exigir and ok_ritmo:
             break
     return melhor[1:]
 
 
-def gerar(filme, cap=None, so=None, refazer=False, tentativas=4, variar=0):
+def gerar(filme, cap=None, so=None, refazer=False, tentativas=4, variar=0, exigir=0.93, ouvido='small'):
     pasta = RAIZ / 'filmes' / filme
     elenco = ler(pasta / 'elenco.json')
     falas = ler(pasta / 'falas.json')
@@ -233,7 +233,7 @@ def gerar(filme, cap=None, so=None, refazer=False, tentativas=4, variar=0):
         print('nada a fazer: todas as falas estão em dia')
         return
     print(f'{len(pendentes)} falas para dublar')
-    d = Dublador()
+    d = Dublador(ouvido)
     d.nomes = elenco.get('nomesProprios', '')
     t0 = time.time()
     relatorio = ler(pv / 'conferencia.json', {})
@@ -245,7 +245,7 @@ def gerar(filme, cap=None, so=None, refazer=False, tentativas=4, variar=0):
         partes, notas, ouvidos, n = [], [], [], 0
         sr = d.tts.sr
         for j, (frase, pausa) in enumerate(frases(texto)):
-            nota, a, sr, ouvido, k = dublar_frase(d, frase, ref, loc, semente + j * 31, tentativas)
+            nota, a, sr, ouvido, k = dublar_frase(d, frase, ref, loc, semente + j * 31, tentativas, exigir)
             partes += [volume(a, sr), np.zeros(int(pausa * loc.get('pausa', 1.0) * sr), np.float32)]
             notas.append((nota, len(frase)))
             ouvidos.append(ouvido)
@@ -278,9 +278,11 @@ if __name__ == '__main__':
     ap.add_argument('--refazer', action='store_true')
     ap.add_argument('--tentativas', type=int, default=4, help='tentativas por frase até passar na conferência')
     ap.add_argument('--variar', type=int, default=0, help='troca a semente (outra leitura da mesma fala)')
+    ap.add_argument('--exigir', type=float, default=0.93, help='nota mínima da conferência para aceitar uma frase')
+    ap.add_argument('--ouvido', default='small', help='modelo do Whisper que confere (small, medium)')
     a = ap.parse_args()
     so = set(a.so.split(',')) if a.so else None
     if a.comando == 'referencias':
         referencias(a.filme, so)
     else:
-        gerar(a.filme, a.cap, so, a.refazer, a.tentativas, a.variar)
+        gerar(a.filme, a.cap, so, a.refazer, a.tentativas, a.variar, a.exigir, a.ouvido)
