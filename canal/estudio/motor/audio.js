@@ -76,7 +76,7 @@ class Mesa {
     s.buffer = this.ruido;
     s.loop = true;
     s.loopStart = Math.random() * 3;
-    s.start(Math.max(0, t0), (t0 * 7.13) % 3.5);
+    s.start(Math.max(0, t0), (((t0 * 7.13) % 3.5) + 3.5) % 3.5);
     s.stop(Math.max(0, t0 + dur + 0.05));
     return s;
   }
