@@ -25,7 +25,7 @@ ferramentas/dublar.sh gerar cavaleiro           # um MP3 por fala (só o que mud
 node ferramentas/linha.mjs cavaleiro 1          # linha do tempo de um capítulo
 node render.mjs --filme cavaleiro --cap 1       # um capítulo (MP4 + legendas .srt)
 node ferramentas/montar.mjs cavaleiro --tudo    # filme completo
-node ferramentas/exportar.mjs cavaleiro         # arquivo para o PC/YouTube, menos de 500 MB
+node ferramentas/exportar.mjs cavaleiro         # arquivo para o PC/YouTube, uns 280 MB, volume -14 LUFS
 node ferramentas/youtube.mjs cavaleiro          # título, descrição com capítulos e tags
 node render.mjs miniatura --quadros 0.5         # miniatura
 ```
@@ -36,7 +36,7 @@ Tudo de uma vez (é o que usar quando o dono pedir para "aplicar as vozes"):
 cd estudio && ferramentas/produzir.sh cavaleiro ../roteiros/01-o-cavaleiro-sem-armadura.md
 ```
 
-Entrega: `saida/<filme>-youtube.mp4` (o app só envia arquivos de até 500 MiB; o `-completo.mp4` tem
+Entrega: `saida/<filme>-youtube.mp4` (o app recusou 462 MiB, então o alvo é 280 MiB; o `-completo.mp4` tem
 mais de 1 GB), `saida/<filme>-youtube.txt` e `saida/<filme>-miniatura-a/b.jpg`.
 
 Sem vozes, as durações são estimadas e o filme sai sem falas (não há legendas nem caixas de texto:
