@@ -17,7 +17,7 @@ O dono não quer mexer em nada fora do Minecraft e do Claude: automatize tudo o 
 | `modpack/legado-mods.lock.json` | Trava antiga (versões já testadas), usada como reserva |
 | `tools/modpack/build-manifest.mjs` | Gera o manifesto (`--offline` usa só a trava antiga) |
 | `.github/workflows/` | `launcher.yml` (instalador Windows + release), `modpack.yml` (resolve mods no Modrinth e testa a abertura) |
-| `canal/` | **Projeto à parte**: canal de histórias com gráfico de PS1 (Estúdio PS1, roteiros). Ver `canal/README.md` |
+| `canal/` | **Projeto à parte**: canal de histórias narradas (motor HD estilo PS2/PS3; o Estúdio PS1 é o antigo). Ver `canal/README.md` |
 
 Publicar nova versão do launcher: subir `version` em `launcher/package.json` e dar push na main — o workflow cria
 a release `vX.Y.Z` sozinho (o proxy desta sessão bloqueia push de tags). Os launchers instalados se atualizam sozinhos.
