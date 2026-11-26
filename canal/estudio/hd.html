@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Estúdio HD</title>
+<style>html, body { margin: 0; background: #000; } canvas { display: block; width: 100vw; height: auto; }</style>
+<script type="importmap">{ "imports": { "three": "./node_modules/three/build/three.module.js", "three/addons/": "./node_modules/three/examples/jsm/" } }</script>
+</head>
+<body>
+<canvas id="tela"></canvas>
+<script type="module">
+import * as THREE from 'three';
+const q = new URLSearchParams(location.search);
+const [w, h] = (q.get('res') ?? '1920x1080').split('x').map(Number);
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('tela'), antialias: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(1);
+renderer.setSize(w, h, false);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const cena = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(38, w / h, 0.05, 900);
+const t0 = performance.now();
+const mod = await import(`./cenas-hd/${q.get('cena') ?? 'estilo-estrada'}.js`);
+const obra = await mod.default({ THREE, renderer, cena, camera, w, h, q });
+console.log(`cena montada em ${((performance.now() - t0) / 1000).toFixed(1)} s`);
+window.estudio = {
+  pronto: true,
+  duracao: obra.duracao ?? 0,
+  fps: 30,
+  foto(t = 0) {
+    obra.atualizar?.(t);
+    const a = performance.now();
+    if (obra.pos) obra.pos.comp.render(); else renderer.render(cena, camera);
+    console.log(`quadro em ${((performance.now() - a) / 1000).toFixed(1)} s`);
+    return renderer.domElement.toDataURL('image/png');
+  },
+};
+</script>
+</body>
+</html>
