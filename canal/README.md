@@ -1,6 +1,7 @@
-# Canal de histórias em gráfico de PS1
+# Canal de histórias narradas
 
-Projeto separado do jogo ANÁTEMA: vídeos longos de histórias originais, narradas, com visual de PlayStation 1.
+Projeto separado do jogo ANÁTEMA: vídeos longos de histórias originais, narradas. O visual atual é o **motor HD**
+(estilo PS2/PS3, souls like); o Estúdio PS1 ficou como referência (o dono achou a qualidade baixa demais).
 
 | Pasta | Conteúdo |
 |---|---|
@@ -8,7 +9,39 @@ Projeto separado do jogo ANÁTEMA: vídeos longos de histórias originais, narra
 | `estudio/` | **Estúdio PS1**: motor 3D, cenários, personagens, áudio e renderização |
 | `estudio/filmes/<nome>/` | Um filme: planos por capítulo (`filme.js`, `cap*.js`), elenco, falas e vozes |
 
-## Fluxo de um filme
+## Fluxo de um filme no motor HD (atual)
+
+A imagem é travada antes das vozes: cada fala tem um espaço fixo (`filmes/<filme>/tempos.json`) e a dublagem
+é encaixada nele depois. Sem vozes, o filme sai com trilha, ambiente e efeitos.
+
+```bash
+cd estudio && npm ci
+# 1. imagem (1080p, 24 quadros/s; ~10 s por quadro por processo; retomável)
+node ferramentas/render-hd.mjs cavaleiro-hd --cap todos                  # pode rodar 3 de uma vez
+node ferramentas/render-hd.mjs cavaleiro-hd --cap todos --ordem reversa  # (cada plano é travado por quem o faz)
+node ferramentas/render-hd.mjs cavaleiro-hd --cap 2 --previa             # 640x360 para conferir
+node ferramentas/foto-hd.mjs ...                                         # um quadro solto / folha de contato
+# 2. vozes (ElevenLabs; chave no ambiente: Network secret de api.elevenlabs.io, cabeçalho xi-api-key)
+node ferramentas/vozes.mjs tudo cavaleiro-hd     # confere a chave, escolhe as vozes, gera e encaixa as falas
+# 3. som: música e ambiente por plano + efeitos sincronizados (filmes/<filme>/som.js) + vozes, se houver
+node ferramentas/som-hd.mjs cavaleiro-hd --tabela   # ordem dos planos (para a exportação)
+node ferramentas/som-hd.mjs cavaleiro-hd            # saida/hd/<filme>/som.wav
+# 4. arquivo para o YouTube (280 MiB, -14 LUFS; sem vozes use --lufs -16)
+node ferramentas/exportar-hd.mjs cavaleiro-hd
+```
+
+Entrega: `saida/hd/<filme>-youtube.mp4`, `saida/hd/<filme>-youtube.txt` e `saida/hd/<filme>-miniatura-a/b.jpg`
+(as miniaturas saem de `cenas-hd/miniatura-hd.js`).
+
+| Arquivo (motor HD) | O quê |
+|---|---|
+| `motor-hd/filme.js`, `hd.html` | executa um filme: cenários e atores montados uma vez, troca por plano |
+| `motor-hd/boneco.js`, `pessoa.js`, `cabeca.js`, `maos.js`, `roupas.js` | corpo por SDF com esqueleto, rosto, mãos e roupas |
+| `motor-hd/natureza.js`, `aldeia.js`, `efeitos.js`, `cavalo.js` | terreno, mato, árvores, céu, casas, fogo, chuva, cavalo |
+| `motor-hd/materiais.js`, `texturas.js`, `pos.js` | texturas PBR por código, névoa, pós (AO, bloom, cor, grão) |
+| `filmes/cavaleiro-hd/` | planos (`filme.js`), cenários, elenco, poses, som e espaços das falas |
+
+## Fluxo de um filme no Estúdio PS1 (antigo)
 
 ```bash
 cd estudio && npm ci
