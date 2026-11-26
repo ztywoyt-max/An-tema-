@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Som HD</title>
+<script type="importmap">{ "imports": { "three": "./node_modules/three/build/three.module.js", "three/addons/": "./node_modules/three/examples/jsm/" } }</script>
+</head>
+<body>
+<script type="module">
+// Mistura o som de um filme do motor HD (música, ambiente, efeitos e, quando houver, vozes) sem montar a cena 3D.
+import { montarLinha } from './motor/linha.js';
+import { mixar } from './motor/audio.js';
+const q = new URLSearchParams(location.search);
+const nome = q.get('filme') ?? 'cavaleiro-hd';
+const base = `./filmes/${nome}`;
+const mod = await import(`./filmes/${nome}/filme.js`);
+const msom = await import(`./filmes/${nome}/som.js`).catch(() => ({}));
+const som = msom.som ?? {}, extras = msom.extras ?? (() => []);
+const falas = await (await fetch(`${base}/falas.json`)).json();
+const rt = await fetch(`${base}/tempos.json`);
+const tempos = rt.ok ? await rt.json() : {};
+const planos = mod.planos.map((p) => ({ ...p, ...(som[p.id] ?? {}) }));
+const linha = montarLinha(planos, falas, tempos);
+// os efeitos recebem também o plano (início/fim no filme), além das falas
+for (const p of linha.planos) {
+  const f = p.sons;
+  p.sons = (P) => [...(f ? f(P, p) : []), ...extras(p)];
+}
+window.estudio = {
+  pronto: true,
+  linha: () => linha.planos.map((p) => ({ id: p.id, cap: p.cap, cenario: p.cenario, inicio: p.inicio, fim: p.fim, musica: p.musica ?? null, ambiente: p.ambiente ?? null, sons: !!p.sons, falas: p.falasT.map((f) => [f.id, f.voz, +f.t0.toFixed(2), +f.t1.toFixed(2)]) })),
+  antigo: async () => {
+    const v = await import('./filmes/cavaleiro/filme.js');
+    return v.planos.map((p) => ({ id: p.id, musica: p.musica ?? null, ambiente: p.ambiente ?? null, sons: p.sons ? p.sons.toString() : null }));
+  },
+  audio: (de, ate) => mixar(linha, base, de, ate),
+  duracao: linha.duracao,
+};
+</script>
+</body>
+</html>

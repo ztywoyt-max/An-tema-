@@ -127,7 +127,7 @@ class Mesa {
   }
 
   corda(t, freq, { vol = 0.4, decai = 0.996, destino = this.bus.musica, pan = 0, brilho = 3000 } = {}) {
-    if (t < 0) return;
+    if (t < 0 || t > this.dur) return;
     const s = this.ctx.createBufferSource();
     s.buffer = this.cordaBuf(freq, decai);
     const f = this.filtro('lowpass', brilho);
@@ -139,7 +139,7 @@ class Mesa {
 
   // acorde sustentado: osciladores levemente desafinados passando por um passa-baixa
   pad(t0, dur, freqs, { tipo = 'sawtooth', corte = 900, vol = 0.12, ataque = 2, solta = 2.5, destino = this.bus.musica, detune = 8 } = {}) {
-    if (t0 + dur < 0) return;
+    if (t0 + dur < 0 || t0 > this.dur) return;
     const f = this.filtro('lowpass', corte, 0.5);
     const e = this.env(t0, ataque, Math.max(0, dur - ataque), solta, vol);
     f.connect(e).connect(destino);
@@ -157,6 +157,7 @@ class Mesa {
   }
 
   zumbido(t0, dur, freq, { vol = 0.15, destino = this.bus.musica } = {}) {
+    if (t0 + dur + 3 < 0 || t0 > this.dur) return;
     const o = this.ctx.createOscillator();
     o.type = 'sine';
     o.frequency.value = freq;
@@ -182,7 +183,7 @@ class Mesa {
   }
 
   sino(t, freq, { vol = 0.12, destino = this.bus.musica } = {}) {
-    if (t < 0) return;
+    if (t < 0 || t > this.dur) return;
     for (const [m, a, d] of [[1, 1, 4], [2.76, 0.5, 2.2], [5.4, 0.25, 1.2], [8.93, 0.12, 0.7]]) {
       const o = this.ctx.createOscillator();
       o.frequency.value = freq * m;
@@ -194,7 +195,7 @@ class Mesa {
   }
 
   tambor(t, { vol = 0.6, freq = 110, destino = this.bus.musica } = {}) {
-    if (t < 0) return;
+    if (t < 0 || t > this.dur) return;
     const o = this.ctx.createOscillator();
     o.frequency.setValueAtTime(freq, t);
     o.frequency.exponentialRampToValueAtTime(freq * 0.42, t + 0.25);
@@ -208,7 +209,8 @@ class Mesa {
   }
 
   ruidoFiltrado(t, dur, { tipo = 'bandpass', freq = 1000, freq2, q = 1, vol = 0.3, ataque = 0.01, solta = 0.1, destino = this.bus.efeitos, pan = 0 } = {}) {
-    if (t + dur < 0) return;
+    if (t + dur + solta < 0 || t > this.dur) return;
+    if (t < 0 && dur < 0.5) return; // som curto que começou antes do trecho
     const n = this.fonteRuido(t, dur + solta);
     const f = this.filtro(tipo, freq, q);
     if (freq2) f.frequency.exponentialRampToValueAtTime(freq2, Math.max(0.001, t + dur));
@@ -302,6 +304,7 @@ const AMBIENTES = {
     for (let k = 0; k < 4; k++) {
       const freq = 4200 + r() * 900, pan = (r() - 0.5) * 1.6;
       for (let t = t0 + r() * 2; t < t0 + dur - 0.3; t += 0.9 + r() * 1.5) {
+        if (t < 0 || t > m.dur) continue;
         for (let i = 0; i < 3; i++) {
           const o = m.ctx.createOscillator();
           o.frequency.value = freq;
@@ -315,13 +318,15 @@ const AMBIENTES = {
   },
   passaros(m, t0, dur, r) {
     for (let t = t0 + 1; t < t0 + dur - 1; t += 0.6 + r() * 2.2) {
-      const o = m.ctx.createOscillator();
       const f0 = 2400 + r() * 1500;
+      const k1 = r(), k2 = r();
+      if (t < 0 || t > m.dur) continue;
+      const o = m.ctx.createOscillator();
       o.frequency.setValueAtTime(f0, Math.max(0, t));
-      o.frequency.exponentialRampToValueAtTime(f0 * (1.3 + r() * 0.5), Math.max(0, t + 0.08));
+      o.frequency.exponentialRampToValueAtTime(f0 * (1.3 + k1 * 0.5), Math.max(0, t + 0.08));
       o.frequency.exponentialRampToValueAtTime(f0 * 0.9, Math.max(0, t + 0.16));
       const e = m.env(t, 0.01, 0.06, 0.08, 0.06);
-      o.connect(e).connect(m.pan((r() - 0.5) * 1.4)).connect(m.bus.ambiente);
+      o.connect(e).connect(m.pan((k2 - 0.5) * 1.4)).connect(m.bus.ambiente);
       o.start(Math.max(0, t));
       o.stop(Math.max(0, t + 0.3));
     }
@@ -338,15 +343,35 @@ const AMBIENTES = {
 
 // ---------------- efeitos ----------------
 const EFEITOS = {
-  arrastoEspada(m, t, { dur = 3, longe = 0 }, r) {
+  arrastoEspada(m, t, { dur = 3, longe = 0, intervalo = 0.64 }, r) {
     const vol = longe ? 0.12 : 0.3;
-    for (let k = t; k < t + dur; k += 0.64) {
+    for (let k = t; k < t + dur; k += intervalo) {
       m.ruidoFiltrado(k, 0.45, { freq: 2600 + r() * 600, q: 6, vol, ataque: 0.05, solta: 0.15 });
       m.ruidoFiltrado(k + 0.05, 0.3, { freq: 4300, q: 12, vol: vol * 0.5, ataque: 0.05, solta: 0.1 });
     }
   },
-  passosDescalco(m, t, { dur = 3 }, r) {
-    for (let k = t; k < t + dur; k += 0.64) m.ruidoFiltrado(k, 0.04, { tipo: 'lowpass', freq: 260, vol: 0.5, ataque: 0.004, solta: 0.08 });
+  passosDescalco(m, t, { dur = 3, intervalo = 0.64, vol = 0.5 }, r) {
+    for (let k = t; k < t + dur; k += intervalo) m.ruidoFiltrado(k, 0.04, { tipo: 'lowpass', freq: 220 + r() * 80, vol: vol * (0.8 + r() * 0.4), ataque: 0.004, solta: 0.08 });
+  },
+  // cascos de cavalo a passo (um ou vários cavalos)
+  cascos(m, t, { dur = 3, cavalos = 1 }, r) {
+    for (let c = 0; c < cavalos; c++) {
+      const fase = r() * 0.4;
+      for (let k = t + fase; k < t + dur; k += 0.48) {
+        for (const d of [0, 0.11]) m.ruidoFiltrado(k + d, 0.02, { freq: 520 + r() * 260, q: 4, vol: 0.32 / Math.sqrt(cavalos), ataque: 0.001, solta: 0.06, pan: (c - (cavalos - 1) / 2) * 0.3 });
+      }
+    }
+  },
+  // gota caindo
+  gota(m, t) {
+    const o = m.ctx.createOscillator();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(1500, t);
+    o.frequency.exponentialRampToValueAtTime(500, t + 0.06);
+    const e = m.env(t, 0.002, 0.01, 0.08, 0.18);
+    o.connect(e).connect(m.bus.efeitos);
+    o.start(t);
+    o.stop(t + 0.12);
   },
   carroca(m, t, { dur = 4 }, r) {
     m.ruidoFiltrado(t, dur, { tipo: 'lowpass', freq: 140, vol: 0.35, ataque: 0.5, solta: 0.5 });
@@ -541,7 +566,10 @@ export async function mixar(linha, base, de = 0, ate = linha.duracao) {
     for (const s of p.sons(P)) {
       const ef = EFEITOS[s.som];
       if (!ef) { console.warn('efeito desconhecido:', s.som); continue; }
-      ef(m, T(p.inicio + s.t), s, r);
+      const tt = T(p.inicio + s.t);
+      // fora do trecho: só entra o que tem duração e ainda está tocando (passos, carroça...)
+      if (tt > dur || (tt < 0 && !(s.dur && tt + s.dur > 0.5) || (tt < 0 && ['cura', 'metal', 'metalQuebra', 'gota', 'blip'].includes(s.som)))) continue;
+      ef(m, tt, s, r);
     }
   }
 
