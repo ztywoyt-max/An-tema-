@@ -8,7 +8,7 @@ import { criarPos } from './pos.js';
 export async function montarFilme({ renderer, cena, camera, w, h, q }) {
   const nome = q.get('filme');
   const base = `./filmes/${nome}`;
-  const mod = await import(`${base}/filme.js`);
+  const mod = await import(`../filmes/${nome}/filme.js`);
   const falas = await (await fetch(`${base}/falas.json`)).json();
   const rt = await fetch(`${base}/tempos.json`);
   const tempos = rt.ok ? await rt.json() : {};
@@ -75,8 +75,9 @@ export async function montarFilme({ renderer, cena, camera, w, h, q }) {
     if (p !== atual) entrar(p);
     const tl = t - p.inicio;
     ctx.tempoFilme = t;
-    ctx.cen?.atualizar?.(tl, t, p);
     p.quadro?.(ctx, tl, contexto(p, tl));
+    ctx.cen?.atualizar?.(tl, t, p);
+    ctx.cen?.seguirCamera?.(camera);
     // entrada e saída em preto
     const fi = p.fadeIn ? Math.min(1, tl / p.fadeIn) : 1, fo = p.fadeOut ? Math.min(1, (p.duracao - tl) / p.fadeOut) : 1;
     pos.grade.uniforms.uFade.value = Math.max(0, Math.min(fi, fo));

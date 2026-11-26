@@ -26,7 +26,12 @@ const q = { filme, cap, res: `${w}x${h}` };
 if (opc('planos')) q.planos = opc('planos');
 if (previa) q.ao = '0';
 await pagina.goto(url(q));
-await pagina.waitForFunction(() => window.estudio?.pronto || false, null, { timeout: 3600000, polling: 1000 }).catch((e) => { console.error(estado.erro ?? e); process.exit(1); });
+let vigia;
+await Promise.race([
+  pagina.waitForFunction(() => window.estudio?.pronto || false, null, { timeout: 3600000, polling: 1000 }),
+  new Promise((_, falha) => { vigia = setInterval(() => { if (estado.erro) falha(estado.erro); }, 500); }),
+]).catch((e) => { console.error('parou:', e.message ?? e); process.exit(1); });
+clearInterval(vigia);
 const planos = await pagina.evaluate(() => window.estudio.planos);
 console.log(`${planos.length} planos`);
 const inicio = Date.now();

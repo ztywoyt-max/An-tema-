@@ -92,8 +92,8 @@ export const FICHAS = {
     roupas: [T('camisa', 'linho', 0xc8bca4, { manga: 'longa', barra: -0.24 }), T('calca', 'la', 0x5a4a3a), T('cinto', 'couro', 0x9a7a5a, { folga: 0.04 })],
   },
   dourado: {
-    nome: 'dourado', versao: 1, altura: 1.84, ombros: 1.04, forca: 1.1, gordura: 0.05, semRosto: true, maos: ['segura', 'aberta'],
-    roupas: [T('camisa', 'la', 0xe8e0d0, { manga: 'longa', barra: -0.3, folga: 0.03 }), T('couraca', 'aco', 0xffc860), T('armadura', 'aco', 0xffc860), T('manto', 'la', 0xd8d0c0, { barra: 0.3, frente: 0.24 })],
+    nome: 'dourado', versao: 2, altura: 1.84, ombros: 1.04, forca: 1.1, gordura: 0.05, semRosto: true, maos: ['segura', 'aberta'],
+    roupas: [T('camisa', 'la', 0xe8e0d0, { manga: 'longa', barra: -0.3, folga: 0.012 }), T('couraca', 'aco', 0xffc860, { folga: 0.04 }), T('armadura', 'aco', 0xffc860, { folga: 0.03 }), T('manto', 'la', 0xd8d0c0, { barra: 0.3, frente: 0.24, folga: 0.06 })],
   },
 };
 
@@ -106,6 +106,16 @@ function empunhar(b, espada, lado = 'D') {
   espada.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(...z));
   espada.position.set(...add(cabo, z, 0.11));
   b.prender('mao' + lado, espada);
+}
+
+export function segurarArco(b, arco) {
+  const { d, n } = b.maos.E.segura.userData.eixos;
+  const J = b.J;
+  const palma = add(add(J.pulsoE, d, 0.05), n, 0.028);
+  arco.position.set(...palma);
+  arco.rotation.set(-Math.PI / 2, 0, 0);
+  b.prender('maoE', arco);
+  b.mao('E', 'segura');
 }
 
 export function pessoa(n) {
@@ -193,3 +203,48 @@ export function criarElmoSoldado() {
   return g;
 }
 export { criarCavalo, criarCarroca };
+
+// pedra de carregar, tigela, estaca e malho
+import { geometriaPedra } from '../../motor-hd/natureza.js';
+import { pedra as texPedra } from '../../motor-hd/texturas.js';
+export function criarPedraMao() {
+  const m = new THREE.Mesh(geometriaPedra(13, 0.8), triplanar(texPedra(), { escala: 2, relevo: 1.3, metal: 0, cor: 0xa09a90 }));
+  m.scale.setScalar(0.17);
+  m.castShadow = m.receiveShadow = true;
+  return m;
+}
+export function criarTigela() {
+  const pts = [[0.0, 0], [0.07, 0.0], [0.1, 0.05], [0.105, 0.07], [0.095, 0.07], [0.088, 0.055], [0.0, 0.02]].map(([x, y]) => new THREE.Vector2(x, y));
+  const m = new THREE.Mesh(new THREE.LatheGeometry(pts, 20), triplanar(madeira(), { escala: 8, relevo: 1, metal: 0, cor: 0xb09070 }));
+  m.castShadow = true;
+  return m;
+}
+export function criarEstaca() {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.035, 1.3, 7), triplanar(madeira(), { escala: 3, relevo: 1, metal: 0 }));
+  m.castShadow = m.receiveShadow = true;
+  return m;
+}
+export function criarMalho() {
+  const g = new THREE.Group();
+  const cabo = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.018, 0.55, 8), triplanar(madeira(), { escala: 6, relevo: 1, metal: 0 }));
+  const cabeca = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.2, 10), triplanar(madeira(), { escala: 4, relevo: 1, metal: 0, cor: 0x8a7060 }));
+  cabeca.rotation.z = Math.PI / 2;
+  cabeca.position.y = 0.27;
+  g.add(cabo, cabeca);
+  g.traverse((o) => { if (o.isMesh) { o.castShadow = true; } });
+  return g;
+}
+export function criarPrego() {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(0.003, 0.002, 0.09, 6), new THREE.MeshStandardMaterial({ color: 0x6a6a6a, metalness: 0.9, roughness: 0.4 }));
+  return m;
+}
+// objeto na mão (palma), na direção dos dedos ou atravessado
+export function naMao(b, lado, obj, { dedos = 0.05, frente = 0.03, giro = null } = {}) {
+  const { d, n, z } = b.maos[lado][Object.keys(b.maos[lado])[0]].userData.eixos;
+  const J = b.J;
+  const p = add(add(J['pulso' + lado], d, dedos), n, frente);
+  obj.position.set(...p);
+  if (giro === 'atravessado') obj.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(...z));
+  b.prender('mao' + lado, obj);
+  return obj;
+}

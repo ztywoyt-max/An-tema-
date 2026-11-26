@@ -43,19 +43,20 @@ function caixaTorta(w, h, d, seg = 6, amp = 0.025) {
  * Casa de pedra. Frente (porta) para +z. telhado: 'palha' | 'madeira'.
  * janelas: lista de [x, y, face] (face: 'frente'|'tras'|'esq'|'dir'); acesas = brilho das janelas.
  */
-export function casa({ largura = 6, fundo = 4.5, altura = 2.6, telhado = 'palha', chamine = true, porta = 0, janelas = null, semente = 1 } = {}) {
+export function casa({ largura = 6, fundo = 4.5, altura = 2.6, telhado = 'palha', chamine = true, porta = 0, janelas = null, semente = 1, parede = 'pedra' } = {}) {
   const M = mats();
   const g = new THREE.Group();
   const r = rng(semente);
-  const parede = sombra(new THREE.Mesh(caixaTorta(largura, altura, fundo), M.pedra));
-  parede.position.y = altura / 2;
-  g.add(parede);
+  const matParede = parede === 'madeira' ? M.madeiraEscura : M.pedra;
+  const pd = sombra(new THREE.Mesh(caixaTorta(largura, altura, fundo), matParede));
+  pd.position.y = altura / 2;
+  g.add(pd);
   // empenas (triângulos de pedra nas pontas)
   const alt2 = fundo * 0.42;
   const tri = new THREE.Shape([new THREE.Vector2(-fundo / 2, 0), new THREE.Vector2(fundo / 2, 0), new THREE.Vector2(0, alt2)]);
   const gEmp = new THREE.ExtrudeGeometry(tri, { depth: 0.35, bevelEnabled: false });
   for (const s of [-1, 1]) {
-    const e = sombra(new THREE.Mesh(gEmp, M.pedra));
+    const e = sombra(new THREE.Mesh(gEmp, matParede));
     e.rotation.y = Math.PI / 2;
     e.position.set(s > 0 ? largura / 2 - 0.35 : -largura / 2, altura, 0);
     g.add(e);
@@ -67,7 +68,7 @@ export function casa({ largura = 6, fundo = 4.5, altura = 2.6, telhado = 'palha'
   for (const s of [-1, 1]) {
     const gT = caixaTorta(largura + beiral * 2, esp, comp, 3, telhado === 'palha' ? 0.06 : 0.01);
     const t = sombra(new THREE.Mesh(gT, telhado === 'palha' ? M.palha : M.madeiraEscura));
-    t.rotation.x = -s * incl;
+    t.rotation.x = s * incl;
     t.position.set(0, altura + alt2 / 2 + esp * 0.35, s * (fundo / 4 + beiral * 0.15));
     g.add(t);
   }
@@ -153,7 +154,8 @@ export function celeiro({ largura = 8, fundo = 11, altura = 3.6, aberto = 1 } = 
     t.position.set(s * (largura / 4 + 0.1), altura + alt2 / 2 + 0.05, 0);
     g.add(t);
   }
-  // portas (giram para fora)
+  // portas (giram para fora); userData.abrir(k) (0 = fechadas com uma fresta, 1 = escancaradas)
+  const portas = [];
   for (const s of [-1, 1]) {
     const piv = new THREE.Group();
     piv.position.set(s * 1.6, 0, fundo / 2 + 0.06);
@@ -162,7 +164,9 @@ export function celeiro({ largura = 8, fundo = 11, altura = 3.6, aberto = 1 } = 
     piv.add(pt);
     piv.rotation.y = s * aberto * 1.9;
     g.add(piv);
+    portas.push([piv, s]);
   }
+  g.userData.abrir = (k) => { for (const [piv, s] of portas) piv.rotation.y = s * Math.max(0.025, k) * 1.9; };
   // vigas por dentro, feno, chão de terra batida
   for (let i = 0; i < 4; i++) {
     const v = sombra(new THREE.Mesh(new THREE.BoxGeometry(largura, 0.2, 0.2), M.madeiraEscura));

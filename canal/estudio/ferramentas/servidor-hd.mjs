@@ -43,6 +43,12 @@ export async function abrir(raiz, { largura = 1920, altura = 1080 } = {}) {
   pagina.on('console', (m) => { if (!/GPU stall|GL Driver|WebGL/.test(m.text())) console.log('[página]', m.text()); });
   pagina.on('pageerror', (e) => { estado.erro = e; console.error('[erro na página]', e.message); });
   const url = (q) => `http://127.0.0.1:${servidor.address().port}/hd.html?${new URLSearchParams(q)}`;
-  const fechar = async () => { await pagina.evaluate(() => window.esperarCache?.()).catch(() => {}); await navegador.close(); servidor.close(); };
+  const fechar = async () => {
+    const limite = (p, ms) => Promise.race([p, new Promise((ok) => setTimeout(ok, ms))]);
+    await limite(pagina.evaluate(() => window.esperarCache?.()).catch(() => {}), 60000);
+    await limite(navegador.close().catch(() => {}), 15000);
+    servidor.closeAllConnections?.();
+    servidor.close();
+  };
   return { pagina, url, fechar, estado };
 }

@@ -19,7 +19,12 @@ const { pagina, url, fechar, estado } = await abrir(raiz, { largura: w, altura: 
 const qs = { cena, res };
 for (const par of (opc('q') ?? '').split('&').filter(Boolean)) { const [k, v] = par.split('='); qs[k] = v ?? ''; }
 await pagina.goto(url(qs));
-await pagina.waitForFunction(() => window.estudio?.pronto || false, null, { timeout: 3600000, polling: 1000 }).catch((e) => { console.error(estado.erro ?? e); process.exit(1); });
+let vigia;
+await Promise.race([
+  pagina.waitForFunction(() => window.estudio?.pronto || false, null, { timeout: 3600000, polling: 1000 }),
+  new Promise((_, falha) => { vigia = setInterval(() => { if (estado.erro) falha(estado.erro); }, 500); }),
+]).catch((e) => { console.error('parou:', e.message ?? e); process.exit(1); });
+clearInterval(vigia);
 fs.mkdirSync(path.dirname(saida), { recursive: true });
 // --meio: uma foto no meio de cada plano (folha de conferência), com o nome do plano
 if (args.includes('--meio')) {

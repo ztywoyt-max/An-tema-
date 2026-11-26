@@ -42,9 +42,9 @@ export function caminhar(ctx, b, de, ate, t0, t1, tl, { passo = 1, bracos = 1, p
 
 // ---------- poses do filme ----------
 // espada arrastando: braço direito solto, punho virado, a ponta riscando o chão atrás
-export const ESPADA_ARRASTA = { bracoD: [-6, 0, 18], antebracoD: [-4, 0, 4], maoD: [0, 150, -18] };
+export const ESPADA_ARRASTA = { maoD: [-75, 0, 0], antebracoD: [-10, 0, 0] };
 // espada pronta (diante do corpo)
-export const ESPADA_GUARDA = { bracoD: [-35, 0, 10], antebracoD: [-55, 0, 0], maoD: [0, 0, 0] };
+export const ESPADA_GUARDA = { bracoD: [-35, 0, 10], antebracoD: [-55, 0, 0], maoD: [0, 180, 0] };
 // arco armado (mão esquerda estica o arco, direita puxa a corda até o rosto)
 export const ARCO_TENSO = { bracoE: [-85, 0, 10], antebracoE: [-5, 0, 0], maoE: [0, 0, 0], bracoD: [-80, 0, -40], antebracoD: [-120, 0, 0], peito: [0, -20, 0], cabeca: [0, -25, 0] };
 export const ARCO_BAIXO = { bracoE: [-30, 0, -5], antebracoE: [-20, 0, 0], bracoD: [-10, 0, -10], antebracoD: [-30, 0, 0] };
@@ -75,3 +75,38 @@ export const GESTO = { bracoD: [-40, 0, -15], antebracoD: [-40, 0, 0] };
 export const MEDO = { coluna: [12, 0, 0], peito: [8, 0, 0], pescoco: [10, 0, 0], bracoE: [-20, 0, -15], bracoD: [-20, 0, 15], antebracoE: [-70, 0, 0], antebracoD: [-70, 0, 0] };
 
 export { parado, andar, somar, misturar, DE_PE };
+
+// ---------- poses do Capítulo II em diante ----------
+// carregando uma pedra diante do peito (braços dobrados, corpo um pouco para trás)
+export const CARREGA = { bracoE: [-38, 0, 12], bracoD: [-38, 0, -12], antebracoE: [-70, 25, 0], antebracoD: [-70, -25, 0], coluna: [-6, 0, 0], peito: [-4, 0, 0] };
+// sentado no chão, encostado, pernas esticadas, mãos no colo
+export const SENTADO_CHAO = { coxaE: [-88, 0, 10], coxaD: [-88, 0, -10], pernaE: [8, 0, 0], pernaD: [12, 0, 0], peE: [-20, 0, 0], peD: [-20, 0, 0], coluna: [-10, 0, 0], pos: [0, -0.82, -0.1], bracoE: [-20, 0, 0], bracoD: [-20, 0, 0], antebracoE: [-50, 0, 0], antebracoD: [-50, 0, 0] };
+// sentado na mureta balançando as pernas (t = tempo)
+export function sentadoMureta(t) {
+  return { coxaE: [-85, 0, 5], coxaD: [-85, 0, -5], pernaE: [70 + 20 * Math.sin(t * 3.1), 0, 0], pernaD: [70 + 20 * Math.sin(t * 3.1 + 2.4), 0, 0], pos: [0, -0.4, 0.05], bracoE: [-15, 0, 0], bracoD: [-15, 0, 0] };
+}
+// martelando uma estaca (k = fase do golpe 0..1)
+export function martelo(k) {
+  const g = Math.sin(k * Math.PI * 2) * 0.5 + 0.5;
+  return { bracoD: [lin(-140, -50, g), 0, -10], antebracoD: [lin(-40, -15, g), 0, 0], bracoE: [-45, 0, 10], antebracoE: [-40, 0, 0], coluna: [lin(-4, 10, g), 0, 0], peito: [lin(-4, 8, g), 0, 0] };
+}
+// convidando (mão aberta para a porta)
+export const CONVITE = { bracoE: [-45, 0, -35], antebracoE: [-20, 0, 0] };
+// recusa: cabeça vira de um lado para o outro
+export const recusa = (t) => ({ cabeca: [0, 18 * Math.sin(t * 5), 0] });
+// curvada na bengala (velha)
+export const VELHA = { coluna: [14, 0, 0], peito: [8, 0, 0], pescoco: [-12, 0, 0], cabeca: [-6, 0, 0], bracoD: [-28, 0, 12], antebracoD: [-40, 0, 0] };
+// espiando (agachada atrás de algo)
+export const ESPIA = { coxaE: [-60, 0, 0], coxaD: [-40, 0, 0], pernaE: [90, 0, 0], pernaD: [70, 0, 0], coluna: [20, 0, 0], peito: [10, 0, 0], pescoco: [-20, 0, 0], pos: [0, -0.3, 0] };
+// riscando o capacete: mão esquerda segura o capacete, direita risca com o prego
+export const RISCA = { bracoE: [-110, 0, 30], antebracoE: [-110, 0, 0], bracoD: [-95, 0, -45], antebracoD: [-95, 0, 0], pescoco: [0, 10, 0] };
+// mãos na cintura (criança provocando)
+export const CINTURA = { bracoE: [-10, 0, 15], bracoD: [-10, 0, -15], antebracoE: [-100, -40, 0], antebracoD: [-100, 40, 0] };
+// sentada abraçando os joelhos
+export const ABRACA_JOELHOS = { coxaE: [-120, 0, 8], coxaD: [-120, 0, -8], pernaE: [140, 0, 0], pernaD: [140, 0, 0], pos: [0, -0.62, -0.05], coluna: [18, 0, 0], peito: [12, 0, 0], bracoE: [-55, 0, -14], bracoD: [-55, 0, 14], antebracoE: [-70, 30, 0], antebracoD: [-70, -30, 0] };
+// braço erguido, punho fechado (protesto)
+export const PROTESTO = { bracoD: [-120, 0, -20], antebracoD: [-40, 0, 0], peito: [-6, 0, 0] };
+// jogando água de um balde para cima
+export function jogaAgua(k) { return { bracoE: [lin(-20, -150, k), 0, 10], bracoD: [lin(-20, -150, k), 0, -10], antebracoE: [-40, 0, 0], antebracoD: [-40, 0, 0], peito: [lin(10, -12, k), 0, 0] }; }
+// batendo na porta / segurando algo diante do corpo
+export const SEGURA_FRENTE = { bracoE: [-35, 0, 8], bracoD: [-35, 0, -8], antebracoE: [-75, 20, 0], antebracoD: [-75, -20, 0] };
