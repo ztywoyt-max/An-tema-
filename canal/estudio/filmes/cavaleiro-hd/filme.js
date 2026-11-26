@@ -7,6 +7,7 @@ import { criarLanterna, estrada as EST, alturaChao } from '../../motor-hd/nature
 import { cavaloAndar } from '../../motor-hd/cavalo.js';
 import { tochaAcesa } from '../../motor-hd/efeitos.js';
 import * as U from './util.js';
+import { add } from '../../motor-hd/boneco.js';
 
 const { camera, trilho, colocar, caminhar, somar, parado, andar, entre, lin } = U;
 export { cenarios };
@@ -1567,20 +1568,20 @@ planos.push(
       ctx.ator('aldea').pose(caminhar(ctx, ctx.ator('aldea'), [6, -13.5], [11.5, -9.6], 0, c.dur, tl, { passo: 0.9 }));
       ctx.ator('lia').pose(caminhar(ctx, ctx.ator('lia'), [6.4, -14.2], [12, -10.3], 0, c.dur, tl, { passo: 1.0, passada: 0.9 }));
       ctx.cen.focar(10, 0, -10);
-      camera(ctx, [4.2, 1.5, -6.6], [11, 1.4, -10], { fov: 40 });
+      camera(ctx, [7.6, 1.6, -17.0], [9.4, 1.2, -11.6], { fov: 42 });
     },
   },
 );
 
 // --- o celeiro: Lia e Brana ---
-const CEL_DAM = () => celeiro(-2.4, -1.4);
+const CEL_DAM = () => celeiro(2.4, -1.4);
 function cenaCeleiro4(ctx, tl, c) {
   const [dx, dz] = CEL_DAM();
   const b = ctx.ator('damaso');
-  colocar(ctx, b, dx, dz, CEL.giro + 0.3);
+  colocar(ctx, b, dx, dz, CEL.giro - 0.3);
   const fala = c.falas.find((x) => tl > x.t0 && tl < x.t1);
-  b.pose(somar(parado(tl * 0.5), U.SENTADO_CHAO, fala?.voz === 'enferrujado' ? { cabeca: [0, -25, 0] } : {}));
-  const [vx, vz] = celeiro(-1.7, -0.6);
+  b.pose(somar(parado(tl * 0.5), U.SENTADO_CHAO, fala?.voz === 'enferrujado' ? { cabeca: [0, 25, 0] } : {}));
+  const [vx, vz] = celeiro(1.7, -0.6);
   ctx.ator('vela').raiz.position.set(vx, chao(vx, vz), vz);
   ctx.ator('vela').raiz.userData.atualizar(ctx.tempoFilme);
   ctx.cen.preencher(0.3);
@@ -1588,18 +1589,18 @@ function cenaCeleiro4(ctx, tl, c) {
 }
 const celeiro4 = { ...ped('noite'), atores: ['damaso', 'vela', 'lia'] };
 function liaAoLado(ctx, tl, c) {
-  const [lx, lz] = celeiro(-3.0, -1.2);
+  const [lx, lz] = celeiro(3.0, -1.2);
   const l = ctx.ator('lia');
-  colocar(ctx, l, lx, lz, CEL.giro + 0.6);
+  colocar(ctx, l, lx, lz, CEL.giro - 0.6);
   const p = somar(parado(tl), U.ABRACA_JOELHOS);
   const fala = c.falas.find((x) => tl > x.t0 && tl < x.t1);
-  if (fala?.voz === 'lia') { l.falar(p, tl); p.cabeca = [0, 25, 0]; }
+  if (fala?.voz === 'lia') { l.falar(p, tl); p.cabeca = [0, -25, 0]; }
   l.pose(p);
 }
 const camCeleiro = (ctx, onde) => {
   const [dx, dz] = CEL_DAM();
-  const alvo = onde === 'lia' ? celeiro(-3.0, -1.2) : onde === 'ele' ? CEL_DAM() : celeiro(-2.7, -1.3);
-  const [cx, cz] = onde === 'dois' ? celeiro(-1.2, 1.8) : onde === 'lia' ? celeiro(-2.0, 0.2) : celeiro(-3.4, 0.3);
+  const alvo = onde === 'lia' ? celeiro(3.0, -1.2) : onde === 'ele' ? CEL_DAM() : celeiro(2.7, -1.3);
+  const [cx, cz] = onde === 'dois' ? celeiro(1.0, 1.8) : onde === 'lia' ? celeiro(2.0, 0.2) : celeiro(3.4, 0.3);
   camera(ctx, [cx, chao(cx, cz) + (onde === 'dois' ? 1.25 : 0.95), cz], [alvo[0], chao(dx, dz) + (onde === 'ele' ? 1.2 : 0.75), alvo[1]], { fov: onde === 'dois' ? 40 : 32 });
 };
 planos.push(
@@ -1612,7 +1613,7 @@ planos.push(
     quadro: (ctx, tl, c) => {
       cenaCeleiro4(ctx, tl, c);
       liaAoLado(ctx, tl, c);
-      if (id === '4.3f') ctx.ator('damaso').pose(somar(parado(tl * 0.5), U.SENTADO_CHAO, { cabeca: [0, -35 * entre(tl, 0.5, 1.5), 0] }));
+      if (id === '4.3f') ctx.ator('damaso').pose(somar(parado(tl * 0.5), U.SENTADO_CHAO, { cabeca: [0, 35 * entre(tl, 0.5, 1.5), 0] }));
       if (id === '4.3f' && tl > 3) ctx.ator('lia').pose(somar(parado(tl), U.ABRACA_JOELHOS, { peito: [0, 0, 0], bracoE: [-40, 0, -30], bracoD: [-40, 0, 30] }));
       camCeleiro(ctx, onde);
     },
@@ -1626,9 +1627,9 @@ planos.push(
       // batidas; Lia sai correndo; a porta abre e Brana entra com o pão
       cel.abrir(entre(tl, 1.4, 2.4) * 0.35);
       const l = ctx.ator('lia');
-      l.pose(caminhar(ctx, l, celeiro(-3.0, -1.2), celeiro(0.2, 8.0), 1.0, 3.0, tl, { passo: 1.2, passada: 1.1 }));
+      l.pose(caminhar(ctx, l, celeiro(3.0, -1.2), celeiro(0.2, 8.0), 1.0, 3.0, tl, { passo: 1.2, passada: 1.1 }));
       const br = ctx.ator('brana');
-      const [ax, az] = celeiro(0.0, 6.5), [bx, bz] = celeiro(-2.0, -0.4);
+      const [ax, az] = celeiro(0.0, 6.5), [bx, bz] = celeiro(2.0, -0.4);
       const pb = caminhar(ctx, br, [ax, az], [bx, bz], 2.2, 5.0, tl, { passo: 0.45, passada: 0.7, extra: somar(U.VELHA, U.SEGURA_FRENTE) });
       const larga = entre(tl, 5.0, 5.8);
       br.pose(somar(pb, { coluna: [30 * larga, 0, 0], peito: [15 * larga, 0, 0] }));
@@ -1651,9 +1652,9 @@ planos.push(
       const f = c.fala(0);
       if (tl > f.t0 && tl < f.t1) br.falar(p, tl, 0.7);
       br.pose(p);
-      const [bx, bz] = celeiro(-2.0, -0.4);
+      const [bx, bz] = celeiro(2.0, -0.4);
       ctx.ator('pao').raiz.position.set(bx, chao(bx, bz) + 0.05, bz);
-      const [cx, cz] = celeiro(-1.0, 0.8);
+      const [cx, cz] = celeiro(1.0, 0.8);
       camera(ctx, [cx, chao(cx, cz) + 1.3, cz], [px, chao(px, pz) + 1.2, pz], { fov: 36 });
     },
   },
@@ -1672,10 +1673,10 @@ planos.push(
     id: '4.3j', cap: 4, ...ped('noite'), falas: ['4.3.10'], antes: 0.6, depois: 2.4, fadeOut: 2.0, atores: ['damaso', 'vela', 'pao'],
     quadro: (ctx, tl, c) => {
       cenaCeleiro4(ctx, tl, c);
-      const [bx, bz] = celeiro(-2.0, -0.4);
+      const [bx, bz] = celeiro(2.0, -0.4);
       ctx.ator('pao').raiz.position.set(bx, chao(bx, bz) + 0.05, bz);
       const k = tl / c.dur;
-      const [cx, cz] = celeiro(1.5, 3.5);
+      const [cx, cz] = celeiro(-0.6, 3.5);
       const [ax, az] = CEL_DAM();
       camera(ctx, [cx, chao(cx, cz) + 2.4 + k * 0.6, cz], [ax, chao(ax, az) + 0.6, az], { fov: 40 });
     },
