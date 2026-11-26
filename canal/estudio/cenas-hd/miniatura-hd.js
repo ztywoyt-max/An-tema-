@@ -34,13 +34,15 @@ export default async function ({ renderer, cena, camera, w, h, q }) {
     b.pose(somar(parado(0), { cabeca: [6, 20, 0] }));
     b.raiz.updateMatrixWorld(true);
     const cap = b.capacete.getWorldPosition(new THREE.Vector3());
-    vela.raiz.position.set(cap.x - 0.25, cap.y - 0.55, cap.z + 0.35);
+    vela.raiz.position.set(cap.x - 0.35, cap.y - 0.7, cap.z + 0.55);
+    vela.raiz.traverse((o) => { if (o.isPointLight) o.intensity = 1.2; });
     vela.raiz.userData.atualizar(2.3);
-    const fria = new THREE.PointLight(0x8aa4ff, 6, 0, 2); fria.position.set(cap.x + 0.6, cap.y + 0.4, cap.z - 0.7); cena.add(fria);
-    const quente = new THREE.PointLight(0xff9a50, 3, 0, 2); quente.position.set(cap.x - 0.3, cap.y - 0.15, cap.z + 0.5); cena.add(quente);
+    vela.raiz.traverse((o) => { if (o.isPointLight) o.userData.atualizar = null; });
+    const fria = new THREE.PointLight(0x8aa4ff, 9, 0, 2); fria.position.set(cap.x + 0.6, cap.y + 0.4, cap.z - 0.7); cena.add(fria);
+    const quente = new THREE.PointLight(0xff9a50, 0.9, 0, 2); quente.position.set(cap.x - 0.3, cap.y - 0.15, cap.z + 0.5); cena.add(quente);
     c.focar(cap.x, 0, cap.z);
-    camera.position.set(cap.x - 0.62, cap.y + 0.16, cap.z + 0.18);
-    camera.lookAt(cap.x - 0.12, cap.y + 0.13, cap.z);
+    camera.position.set(cap.x - 0.78, cap.y + 0.17, cap.z + 0.22);
+    camera.lookAt(cap.x, cap.y + 0.13, cap.z + 0.3);
     camera.fov = 34;
     texto = { linhas: [['312', 'Cinzel', 600, 300, '#efe2c8']], sub: 'vidas', x: 0.73 };
   } else {
@@ -71,17 +73,19 @@ export default async function ({ renderer, cena, camera, w, h, q }) {
       const W = c2.width, H = c2.height, k = W / 1920;
       g.textAlign = 'center';
       let y = H * (texto.linhas.length > 1 ? 0.42 : 0.56);
+      let base = y;
       for (const [t, f, peso, tam, cor] of texto.linhas) {
         g.font = `${peso} ${tam * k}px ${f}`;
         g.shadowColor = 'rgba(0,0,0,0.9)'; g.shadowBlur = 30 * k; g.shadowOffsetY = 6 * k;
         g.fillStyle = cor;
         g.fillText(t, W * texto.x, y);
+        base = y;
         y += tam * k * 1.05;
       }
       g.shadowBlur = 0;
       g.fillStyle = '#9a1a14';
-      g.fillRect(W * texto.x - 220 * k, y - 70 * k, 440 * k, 6 * k);
-      if (texto.sub) { g.font = `italic 500 ${110 * k}px "Cormorant Garamond"`; g.fillStyle = '#d8c8a8'; g.fillText(texto.sub, W * texto.x, y + 40 * k); }
+      g.fillRect(W * texto.x - 220 * k, base + 50 * k, 440 * k, 6 * k);
+      if (texto.sub) { g.font = `italic 500 ${110 * k}px "Cormorant Garamond"`; g.fillStyle = '#d8c8a8'; g.fillText(texto.sub, W * texto.x, base + 160 * k); }
       return c2.toDataURL('image/jpeg', 0.93);
     },
   };
