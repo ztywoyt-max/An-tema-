@@ -54,7 +54,7 @@ window.estudio = {
     const a = performance.now();
     if (obra.quadro) obra.quadro(t); else if (obra.pos) obra.pos.comp.render(); else renderer.render(cena, camera);
     console.log(`quadro em ${((performance.now() - a) / 1000).toFixed(1)} s`);
-    return renderer.domElement.toDataURL('image/png');
+    return obra.sobrepor ? obra.sobrepor(renderer.domElement) : renderer.domElement.toDataURL('image/png');
   },
 };
 </script>

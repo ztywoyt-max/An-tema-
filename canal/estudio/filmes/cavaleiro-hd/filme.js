@@ -1691,11 +1691,11 @@ function criarSerpente() {
   const g = new THREE.Group();
   const tochas = [];
   for (let i = 0; i < 46; i++) {
-    const c = chama4({ largura: 0.22, altura: 0.5, intensidade: 6, semente: 50 + i });
+    const c = chama4({ largura: 0.45, altura: 0.9, intensidade: 9, semente: 50 + i });
     g.add(c);
     tochas.push(c);
   }
-  const luzes = [0, 1, 2, 3].map((i) => { const l = luz4({ cor: 0xff7a30, intensidade: 40, semente: 60 + i }); g.add(l); return l; });
+  const luzes = [0, 1, 2, 3].map((i) => { const l = luz4({ cor: 0xff7a30, intensidade: 120, semente: 60 + i }); g.add(l); return l; });
   g.userData.atualizar = (t, frente = 14) => {
     tochas.forEach((c, i) => {
       const z = frente + i * 1.4 + Math.sin(i * 7.3) * 0.5;
@@ -1953,7 +1953,7 @@ planos.push(
       const f = c.fala(0);
       if (tl > f.t0 && tl < f.t1) { l.falar(p, tl); Object.assign(p, { bracoD: [-80, 0, -20], antebracoD: [-10, 0, 0] }); }
       l.pose(p);
-      camera(ctx, [9.6, 1.4, -6.2], [10.0, 1.1, -11.2], { fov: 40 });
+      camera(ctx, [10.4, 1.5, -7.4], [10.0, 1.1, -11.4], { fov: 44 });
     },
   },
   {
@@ -2084,17 +2084,18 @@ planos.push(
 function cenaBrana(ctx, tl, c, { segura = 0, olhaDela = 0, sangra = 0, amarra = 0 } = {}) {
   const b = ctx.ator('damasoRosto'), br = ctx.ator('brana');
   sentarBeira(b, BORDA);
-  sentarBeira(br, BORDA_BR);
+  br.raiz.position.set(BORDA_BR[0] - 0.35, 0.44, BORDA_BR[1] + 0.15);
+  br.raiz.rotation.y = Math.PI / 2;
   const fala = c.falas.find((x) => tl > x.t0 && tl < x.t1);
   const pb = somar(parado(tl * 0.5), BEIRA, { pescoco: [12, -30 * olhaDela, 0] }, U.misturar({}, { bracoE: [-30, 0, 0], antebracoE: [-60, 60, 0] }, Math.max(segura, amarra)));
   b.pose(pb);
   b.espada.visible = false;
   b.corte.visible = sangra > 0 || amarra > 0;
   b.faixa.visible = amarra > 0.6;
-  const pr = somar(parado(tl * 0.5), BEIRA, { coluna: [10, 0, 0], pescoco: [-6, 0, 0] }, U.misturar({}, { bracoD: [-45, 0, 25], antebracoD: [-50, 0, 0], bracoE: [-45, 0, 0], antebracoE: [-50, 0, 0] }, Math.max(segura, amarra)));
+  const pr = somar(parado(tl * 0.5), U.VELHA, { pescoco: [-2, 0, 0] }, U.misturar({}, { coluna: [30, 0, 0], peito: [15, 0, 0], bracoE: [-55, 0, 10], antebracoE: [-30, 0, 0] }, Math.max(segura, amarra)));
   if (fala?.voz === 'brana') br.falar(pr, tl, 0.8);
   br.pose(pr);
-  br.bengala.visible = false;
+  br.bengala.visible = true;
   const cp = ctx.ator('capaceteSolto').raiz;
   b.raiz.updateMatrixWorld(true);
   cp.position.copy(b.ossos.cabeca.getWorldPosition(new THREE.Vector3())).add(new THREE.Vector3(0, -0.045, 0));
@@ -2118,7 +2119,7 @@ planos.push(
     },
   },
   { id: '6.2b', cap: 6, ...beira, falas: ['6.2.02'], antes: 0.3, depois: 0.5, quadro: (ctx, tl, c) => { cenaBrana(ctx, tl, c, { olhaDela: 1 }); closeBrana(ctx); } },
-  { id: '6.2c', cap: 6, ...beira, falas: ['6.2.03'], antes: 0.3, depois: 0.6, quadro: (ctx, tl, c) => { cenaBrana(ctx, tl, c, { olhaDela: 1 }); const br = ctx.ator('brana'); br.pose(somar(parado(tl), BEIRA, { bracoE: [-50, 0, 0], antebracoE: [-80, 70, 0], bracoD: [-50, 0, 0], antebracoD: [-80, -70, 0] })); br.raiz.updateMatrixWorld(true); const m = br.ossos.maoE.getWorldPosition(new THREE.Vector3()); camera(ctx, [m.x + 0.45, m.y + 0.25, m.z - 0.15], [m.x, m.y, m.z + 0.08], { fov: 30 }); } },
+  { id: '6.2c', cap: 6, ...beira, falas: ['6.2.03'], antes: 0.3, depois: 0.6, quadro: (ctx, tl, c) => { cenaBrana(ctx, tl, c, { olhaDela: 1 }); const br = ctx.ator('brana'); br.pose(somar(parado(tl), U.VELHA, { bracoE: [-50, 0, 0], antebracoE: [-80, 70, 0] })); br.raiz.updateMatrixWorld(true); const m = br.ossos.maoE.getWorldPosition(new THREE.Vector3()); camera(ctx, [m.x + 0.45, m.y + 0.25, m.z - 0.15], [m.x, m.y, m.z + 0.08], { fov: 30 }); } },
   { id: '6.2d', cap: 6, ...beira, falas: ['6.2.04'], antes: 0.3, depois: 0.6, quadro: (ctx, tl, c) => { cenaBrana(ctx, tl, c, { olhaDela: 1 }); closeBrana(ctx); } },
   { id: '6.2e', cap: 6, ...beira, falas: ['6.2.05'], antes: 0.6, depois: 1.0, quadro: (ctx, tl, c) => { cenaBrana(ctx, tl, c, { olhaDela: 1 }); closeEle(ctx); } },
   { id: '6.2f', cap: 6, ...beira, falas: ['6.2.06', '6.2.07'], antes: 0.4, depois: 0.6, quadro: (ctx, tl, c) => { cenaBrana(ctx, tl, c, { olhaDela: 1 }); trilho(ctx, tl / c.dur, [[3.0, 1.1, 1.6], [1.25, 1.1, 0.6]], [[2.6, 1.15, 1.3], [1.25, 1.15, 0.7]]); } },

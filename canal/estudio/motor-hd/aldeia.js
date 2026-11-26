@@ -230,15 +230,19 @@ export function ponte({ comprimento = 13, largura = 2.8, altura = 0.45, fundoRio
     const viga = new THREE.BoxGeometry(0.2, 0.25, comprimento);
     viga.translate(s * (largura / 2 - 0.15), altura - 0.16, 0);
     geos.push(viga);
+    // corrimão só de um lado (o outro fica livre: dá para sentar na beira com as pernas sobre o rio)
+    const topo = s < 0 ? 1.1 : -0.05;
     for (let k = 0; k <= 4; k++) {
       const z = -comprimento / 2 + (k / 4) * comprimento;
-      const pilar = new THREE.CylinderGeometry(0.13, 0.15, altura - fundoRio + 1.1, 8);
-      pilar.translate(s * (largura / 2 + 0.05), (altura + 1.1 + fundoRio) / 2, z);
+      const pilar = new THREE.CylinderGeometry(0.13, 0.15, altura - fundoRio + topo, 8);
+      pilar.translate(s * (largura / 2 + 0.05), (altura + topo + fundoRio) / 2, z);
       geos.push(pilar);
     }
-    const corr = new THREE.BoxGeometry(0.1, 0.1, comprimento);
-    corr.translate(s * (largura / 2 + 0.05), altura + 1.0, 0);
-    geos.push(corr);
+    if (s < 0) {
+      const corr = new THREE.BoxGeometry(0.1, 0.1, comprimento);
+      corr.translate(s * (largura / 2 + 0.05), altura + 1.0, 0);
+      geos.push(corr);
+    }
   }
   g.add(sombra(new THREE.Mesh(mergeGeometries(geos.map((x) => { x.deleteAttribute('uv'); return x; })), M.madeira)));
   return g;

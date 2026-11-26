@@ -20,7 +20,7 @@ const HORAS = {
   dia: { ceu: 'nublado', dir: [0.5, 0.75, 0.3], corNevoa: [0.3, 0.32, 0.35], corLua: [0.12, 0.12, 0.1], dens: 0.014, queda: 6, exp: 3, luz: [0xfff0e0, 2.0], hemi: [0xb0bccc, 0x5a4a38, 1.5], expo: 0.9, amb: 1.0, sat: 0.78, janelas: 0 },
   tarde: { ceu: 'tarde', dir: [-0.8, 0.3, 0.55], corNevoa: [0.3, 0.2, 0.15], corLua: [0.9, 0.45, 0.18], dens: 0.016, queda: 5, exp: 4, luz: [0xffa060, 3.4], hemi: [0x7a7a90, 0x4a3020, 0.9], expo: 0.95, amb: 0.9, sat: 0.95, janelas: 0.6 },
   ventoso: { ceu: 'nublado', dir: [0.3, 0.8, -0.4], corNevoa: [0.22, 0.24, 0.27], corLua: [0.06, 0.06, 0.06], dens: 0.02, queda: 6, exp: 3, luz: [0xdde4ec, 1.2], hemi: [0x9aa4b4, 0x4a4038, 1.4], expo: 0.95, amb: 1.0, sat: 0.6, janelas: 0 },
-  tempestade: { ceu: 'tempestade', dir: [0.3, 0.6, -1], corNevoa: [0.008, 0.01, 0.016], corLua: [0.02, 0.025, 0.035], dens: 0.05, queda: 4, exp: 6, luz: [0x8090b0, 0.5], hemi: [0x1a2232, 0x080706, 0.5], expo: 1.6, amb: 0.6, sat: 0.65, janelas: 2.5, preench: 0.9 },
+  tempestade: { ceu: 'tempestade', dir: [0.3, 0.6, -1], corNevoa: [0.016, 0.02, 0.03], corLua: [0.03, 0.035, 0.05], dens: 0.04, queda: 4, exp: 6, luz: [0x8494b8, 1.1], hemi: [0x34405a, 0x0c0a08, 1.2], expo: 2.0, amb: 0.8, sat: 0.65, janelas: 2.5, preench: 1.6 },
   aurora: { ceu: 'amanhecer', dir: [0.2, 0.1, -1], corNevoa: [0.34, 0.26, 0.3], corLua: [0.8, 0.45, 0.4], dens: 0.028, queda: 2.2, exp: 3, luz: [0xffb898, 2.0], hemi: [0xb09aa8, 0x4a3a32, 1.0], expo: 0.95, amb: 1.0, sat: 0.85, janelas: 0.5 },
   sepia: { ceu: 'tarde', dir: [-0.5, 0.25, -1], corNevoa: [0.22, 0.17, 0.11], corLua: [0.5, 0.34, 0.16], dens: 0.025, queda: 4, exp: 4, luz: [0xffd8a0, 2.4], hemi: [0x9a8a70, 0x3a2a18, 1.0], expo: 1.0, amb: 0.8, sat: 0.35, tinta: [1.08, 0.98, 0.8], janelas: 0.5 },
   sepiaNoite: { ceu: 'noite', dir: [-0.4, 0.4, -1], corNevoa: [0.04, 0.025, 0.015], corLua: [0.12, 0.08, 0.04], dens: 0.04, queda: 4, exp: 6, luz: [0x9a8a70, 0.6], hemi: [0x3a3020, 0x100804, 0.5], expo: 1.4, amb: 0.5, sat: 0.4, tinta: [1.1, 0.95, 0.75], janelas: 2, preench: 0.8 },
@@ -211,6 +211,17 @@ export const cenarios = {
     const v = pedralva(ctx, 'tempestade');
     const chuva = criarChuva({});
     v.grupo.add(chuva);
+    // relâmpagos: clarões curtos de tempos em tempos
+    const flash = new THREE.DirectionalLight(0xc8d4ff, 0);
+    flash.position.set(-20, 40, -30);
+    v.grupo.add(flash);
+    const atual = v.atualizar;
+    v.atualizar = (tl, t) => {
+      atual(tl, t);
+      const c = (t % 9.7) / 9.7, d = ((t + 4.1) % 13.3) / 13.3;
+      const pico = (x) => (x < 0.012 ? 1 : x < 0.02 ? 0.3 : x < 0.03 ? 0.8 : 0);
+      flash.intensity = 7 * Math.max(pico(c), pico(d) * 0.6);
+    };
     return v;
   },
   'pedralva:aurora': (ctx) => pedralva(ctx, 'aurora'),
