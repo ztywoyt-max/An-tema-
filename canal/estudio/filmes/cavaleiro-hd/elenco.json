@@ -1,0 +1,248 @@
+{
+  "_comentario": "Escalação de vozes do filme HD (ElevenLabs). 'busca' escolhe uma voz humana da biblioteca (atores do Brasil primeiro); depois de escolhida, voice_id fica salvo aqui. 'igual' usa a voz de outro papel.",
+  "modelo": "eleven_multilingual_v2",
+  "vozes": {
+    "narrador": {
+      "papel": "Contador de histórias: homem maduro, voz grave, quente e calma, ritmo lento",
+      "busca": {
+        "gender": "male",
+        "age": "old",
+        "use_cases": "narrative_story",
+        "termos": [
+          "narrador",
+          "contador",
+          "histórias",
+          "grave",
+          "storyteller",
+          "deep"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.55,
+        "similarity_boost": 0.8,
+        "style": 0.25,
+        "use_speaker_boost": true,
+        "speed": 0.9
+      },
+      "voice_id": null
+    },
+    "enferrujado": {
+      "papel": "Sir Dâmaso: homem de 45 anos, voz baixa, rouca e cansada, fala pouco e sem pressa",
+      "busca": {
+        "gender": "male",
+        "age": "middle_aged",
+        "use_cases": "characters_animation",
+        "termos": [
+          "rouca",
+          "grave",
+          "cansado",
+          "raspy",
+          "gravelly"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.6,
+        "similarity_boost": 0.8,
+        "style": 0.2,
+        "use_speaker_boost": true,
+        "speed": 0.88
+      },
+      "voice_id": null
+    },
+    "lia": {
+      "papel": "Menina de 9 anos, esperta, curiosa e teimosa",
+      "busca": {
+        "gender": "female",
+        "age": "young",
+        "use_cases": "characters_animation",
+        "termos": [
+          "criança",
+          "menina",
+          "infantil",
+          "child",
+          "girl",
+          "kid"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.4,
+        "similarity_boost": 0.75,
+        "style": 0.45,
+        "use_speaker_boost": true,
+        "speed": 1
+      },
+      "voice_id": null
+    },
+    "tome": {
+      "papel": "Tomé, ferreiro de 40 anos: voz firme de homem simples, com medo pela família",
+      "busca": {
+        "gender": "male",
+        "age": "middle_aged",
+        "use_cases": "conversational",
+        "termos": [
+          "natural",
+          "firme",
+          "simples"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.45,
+        "similarity_boost": 0.8,
+        "style": 0.35,
+        "use_speaker_boost": true,
+        "speed": 1
+      },
+      "voice_id": null
+    },
+    "brana": {
+      "papel": "Brana, curandeira idosa: voz baixa, áspera e serena (também é a mulher do flashback)",
+      "busca": {
+        "gender": "female",
+        "age": "old",
+        "use_cases": "narrative_story",
+        "termos": [
+          "idosa",
+          "senhora",
+          "avó",
+          "old",
+          "grandmother"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.5,
+        "similarity_boost": 0.8,
+        "style": 0.35,
+        "use_speaker_boost": true,
+        "speed": 0.88
+      },
+      "voice_id": null
+    },
+    "malvar": {
+      "papel": "Barão Malvar: nobre de 60 anos, frio, arrogante, voz cortante",
+      "busca": {
+        "gender": "male",
+        "age": "old",
+        "use_cases": "characters_animation",
+        "termos": [
+          "vilão",
+          "frio",
+          "autoritário",
+          "villain",
+          "cold"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.55,
+        "similarity_boost": 0.8,
+        "style": 0.4,
+        "use_speaker_boost": true,
+        "speed": 0.92
+      },
+      "voice_id": null
+    },
+    "raposa": {
+      "papel": "Raposa, chefe dos bandidos: debochado, ameaçador, voz anasalada",
+      "busca": {
+        "gender": "male",
+        "age": "young",
+        "use_cases": "characters_animation",
+        "termos": [
+          "bandido",
+          "malandro",
+          "deboche",
+          "sarcastic"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.35,
+        "similarity_boost": 0.75,
+        "style": 0.5,
+        "use_speaker_boost": true,
+        "speed": 1
+      },
+      "voice_id": null
+    },
+    "bandido1": {
+      "papel": "Bandido rindo, voz rude",
+      "busca": {
+        "gender": "male",
+        "age": "middle_aged",
+        "use_cases": "characters_animation",
+        "termos": [
+          "rude",
+          "rouco"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.35,
+        "similarity_boost": 0.75,
+        "style": 0.5,
+        "use_speaker_boost": true,
+        "speed": 1
+      },
+      "voice_id": null
+    },
+    "bandido2": {
+      "papel": "Bandido assustado",
+      "busca": {
+        "gender": "male",
+        "age": "young",
+        "use_cases": "conversational",
+        "termos": [
+          "jovem"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.3,
+        "similarity_boost": 0.75,
+        "style": 0.5,
+        "use_speaker_boost": true,
+        "speed": 1.05
+      },
+      "voice_id": null
+    },
+    "soldado": {
+      "papel": "Soldado do barão: voz militar, seca e mandona",
+      "busca": {
+        "gender": "male",
+        "age": "middle_aged",
+        "use_cases": "characters_animation",
+        "termos": [
+          "militar",
+          "soldado",
+          "autoritário"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.5,
+        "similarity_boost": 0.8,
+        "style": 0.35,
+        "use_speaker_boost": true,
+        "speed": 1
+      },
+      "voice_id": null
+    },
+    "aldeao": {
+      "papel": "Aldeão aflito",
+      "busca": {
+        "gender": "male",
+        "age": "old",
+        "use_cases": "conversational",
+        "termos": [
+          "simples",
+          "aflito"
+        ]
+      },
+      "ajustes": {
+        "stability": 0.4,
+        "similarity_boost": 0.75,
+        "style": 0.4,
+        "use_speaker_boost": true,
+        "speed": 1
+      },
+      "voice_id": null,
+      "igual": "bandido1"
+    }
+  },
+  "nomesProprios": "Sir Dâmaso, Pedralva, Brumal, Barão Malvar, Brana, Tomé, Lia, Dália, Raposa."
+}

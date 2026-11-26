@@ -4,6 +4,12 @@
 //   node ferramentas/vozes.mjs testar cavaleiro          confere a chave e lista os modelos
 //   node ferramentas/vozes.mjs escalar cavaleiro         escolhe as vozes na biblioteca (só as que faltam)
 //   node ferramentas/vozes.mjs gerar cavaleiro [--cap 1] gera um MP3 por fala (só o que mudou)
+//   node ferramentas/vozes.mjs tudo cavaleiro-hd         testar + escalar + gerar
+//
+// Filme com imagem travada (filmes/<filme>/tempos.json = espaço de cada fala): a fala bruta fica em vozes/bruto/,
+// e vozes/<id>.mp3 é ela sem o silêncio das pontas e, se passar do espaço, um pouco acelerada (sem mudar o tom);
+// se precisar acelerar demais, a fala é gerada de novo com a voz mais rápida.
+// "igual": "<outro papel>" no elenco usa a mesma voz de outro papel (economiza vaga de voz na conta).
 //
 // A chave vem de ELEVENLABS_API_KEY ou é injetada pelo proxy do ambiente (Network secret do host
 // api.elevenlabs.io, cabeçalho xi-api-key).
@@ -24,6 +30,7 @@ const arqElenco = path.join(pasta, 'elenco.json');
 const arqFalas = path.join(pasta, 'falas.json');
 const pastaVozes = path.join(pasta, 'vozes');
 const arqDur = path.join(pastaVozes, 'duracoes.json');
+const arqTempos = path.join(pasta, 'tempos.json');
 const API = 'https://api.elevenlabs.io';
 
 // sem a variável, o cabeçalho não é enviado: o proxy do ambiente coloca a chave salva
@@ -76,7 +83,7 @@ async function escalar() {
   const usados = new Set(Object.values(elenco.vozes).map((v) => v.voice_id).filter(Boolean));
   fs.mkdirSync(path.join(pastaVozes, 'amostras'), { recursive: true });
   for (const [nome, v] of Object.entries(elenco.vozes)) {
-    if (v.voice_id) continue;
+    if (v.voice_id || v.igual) continue;
     const b = v.busca;
     const candidatos = new Map();
     const consultas = [
@@ -129,44 +136,73 @@ async function escalar() {
   }
 }
 
+// tira o silêncio das pontas e, se preciso, acelera até caber no espaço; devolve a duração final
+function encaixar(bruto, arq, espaco, limite = 1.18) {
+  const pontas = 'silenceremove=start_periods=1:start_threshold=-48dB:start_silence=0.04,areverse,silenceremove=start_periods=1:start_threshold=-48dB:start_silence=0.08,areverse';
+  const tmp = arq + '.tmp.wav';
+  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', bruto, '-af', pontas, tmp]);
+  const d = duracaoMp3(tmp);
+  const r = espaco ? d / espaco : 1;
+  const filtro = r > 1.0 ? [`atempo=${Math.min(r, limite).toFixed(4)}`] : [];
+  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', tmp, ...(filtro.length ? ['-af', filtro.join(',')] : []), '-c:a', 'libmp3lame', '-b:a', '192k', arq]);
+  fs.rmSync(tmp);
+  return { d, r, final: duracaoMp3(arq) };
+}
+
 async function gerar() {
   const elenco = lerJson(arqElenco);
   const falas = lerJson(arqFalas);
   const dur = lerJson(arqDur, {});
+  const tempos = lerJson(arqTempos, null);
   const cap = opc('cap');
-  fs.mkdirSync(pastaVozes, { recursive: true });
+  const pastaBruto = path.join(pastaVozes, 'bruto');
+  fs.mkdirSync(pastaBruto, { recursive: true });
   const alvo = falas.filter((f) => cap === undefined || String(f.capitulo) === cap);
   let feitas = 0, gastos = 0;
+  const pedir = async (f, v, voz, modelo, ajustes) => {
+    const i = falas.indexOf(f);
+    const corpo = { text: f.texto, model_id: modelo, voice_settings: ajustes, previous_text: falas[i - 1]?.texto, next_text: falas[i + 1]?.texto };
+    if (/turbo|flash|v3/.test(modelo)) corpo.language_code = 'pt';
+    gastos += f.texto.length;
+    return api('POST', `/v1/text-to-speech/${voz}?output_format=mp3_44100_128`, corpo, { binario: true });
+  };
   for (const f of alvo) {
     const v = elenco.vozes[f.voz];
-    if (!v?.voice_id) throw new Error(`A voz "${f.voz}" ainda não foi escolhida. Rode: node ferramentas/vozes.mjs escalar ${filme}`);
+    const voz = v?.igual ? elenco.vozes[v.igual]?.voice_id : v?.voice_id;
+    if (!voz) throw new Error(`A voz "${f.voz}" ainda não foi escolhida. Rode: node ferramentas/vozes.mjs escalar ${filme}`);
     const modelo = v.modelo ?? elenco.modelo;
-    const hash = crypto.createHash('sha1').update(JSON.stringify([f.texto, v.voice_id, modelo, v.ajustes])).digest('hex').slice(0, 12);
+    const hash = crypto.createHash('sha1').update(JSON.stringify([f.texto, voz, modelo, v.ajustes])).digest('hex').slice(0, 12);
     const arq = path.join(pastaVozes, `${f.id}.mp3`);
     if (dur[f.id]?.hash === hash && fs.existsSync(arq)) continue;
-    const i = falas.indexOf(f);
-    const corpo = {
-      text: f.texto,
-      model_id: modelo,
-      voice_settings: v.ajustes,
-      previous_text: falas[i - 1]?.texto,
-      next_text: falas[i + 1]?.texto,
-    };
-    if (/turbo|flash|v3/.test(modelo)) corpo.language_code = 'pt';
-    const audio = await api('POST', `/v1/text-to-speech/${v.voice_id}?output_format=mp3_44100_128`, corpo, { binario: true });
-    fs.writeFileSync(arq, audio);
-    dur[f.id] = { dur: Number(duracaoMp3(arq).toFixed(3)), hash };
+    const bruto = path.join(pastaBruto, `${f.id}.mp3`);
+    fs.writeFileSync(bruto, await pedir(f, v, voz, modelo, v.ajustes));
+    const espaco = tempos?.[f.id]?.dur;
+    let e = encaixar(bruto, arq, espaco);
+    // passou muito do espaço: gera de novo com a voz mais rápida (a ElevenLabs aceita até 1.2)
+    if (e.r > 1.18) {
+      const vel = Math.min(1.2, (v.ajustes?.speed ?? 1) * e.r * 1.03);
+      fs.writeFileSync(bruto, await pedir(f, v, voz, modelo, { ...v.ajustes, speed: Number(vel.toFixed(2)) }));
+      e = encaixar(bruto, arq, espaco, 1.3);
+      if (e.r > 1.3) console.warn(`  ATENÇÃO ${f.id}: a fala não coube (${e.d.toFixed(1)} s para ${espaco.toFixed(1)} s)`);
+    }
+    dur[f.id] = { dur: Number(e.final.toFixed(3)), bruta: Number(e.d.toFixed(3)), espaco: espaco ?? null, hash };
     salvarJson(arqDur, dur);
     feitas++;
-    gastos += f.texto.length;
-    console.log(`${f.id.padEnd(7)} ${f.voz.padEnd(11)} ${dur[f.id].dur.toFixed(1)}s  ${f.texto.slice(0, 60)}`);
+    const nota = espaco ? `${e.final.toFixed(1)}/${espaco.toFixed(1)}s${e.r > 1 ? ` (x${Math.min(e.r, 1.3).toFixed(2)})` : ''}` : `${e.final.toFixed(1)}s`;
+    console.log(`${f.id.padEnd(7)} ${f.voz.padEnd(11)} ${nota.padEnd(18)} ${f.texto.slice(0, 50)}`);
   }
   console.log(`${feitas} falas geradas (~${gastos} créditos).`);
 }
 
-const comandos = { testar, escalar, gerar };
+async function tudo() {
+  await testar();
+  await escalar();
+  await gerar();
+}
+
+const comandos = { testar, escalar, gerar, tudo };
 if (!comandos[comando]) {
-  console.error(`Comando desconhecido: ${comando}. Use: testar | escalar | gerar`);
+  console.error(`Comando desconhecido: ${comando}. Use: testar | escalar | gerar | tudo`);
   process.exit(1);
 }
 await comandos[comando]().catch((e) => {
