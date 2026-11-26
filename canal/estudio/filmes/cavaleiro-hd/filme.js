@@ -900,8 +900,8 @@ planos.push(
     quadro: (ctx, tl, c) => {
       cenaCerca(ctx, tl, c, { falando: falaAtiva(c, tl), golpes: false, olhaLia: 35 });
       if (falaAtiva(c, tl).enferrujado) ctx.ator('damaso').pose(somar(parado(tl), { cabeca: [-4, 35, 0] }));
-      const q = ctx.ator('damaso').raiz.position;
-      camera(ctx, [q.x - 1.9, q.y + 1.5, q.z + 1.6], [q.x, q.y + 1.5, q.z], { fov: 34 });
+      const b = ctx.ator('damaso'), q = b.raiz.position, fb = [Math.sin(b.raiz.rotation.y + 0.9), Math.cos(b.raiz.rotation.y + 0.9)];
+      camera(ctx, [q.x + fb[0] * 2.2, q.y + 1.5, q.z + fb[1] * 2.2], [q.x, q.y + 1.4, q.z], { fov: 34 });
     },
   },
   {
@@ -1843,15 +1843,16 @@ planos.push(
     quadro: (ctx, tl, c) => {
       const p = portaCasa(6, 0.8);
       const a = ctx.ator('aldeao'), t = ctx.ator('tome');
-      colocar(ctx, a, p.x + 0.8, p.z, p.giro + Math.PI);
+      const fr = [Math.sin(p.giro), Math.cos(p.giro)], ld = [Math.cos(p.giro), -Math.sin(p.giro)];
+      colocar(ctx, a, p.x + fr[0] * 1.6 + ld[0] * 0.8, p.z + fr[1] * 1.6 + ld[1] * 0.8, p.giro + Math.PI);
       a.pose(somar(parado(tl), U.jogaAgua(Math.max(0, Math.sin(tl * 1.7)))));
-      colocar(ctx, t, p.x - 1.0, p.z + 0.3, p.giro + Math.PI);
+      colocar(ctx, t, p.x + fr[0] * 1.4 - ld[0] * 1.0, p.z + fr[1] * 1.4 - ld[1] * 1.0, p.giro + Math.PI);
       t.pose(somar(parado(tl), U.jogaAgua(Math.max(0, Math.sin(tl * 1.7 + 1.4)))));
       a.raiz.updateMatrixWorld(true);
       ctx.ator('balde').raiz.position.copy(a.ossos.maoE.getWorldPosition(new THREE.Vector3()));
       ctx.cen.focar(p.x, 0, p.z);
       ctx.cen.preencher(0.8);
-      camera(ctx, [p.x + Math.sin(p.giro) * 5.5, 1.6, p.z + Math.cos(p.giro) * 5.5], [p.x, 1.9, p.z], { fov: 40 });
+      camera(ctx, [p.x + fr[0] * 5.0 + ld[0] * 1.5, 1.7, p.z + fr[1] * 5.0 + ld[1] * 1.5], [p.x + fr[0] * 1.2, 1.8, p.z + fr[1] * 1.2], { fov: 42 });
     },
   },
 );
@@ -1953,7 +1954,7 @@ planos.push(
       const f = c.fala(0);
       if (tl > f.t0 && tl < f.t1) { l.falar(p, tl); Object.assign(p, { bracoD: [-80, 0, -20], antebracoD: [-10, 0, 0] }); }
       l.pose(p);
-      camera(ctx, [10.4, 1.5, -7.4], [10.0, 1.1, -11.4], { fov: 44 });
+      camera(ctx, [12.6, 1.6, -6.6], [10.0, 1.1, -11.2], { fov: 44 });
     },
   },
   {

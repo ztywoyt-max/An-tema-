@@ -45,6 +45,14 @@ export function criarPos(renderer, cena, camera, { w = 1920, h = 1080, bloom = 0
     gtao.updateGtaoMaterial({ radius: 0.6, distanceExponent: 1.5, thickness: 1.0, scale: 1.2, samples: 16 });
     gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 16 });
     gtao.blendIntensity = 0.9;
+    // efeitos transparentes (fumaça, chamas, chuva, névoa) não entram na oclusão: senão viram retângulos escuros
+    gtao.overrideVisibility = function () {
+      const cache = this._visibilityCache;
+      this.scene.traverse((o) => {
+        cache.set(o, o.visible);
+        if (o.isPoints || o.isLine || (o.isMesh && o.material && (o.material.transparent || o.material.blending === THREE.AdditiveBlending))) o.visible = false;
+      });
+    };
     comp.addPass(gtao);
   }
   const b = new UnrealBloomPass(new THREE.Vector2(w, h), bloom, 0.75, 0.82);

@@ -173,10 +173,10 @@ export function celeiro({ largura = 8, fundo = 11, altura = 3.6, aberto = 1 } = 
     v.position.set(0, altura - 0.1, -fundo / 2 + 1.5 + i * 2.6);
     g.add(v);
   }
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 4; i++) {
     const f = sombra(new THREE.Mesh(new THREE.SphereGeometry(1, 18, 12), M.feno));
-    f.scale.set(1.2 + (i % 2) * 0.4, 0.7 + (i % 3) * 0.25, 1.0);
-    f.position.set(-largura / 2 + 1.3, 0.3, -fundo / 2 + 1.5 + i * 1.7);
+    f.scale.set(0.9 + (i % 2) * 0.3, 0.55 + (i % 3) * 0.2, 0.8);
+    f.position.set(-largura / 2 + 1.0 + (i % 2) * 1.4, 0.2, -fundo / 2 + 1.1 + Math.floor(i / 2) * 1.3);
     g.add(f);
   }
   return g;

@@ -179,7 +179,7 @@ function basePedralva() {
     return distCaminho(x, z);
   };
   g.add(criarMato({ qtd: 30000, raio: 45, centro: [0, -14], altura: alt, dist: fora, tamanho: 0.8 }));
-  g.add(criarFloresta({ qtd: 420, altura: alt, dist: (x, z) => (Math.hypot(x, (z + 18) * 0.8) < 38 ? 0 : 99) + distCaminho(x, z), zMin: -110, zMax: 90, xLarg: 200, folga: 4 }));
+  g.add(criarFloresta({ qtd: 420, altura: alt, dist: (x, z) => (Math.hypot(x, (z + 18) * 0.8) < 36 || Math.abs(z - PED.rioZ(x)) < 7 ? 0 : distCaminho(x, z)), zMin: -110, zMax: 90, xLarg: 200, folga: 4 }));
   g.add(criarPedras([[-6, 4.5, 0.7, 3], [5, 5.2, 0.5, 4], [-14, 3, 0.9, 5], [20, 4.4, 0.8, 6], [-3, -5.8, 0.6, 7], [24, -12, 1.2, 8]], alt));
   g.userData = { casas, moinho: mo, celeiro: cel, ponte: pt, agua };
   bases.pedralva = g;
@@ -244,8 +244,9 @@ export function tela(ctx) {
     x.fillStyle = '#000'; x.fillRect(0, 0, 1920, 1080);
     x.textAlign = 'center';
     x.fillStyle = corTitulo;
-    x.font = `600 ${tamanho}px Cinzel`;
+    let t = tamanho;
     x.letterSpacing = '14px';
+    do { x.font = `600 ${t}px Cinzel`; t -= 4; } while (x.measureText(titulo).width > 1640 && t > 40);
     x.fillText(titulo, 960, sub ? 500 : 560);
     x.fillStyle = corLinha;
     x.fillRect(960 - 260, sub ? 545 : 600, 520, 3);

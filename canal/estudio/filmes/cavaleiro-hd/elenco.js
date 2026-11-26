@@ -87,9 +87,9 @@ export const FICHAS = {
     roupas: [T('cueca', 'linho', 0xd8ccb4), T('cinto', 'couro', 0x9a7a5a), T('faixas', 'linho', 0xb8a890)],
   },
   damasoCamisa: {
-    nome: 'damasoCamisa', versao: 2, altura: 1.84, ombros: 1.04, forca: 1.1, gordura: 0.05, idade: 0.65, olhos: 0x4a4038, maos: ['aberta', 'segura', 'punho', 'meia'],
+    nome: 'damasoCamisa', versao: 3, altura: 1.84, ombros: 1.04, forca: 1.1, gordura: 0.05, idade: 0.65, olhos: 0x4a4038, maos: ['aberta', 'segura', 'punho', 'meia'],
     rosto: { nariz: 1.0, queixo: 1.05, semente: 121 }, cabelo: { estilo: 'curto', cor: 0x5a524a, volume: 0.9 }, barba: { tamanho: 0.55, cor: 0x5e5650 },
-    roupas: [T('camisa', 'linho', 0xc8bca4, { manga: 'longa', barra: -0.24 }), T('calca', 'la', 0x5a4a3a), T('cinto', 'couro', 0x9a7a5a, { folga: 0.04 })],
+    roupas: [T('camisa', 'la', 0xb0a490, { manga: 'longa', barra: -0.24 }), T('calca', 'la', 0x5a4a3a), T('cinto', 'couro', 0x9a7a5a, { folga: 0.04 })],
   },
   dourado: {
     nome: 'dourado', versao: 2, altura: 1.84, ombros: 1.04, forca: 1.1, gordura: 0.05, semRosto: true, maos: ['segura', 'aberta'],
