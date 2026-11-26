@@ -68,7 +68,7 @@ export function criarPessoa(f) {
     b.malhas.push(m);
     return m;
   };
-  if (f.rosto !== false) {
+  if (f.rosto !== false && !f.semRosto) {
     const ro = { mulher: f.mulher ?? 0, crianca: f.crianca ?? 0, idade: f.idade ?? 0.3, ...(f.rosto ?? {}) };
     pele2(geoCache(`${chave}/rosto`, () => naCabeca(sdfRosto(ro))), matPele);
     for (const [x, y, z] of OLHOS) {

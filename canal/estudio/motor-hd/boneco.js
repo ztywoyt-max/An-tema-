@@ -126,13 +126,14 @@ export function sdfDePartes(P) {
 
 // ---------- pesos da pele ----------
 // ossosPermitidos: limita os ossos (ex.: saia só no quadril e coxas); ajuste: { osso: fator }
-export function pesar(geo, P, J, { permitidos = null, ajuste = {}, suave = 0.012 } = {}) {
-  const idx = Object.fromEntries(OSSOS.map((o, i) => [o[0], i]));
-  const pai = Object.fromEntries(OSSOS.map((o) => [o[0], o[1]]));
+export function pesar(geo, P, J, { permitidos = null, ajuste = {}, suave = 0.012, ossos = OSSOS, raios = JUNTA_RAIO } = {}) {
+  const OS = ossos;
+  const idx = Object.fromEntries(OS.map((o, i) => [o[0], i]));
+  const pai = Object.fromEntries(OS.map((o) => [o[0], o[1]]));
   const pos = geo.attributes.position;
   const n = pos.count;
   const si = new Uint16Array(n * 4), sw = new Float32Array(n * 4);
-  const w = new Float32Array(OSSOS.length);
+  const w = new Float32Array(OS.length);
   for (let v = 0; v < n; v++) {
     const x = pos.getX(v), y = pos.getY(v), z = pos.getZ(v);
     w.fill(0);
@@ -146,11 +147,11 @@ export function pesar(geo, P, J, { permitidos = null, ajuste = {}, suave = 0.012
       w[idx[o]] += Math.exp(-(ds[k] - dmin) / suave) * (ajuste[o] ?? 1);
     }
     // espalha o peso perto do começo de cada osso de membro (a junta dobra macia, sem vinco)
-    for (const [nome, , a, b] of OSSOS) {
+    for (const [nome, , a, b] of OS) {
       const i = idx[nome];
       if (!w[i] || !pai[nome]) continue;
       const base = nome.replace(/[ED]$/, '');
-      const r = (JUNTA_RAIO[base] ?? 0.05) * (J.altura / 1.82);
+      const r = (raios[base] ?? 0.05) * (J.altura / 1.82);
       const ja = J[a], jb = J[b];
       const dir = norm(sub(jb, ja));
       const t = (x - ja[0]) * dir[0] + (y - ja[1]) * dir[1] + (z - ja[2]) * dir[2];
@@ -180,17 +181,17 @@ export function pesar(geo, P, J, { permitidos = null, ajuste = {}, suave = 0.012
  *               rigidas: [{ osso, objeto }] })
  * Devolve { raiz (Group), ossos, malhas, pose(p), J }.
  */
-export function criarBoneco({ J, partes, corpo, roupas = [], nome = 'boneco' }) {
+export function criarBoneco({ J, partes, corpo, roupas = [], nome = 'boneco', ossos: OS = OSSOS, raios = JUNTA_RAIO }) {
   const raiz = new THREE.Group();
   raiz.name = nome;
   const ossos = {};
   const lista = [];
-  for (const [o, p, a] of OSSOS) {
+  for (const [o, p, a] of OS) {
     const b = new THREE.Bone();
     b.name = o;
     const ja = J[a];
     if (p) {
-      const jp = J[OSSOS.find((x) => x[0] === p)[2]];
+      const jp = J[OS.find((x) => x[0] === p)[2]];
       b.position.set(ja[0] - jp[0], ja[1] - jp[1], ja[2] - jp[2]);
       ossos[p].add(b);
     } else {
@@ -216,15 +217,15 @@ export function criarBoneco({ J, partes, corpo, roupas = [], nome = 'boneco' }) 
   if (corpo) {
     const sdf = sdfDePartes(partes);
     const h = J.altura / 1.82;
-    const lim = { min: [-0.62 * h, 0, -0.32 * h], max: [0.62 * h, J.topo[1] + 0.02, 0.42 * h] };
-    const g = geoCache(corpo.cache && `${corpo.cache}/corpo`, () => pesar(malha(sdf, { ...lim, passo: corpo.passo ?? 0.0065, suavizar: 1, ...(corpo.limites ?? {}) }), partes, J));
+    const lim = corpo.caixa ?? { min: [-0.62 * h, 0, -0.32 * h], max: [0.62 * h, J.topo[1] + 0.02, 0.42 * h] };
+    const g = geoCache(corpo.cache && `${corpo.cache}/corpo`, () => pesar(malha(sdf, { ...lim, passo: corpo.passo ?? 0.0065, suavizar: 1, ...(corpo.limites ?? {}) }), partes, J, { ossos: OS, raios }));
     pele(g, corpo.material);
   }
   roupas.forEach((r, i) => {
-    const g = geoCache(corpo?.cache && `${corpo.cache}/roupa${i}`, () => pesar(malha(r.sdf, { min: r.limites.min, max: r.limites.max, passo: r.passo ?? 0.006, suavizar: r.suavizar ?? 1, uv: r.uv }), partes, J, { permitidos: r.permitidos, ajuste: r.ajuste }));
+    const g = geoCache(corpo?.cache && `${corpo.cache}/roupa${i}`, () => pesar(malha(r.sdf, { min: r.limites.min, max: r.limites.max, passo: r.passo ?? 0.006, suavizar: r.suavizar ?? 1, uv: r.uv }), partes, J, { permitidos: r.permitidos, ajuste: r.ajuste, ossos: OS, raios }));
     pele(g, r.material);
   });
-  const boneco = { raiz, ossos, malhas, esqueleto, J };
+  const boneco = { raiz, ossos, malhas, esqueleto, J, ossosDef: OS };
   boneco.prender = (osso, obj) => {
     // prende um objeto rígido ao osso, mantendo a posição de repouso dele (em coordenadas do boneco)
     const b = ossos[osso];
@@ -245,7 +246,7 @@ export function criarBoneco({ J, partes, corpo, roupas = [], nome = 'boneco' }) 
 // cotovelo dobra com x negativo; braço esquerdo abre com z positivo, o direito com z negativo.
 const D2R = Math.PI / 180;
 export function aplicarPose(b, p) {
-  for (const [o] of OSSOS) {
+  for (const [o] of b.ossosDef ?? OSSOS) {
     const r = p[o] ?? [0, 0, 0];
     b.ossos[o].rotation.set(r[0] * D2R, r[1] * D2R, r[2] * D2R, 'YXZ');
   }

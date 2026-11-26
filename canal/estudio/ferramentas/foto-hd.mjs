@@ -21,6 +21,12 @@ for (const par of (opc('q') ?? '').split('&').filter(Boolean)) { const [k, v] = 
 await pagina.goto(url(qs));
 await pagina.waitForFunction(() => window.estudio?.pronto || false, null, { timeout: 3600000, polling: 1000 }).catch((e) => { console.error(estado.erro ?? e); process.exit(1); });
 fs.mkdirSync(path.dirname(saida), { recursive: true });
+// --meio: uma foto no meio de cada plano (folha de conferência), com o nome do plano
+if (args.includes('--meio')) {
+  const planos = await pagina.evaluate(() => window.estudio.planos);
+  ts.length = 0;
+  for (const p of planos) ts.push(+(p.inicio + (p.fim - p.inicio) * 0.6).toFixed(2));
+}
 for (const t of ts) {
   const dataUrl = await pagina.evaluate((tt) => window.estudio.foto(tt), t);
   const arq = ts.length > 1 ? saida.replace(/\.png$/, `-${t}.png`) : saida;

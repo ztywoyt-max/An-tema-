@@ -297,3 +297,63 @@ export const aco = () => feito('aco', () => criar(512, 4, (P, x, y, per, s) => {
   s.met = 1;
   s.m = mancha;
 }, { relevo: 0.6, semente: 31 }));
+
+// madeira de tábua: veios compridos, nós e desgaste
+export const madeira = () => feito('madeira', () => criar(512, 4, (P, x, y, per, s) => {
+  const veio = P.fbm(x * 8, y * 0.5, 0, 4, [per * 8, per * 0.5 || 1]);
+  const anel = 0.5 + 0.5 * Math.sin((x * 6 + veio * 3) * Math.PI * 2);
+  const no = suave(0.38, 0.5, P.ruido(x * 1.5, y * 1.5, 4, per * 1.5 || 1));
+  const gasto = suave(0.0, 0.4, P.fbm(x * 2, y * 2, 7, 3, per * 2));
+  const k = 0.32 + anel * 0.1 + veio * 0.12 - no * 0.12;
+  s.r = k * 1.15 * (1 - gasto * 0.25); s.g = k * 0.88 * (1 - gasto * 0.25); s.b = k * 0.62 * (1 - gasto * 0.2);
+  s.h = anel * 0.4 + veio * 0.6 - no * 0.5;
+  s.rug = 0.78 + gasto * 0.12;
+  s.m = gasto;
+}, { relevo: 2.2, semente: 37 }));
+
+// alvenaria de pedra: pedras irregulares (células de Voronoi) com argamassa funda
+export const alvenaria = () => feito('alvenaria', () => {
+  const n = 7;
+  const r0 = (i, j, k) => { const v = Math.sin((i * 127.1 + j * 311.7 + k * 74.7)) * 43758.5453; return v - Math.floor(v); };
+  const ponto = (i, j) => { const ii = ((i % n) + n) % n, jj = ((j % n) + n) % n; return [i + 0.15 + 0.7 * r0(ii, jj, 1), j + 0.15 + 0.7 * r0(ii, jj, 2) * 0.8 + 0.1]; };
+  return criar(1024, 4, (P, x, y, per, s, u, v) => {
+    const px = u * n, py = v * n * 1.6;
+    const ci = Math.floor(px), cj = Math.floor(py);
+    let d1 = 9, d2 = 9, id = 0;
+    for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) {
+      const [qx, qy] = ponto(ci + a, cj + b);
+      const d = Math.hypot((px - qx) * 1.0, (py - qy) * 1.25);
+      if (d < d1) { d2 = d1; d1 = d; id = r0(((ci + a) % n + n) % n, ((cj + b) % n + n) % n, 3); } else if (d < d2) d2 = d;
+    }
+    const borda = clamp((d2 - d1) * 6);
+    const grao = P.fbm(x * 8, y * 8, 2, 3, per * 8);
+    const musgo = suave(0.15, 0.45, P.fbm(x * 1.5, y * 1.5, 5, 3, per * 1.5)) * (1 - borda) * 0.6;
+    const tom = 0.34 + id * 0.12 + grao * 0.08;
+    const arg = 1 - borda;
+    s.r = mistura(tom * 1.02, 0.2, arg); s.g = mistura(tom * 0.98, 0.19, arg); s.b = mistura(tom * 0.92, 0.17, arg);
+    s.r = mistura(s.r, 0.16, musgo); s.g = mistura(s.g, 0.2, musgo); s.b = mistura(s.b, 0.1, musgo);
+    s.h = Math.pow(borda, 0.5) * 1.2 + grao * 0.3;
+    s.rug = 0.85;
+    s.m = musgo;
+  }, { relevo: 4, semente: 41 });
+});
+
+// palha de telhado: fios grossos e mechas escurecidas pela chuva
+export const palha = () => feito('palha', () => criar(512, 4, (P, x, y, per, s, u, v) => {
+  const mecha = P.fbm(x * 5, y * 0.4, 0, 3, [per * 5, per * 0.4 || 1]);
+  const fio = 0.5 + 0.5 * Math.sin((u * 160 + mecha * 20) * Math.PI);
+  const camada = 0.5 + 0.5 * Math.sin(v * 24 * Math.PI * 2 + mecha * 2);
+  const velho = suave(-0.1, 0.4, P.fbm(x * 1.2, y * 1.2, 4, 4, per * 1.2 || 1));
+  const k = (0.5 + fio * 0.25 + mecha * 0.3) * (0.75 + camada * 0.25);
+  s.r = mistura(k * 0.95, k * 0.5, velho); s.g = mistura(k * 0.8, k * 0.46, velho); s.b = mistura(k * 0.5, k * 0.36, velho);
+  s.h = fio * 0.5 + camada * 0.6 + mecha;
+  s.rug = 0.92;
+  s.m = velho;
+}, { relevo: 3, semente: 43 }));
+
+// ondinhas de água (só a normal importa)
+export const agua = () => feito('agua', () => criar(512, 8, (P, x, y, per, s) => {
+  s.h = P.fbm(x, y, 0, 4, per) + 0.3 * P.fbm(x * 3, y * 3, 2, 3, per * 3);
+  s.r = s.g = s.b = 1;
+  s.rug = 0.05;
+}, { relevo: 1.2, semente: 47 }));

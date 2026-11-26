@@ -49,11 +49,11 @@ export function criarChao() {
 }
 
 // ---------- mato ----------
-export function criarMato({ qtd = 11000, raio = 26, centro = [0, -4], semente = 5 } = {}) {
+export function criarMato({ qtd = 11000, raio = 26, centro = [0, -4], semente = 5, altura = alturaChao, dist = distEstrada, folhas: nFolhas = 14, tamanho = 1 } = {}) {
   const r = rng(semente);
   // um tufo = várias folhas finas e curvas
   const folhas = [];
-  for (let f = 0; f < 14; f++) {
+  for (let f = 0; f < nFolhas; f++) {
     const a = r() * Math.PI * 2, inc = 0.15 + r() * 0.5, alt = 0.12 + r() * 0.26, larg = 0.006 + r() * 0.006;
     const segs = 4;
     const v = [], c = [], idx = [];
@@ -85,13 +85,13 @@ export function criarMato({ qtd = 11000, raio = 26, centro = [0, -4], semente = 
   for (let tent = 0; n < qtd && tent < qtd * 8; tent++) {
     const ang = r() * Math.PI * 2, rad = Math.pow(r(), 0.7) * raio;
     const x = centro[0] + Math.cos(ang) * rad, z = centro[1] + Math.sin(ang) * rad;
-    const d = distEstrada(x, z) + P.fbm(x * 0.9, z * 0.9, 6, 2) * 0.8;
+    const d = dist(x, z) + P.fbm(x * 0.9, z * 0.9, 6, 2) * 0.8;
     if (d < 1.35 && r() > 0.04) continue;
     if (P.fbm(x * 0.3, z * 0.3, 8, 2) < -0.15 && r() > 0.3) continue;
-    const esc = (0.55 + r() * 0.75) * (d < 1.8 ? 0.55 : 1);
+    const esc = (0.55 + r() * 0.75) * (d < 1.8 ? 0.55 : 1) * tamanho;
     e.set((r() - 0.5) * 0.2, r() * Math.PI * 2, (r() - 0.5) * 0.2);
     q.setFromEuler(e);
-    m4.compose(p3.set(x, alturaChao(x, z), z), q, s3.set(esc, esc * (0.8 + r() * 0.5), esc));
+    m4.compose(p3.set(x, altura(x, z), z), q, s3.set(esc, esc * (0.8 + r() * 0.5), esc));
     inst.setMatrixAt(n, m4);
     const seco = clamp(0.55 + P.fbm(x * 0.2, z * 0.2, 3, 2) * 1.5 + (r() - 0.5) * 0.3);
     cor.setRGB(mistura(0.07, 0.3, seco), mistura(0.1, 0.25, seco), mistura(0.04, 0.12, seco));
@@ -170,7 +170,7 @@ function geometriaPinheiro(semente) {
   return { tronco: troncoTudo, galhos };
 }
 
-export function criarFloresta({ qtd = 340, semente = 9, evitar = [] } = {}) {
+export function criarFloresta({ qtd = 340, semente = 9, evitar = [], altura = alturaChao, dist = distEstrada, zMin = -110, zMax = 14, xLarg = 130, folga = 3.4 } = {}) {
   const r = rng(semente);
   const grupo = new THREE.Group();
   const matTronco = triplanar(casca(), { escala: 1.2, relevo: 1.4, metal: 0 });
@@ -179,10 +179,10 @@ export function criarFloresta({ qtd = 340, semente = 9, evitar = [] } = {}) {
   const variantes = [1, 2, 3].map((s) => geometriaPinheiro(s * 31 + semente));
   const lugares = [];
   for (let tent = 0; lugares.length < qtd && tent < qtd * 30; tent++) {
-    const z = mistura(-110, 14, Math.pow(r(), 0.8));
-    const x = (r() - 0.5) * 130;
-    const d = distEstrada(x, z);
-    if (d < 3.4 + r() * 2) continue;
+    const z = mistura(zMin, zMax, Math.pow(r(), 0.8));
+    const x = (r() - 0.5) * xLarg;
+    const d = dist(x, z);
+    if (d < folga + r() * 2) continue;
     if (evitar.some(([ex, ez, er]) => Math.hypot(x - ex, z - ez) < er)) continue;
     lugares.push([x, z, r()]);
   }
@@ -194,7 +194,7 @@ export function criarFloresta({ qtd = 340, semente = 9, evitar = [] } = {}) {
     meus.forEach(([x, z, k], i) => {
       const esc = 0.75 + k * 0.6;
       q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), k * 40);
-      m4.compose(p3.set(x, alturaChao(x, z) - 0.1, z), q, s3.set(esc, esc, esc));
+      m4.compose(p3.set(x, altura(x, z) - 0.1, z), q, s3.set(esc, esc, esc));
       iT.setMatrixAt(i, m4);
       iG.setMatrixAt(i, m4);
     });
@@ -262,14 +262,14 @@ export function geometriaPedra(semente, achatar = 0.65) {
   g.computeVertexNormals();
   return g;
 }
-export function criarPedras(lista) {
+export function criarPedras(lista, altura = alturaChao) {
   const grupo = new THREE.Group();
   const mat = triplanar(pedra(), { escala: 0.9, relevo: 1.3, metal: 0, musgo: { cor: 0x26331a, qtd: 0.85 } });
   lista.forEach(([x, z, esc, sem], i) => {
     const m = new THREE.Mesh(geometriaPedra(sem ?? i + 3), mat);
     m.scale.setScalar(esc);
     m.rotation.y = i * 1.7;
-    m.position.set(x, alturaChao(x, z) + esc * 0.15, z);
+    m.position.set(x, altura(x, z) + esc * 0.15, z);
     m.castShadow = true; m.receiveShadow = true;
     grupo.add(m);
   });
@@ -332,41 +332,48 @@ export function criarLanterna({ intensidade = 5 } = {}) {
   return g;
 }
 
-// ---------- céu noturno: degradê, nuvens e lua ----------
-export function criarCeu({ dirLua, corNevoa, corLua }) {
+// ---------- céu: degradê, nuvens, sol/lua e estrelas (parâmetros por hora do dia) ----------
+export const CEUS = {
+  noite: { zenite: [0.004, 0.006, 0.014], solCor: [1.9, 2.0, 2.2], solTam: 0.9997, nuvens: 0.85, nuvemEscura: [0.012, 0.014, 0.022], estrelas: 1, brilhoExp: 6 },
+  amanhecer: { zenite: [0.08, 0.1, 0.16], solCor: [9, 6.5, 4.5], solTam: 0.99985, nuvens: 0.7, nuvemEscura: [0.18, 0.15, 0.17], estrelas: 0, brilhoExp: 4 },
+  nublado: { zenite: [0.16, 0.18, 0.21], solCor: [0, 0, 0], solTam: 1, nuvens: 1.0, nuvemEscura: [0.2, 0.21, 0.23], estrelas: 0, brilhoExp: 3, cobertura: 0.38 },
+  tarde: { zenite: [0.1, 0.12, 0.2], solCor: [14, 7, 2.6], solTam: 0.99975, nuvens: 0.8, nuvemEscura: [0.16, 0.1, 0.09], estrelas: 0, brilhoExp: 3 },
+  tempestade: { zenite: [0.003, 0.004, 0.007], solCor: [0, 0, 0], solTam: 1, nuvens: 1.0, nuvemEscura: [0.006, 0.007, 0.01], estrelas: 0, brilhoExp: 6, cobertura: 0.3 },
+};
+export function criarCeu({ dirLua, corNevoa, corLua, tipo = 'noite' }) {
+  const c = CEUS[tipo];
   const m = new THREE.ShaderMaterial({
     side: THREE.BackSide, depthWrite: false, fog: false,
     uniforms: {
       uLua: { value: dirLua.clone() }, uNevoa: { value: new THREE.Color(...corNevoa) }, uBrilho: { value: new THREE.Color(...corLua) },
+      uZenite: { value: new THREE.Color(...c.zenite) }, uSolCor: { value: new THREE.Color(...c.solCor) }, uSolTam: { value: c.solTam },
+      uNuvens: { value: c.nuvens }, uNuvemEscura: { value: new THREE.Color(...c.nuvemEscura) }, uEstrelas: { value: c.estrelas }, uExp: { value: c.brilhoExp }, uCobertura: { value: c.cobertura ?? 0.48 },
     },
     vertexShader: `varying vec3 vDir; void main(){ vec4 w = modelMatrix * vec4(position,1.0); vDir = w.xyz - cameraPosition; gl_Position = projectionMatrix * viewMatrix * w; gl_Position.z = gl_Position.w; }`,
     fragmentShader: `
-      uniform vec3 uLua, uNevoa, uBrilho; varying vec3 vDir;
+      uniform vec3 uLua, uNevoa, uBrilho, uZenite, uSolCor, uNuvemEscura; uniform float uSolTam, uNuvens, uEstrelas, uExp, uCobertura; varying vec3 vDir;
       float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
       float rn(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(h(i),h(i+vec2(1,0)),f.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x), f.y); }
       float fbm(vec2 p){ float s=0.0,a=0.5; for(int i=0;i<6;i++){ s+=a*rn(p); p=p*2.03+vec2(1.7,9.2); a*=0.5; } return s; }
       void main(){
         vec3 d = normalize(vDir);
         float alt = max(d.y, 0.0);
-        vec3 cor = mix(uNevoa, vec3(0.004, 0.006, 0.014), pow(alt, 0.45));
+        vec3 cor = mix(uNevoa, uZenite, pow(alt, 0.45));
         float cl = max(dot(d, uLua), 0.0);
-        cor += uBrilho * pow(cl, 6.0) + uBrilho * 1.6 * pow(cl, 60.0);
-        // nuvens rasgadas, com borda acesa perto da lua
+        cor += uBrilho * pow(cl, uExp) + uBrilho * 1.6 * pow(cl, 60.0);
         vec2 q = d.xz / (d.y + 0.12) * 1.4;
         float n = fbm(q + vec2(3.0, 1.0));
-        float nuvem = smoothstep(0.48, 0.75, n) * smoothstep(0.0, 0.12, d.y);
-        vec3 corNuvem = mix(vec3(0.012, 0.014, 0.022), uBrilho * 1.3, pow(cl, 10.0) * (1.0 - smoothstep(0.6, 0.85, n)) + 0.05);
+        float nuvem = smoothstep(uCobertura, uCobertura + 0.27, n) * smoothstep(0.0, 0.12, d.y) * uNuvens;
+        vec3 corNuvem = mix(uNuvemEscura, uBrilho * 1.3 + uNevoa * 0.5, pow(cl, 10.0) * (1.0 - smoothstep(0.6, 0.85, n)) + 0.05);
         cor = mix(cor, corNuvem, nuvem * 0.85);
-        // lua
-        float disco = smoothstep(0.99962, 0.99972, cl);
+        float disco = smoothstep(uSolTam - 0.0001, uSolTam, cl);
         vec3 du = normalize(cross(uLua, vec3(0.0, 1.0, 0.0)));
         vec3 dv = cross(du, uLua);
         vec2 lp = vec2(dot(d, du), dot(d, dv)) * 40.0;
         float mares = rn(lp * 2.0 + 3.0) * 0.6 + rn(lp * 5.0 + 7.0) * 0.4;
-        cor = mix(cor, vec3(1.9, 2.0, 2.2) * (0.72 + 0.35 * smoothstep(0.35, 0.7, mares)), disco * (1.0 - nuvem * 0.7));
-        // estrelas
+        cor = mix(cor, uSolCor * (0.72 + 0.35 * smoothstep(0.35, 0.7, mares) * uEstrelas), disco * (1.0 - nuvem * 0.7));
         float est = step(0.9985, h(floor(d.xz / (d.y + 0.3) * 260.0))) * smoothstep(0.1, 0.5, d.y) * (1.0 - nuvem);
-        cor += vec3(0.9, 0.95, 1.0) * est * 0.6 * (1.0 - smoothstep(0.995, 0.999, cl));
+        cor += vec3(0.9, 0.95, 1.0) * est * 0.6 * uEstrelas * (1.0 - smoothstep(0.995, 0.999, cl));
         gl_FragColor = vec4(cor, 1.0);
       }`,
   });
@@ -374,6 +381,37 @@ export function criarCeu({ dirLua, corNevoa, corLua }) {
   ceu.frustumCulled = false;
   ceu.renderOrder = -1;
   return ceu;
+}
+
+// mapa de reflexos (ambiente) a partir do próprio céu
+export function ambienteDoCeu(renderer, ceu) {
+  const so = new THREE.Scene();
+  so.add(ceu.clone());
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const t = pmrem.fromScene(so, 0, 0.1, 1000).texture;
+  pmrem.dispose();
+  return t;
+}
+
+// chão genérico: altura(x, z) e lama(x, z) (0..1) dão o relevo e onde há caminho de terra
+export function criarTerreno({ altura, lama: lamaFn, centro = [0, 0], raio = 150, N = 480, pocas = 0.6, escala = 0.55 }) {
+  const g = new THREE.PlaneGeometry(2, 2, N, N);
+  g.rotateX(-Math.PI / 2);
+  const pos = g.attributes.position;
+  const aLama = new Float32Array(pos.count);
+  const esticar = (u) => Math.sign(u) * Math.pow(Math.abs(u), 1.9) * raio;
+  for (let i = 0; i < pos.count; i++) {
+    const x = esticar(pos.getX(i)) + centro[0], z = esticar(pos.getZ(i)) + centro[1];
+    pos.setXYZ(i, x, altura(x, z), z);
+    aLama[i] = lamaFn(x, z);
+  }
+  g.setAttribute('aLama', new THREE.BufferAttribute(aLama, 1));
+  g.computeVertexNormals();
+  const mat = materialChao(lama(), terra(), { escala, pocas });
+  mat.envMapIntensity = 0.45;
+  const m = new THREE.Mesh(g, mat);
+  m.receiveShadow = true;
+  return m;
 }
 
 // ---------- neblina em camadas (cartões grandes e suaves perto do chão) ----------

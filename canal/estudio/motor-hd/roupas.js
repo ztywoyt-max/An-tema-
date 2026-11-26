@@ -171,3 +171,71 @@ export function couraca(P, J, { folga = 0.03 } = {}) {
     ajuste: { bracoE: 0.3, bracoD: 0.3 },
   };
 }
+
+// cueca de linho (só a parte de baixo do quadril até o meio da coxa)
+export function cueca(P, J, { folga = 0.02, semente = 41 } = {}) {
+  const P3 = new Perlin(semente);
+  const h = J.altura / 1.82;
+  const baixo = sdfDePartes(deOssos(P, ['raiz', 'coxaE', 'coxaD']));
+  const yQ = J.quadrilE[1];
+  return {
+    sdf: (x, y, z) => {
+      const dobras = 0.005 * P3.ruido(x * 28, y * 9, z * 28) + 0.0025 * Math.sin(Math.atan2(x, z) * 9 + y * 20);
+      let d = baixo(x, y, z) - folga * h + dobras;
+      d = smax(d, y - (yQ + 0.125 * h), 0.01);
+      return smax(d, yQ - 0.155 * h - y, 0.012);
+    },
+    limites: LIM(J),
+    permitidos: ['raiz', 'coluna', 'coxaE', 'coxaD'],
+  };
+}
+
+// cinto de couro na cintura
+export function cinto(P, J, { altura = 0.115, largura = 0.022, folga = 0.024 } = {}) {
+  const h = J.altura / 1.82;
+  const cint = sdfDePartes(deOssos(P, ['coluna', 'raiz']));
+  const y0 = J.quadrilE[1] + altura * h;
+  return {
+    sdf: (x, y, z) => smax(cint(x, y, z) - folga * h, Math.abs(y - y0) - largura * h, 0.006),
+    limites: { min: [-0.3 * h, y0 - 0.06, -0.25 * h], max: [0.3 * h, y0 + 0.06, 0.3 * h] }, passo: 0.004,
+    permitidos: ['raiz', 'coluna'],
+  };
+}
+
+// faixas de pano enroladas nos antebraços (ou nas canelas)
+export function faixas(P, J, { onde = 'antebraco', semente = 43 } = {}) {
+  const P3 = new Perlin(semente);
+  const h = J.altura / 1.82;
+  const pares = onde === 'antebraco' ? [['cotoveloE', 'pulsoE', 'antebracoE'], ['cotoveloD', 'pulsoD', 'antebracoD']] : [['joelhoE', 'tornozeloE', 'pernaE'], ['joelhoD', 'tornozeloD', 'pernaD']];
+  const fs = pares.map(([a, b, o]) => {
+    const parte = sdfDePartes(deOssos(P, [o]));
+    const t = aoLongo(J, a, b);
+    return (x, y, z) => {
+      const tt = t(x, y, z);
+      const espiral = 0.0018 * h * Math.sin(tt * 70 + Math.atan2(x - J[b][0], z - J[b][2]));
+      return smax(parte(x, y, z) - 0.009 * h + espiral + 0.002 * P3.ruido(x * 60, y * 60, z * 60), Math.abs(tt - 0.78) - 0.2, 0.004);
+    };
+  });
+  return {
+    sdf: (x, y, z) => Math.min(fs[0](x, y, z), fs[1](x, y, z)),
+    limites: LIM(J), passo: 0.0045,
+    permitidos: pares.map((p) => p[2]),
+  };
+}
+
+// placas de armadura nos braços e pernas (braçais, coxotes, grevas), com aros nas juntas
+export function armadura(P, J, { folga = 0.022 } = {}) {
+  const h = J.altura / 1.82;
+  const ossos = ['bracoE', 'bracoD', 'antebracoE', 'antebracoD', 'coxaE', 'coxaD', 'pernaE', 'pernaD', 'peE', 'peD'];
+  const membros = sdfDePartes(deOssos(P, ossos));
+  const juntasA = ['cotoveloE', 'cotoveloD', 'joelhoE', 'joelhoD'].map((k) => J[k]);
+  return {
+    sdf: (x, y, z) => {
+      let d = membros(x, y, z) - folga * h;
+      for (const j of juntasA) d = smin(d, Math.hypot(x - j[0], y - j[1], z - j[2]) - 0.068 * h, 0.01);
+      return smax(d, y - (J.quadrilE[1] + 0.05 * h), 0.01);
+    },
+    limites: LIM(J), passo: 0.007,
+    permitidos: ossos,
+  };
+}

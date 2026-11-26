@@ -28,6 +28,7 @@ export async function montarFilme({ renderer, cena, camera, w, h, q }) {
       const c = await mod.cenarios[p.cenario](ctx);
       c.grupo.visible = false;
       cena.add(c.grupo);
+      if (c.base) { c.base.visible = false; cena.add(c.base); }
       ctx.cenarios[p.cenario] = c;
       console.log(`cenário ${p.cenario}: ${((performance.now() - t0) / 1000).toFixed(1)} s`);
     }
@@ -44,12 +45,13 @@ export async function montarFilme({ renderer, cena, camera, w, h, q }) {
 
   let atual = null;
   function entrar(p) {
-    for (const c of Object.values(ctx.cenarios)) c.grupo.visible = false;
+    for (const c of Object.values(ctx.cenarios)) { c.grupo.visible = false; if (c.base) c.base.visible = false; }
     for (const a of Object.values(ctx.atores)) a.raiz.visible = false;
     const c = ctx.cenarios[p.cenario];
     ctx.cen = c;
     if (c) {
       c.grupo.visible = true;
+      if (c.base) c.base.visible = true;
       const amb = c.ambiente ?? {};
       if (amb.nevoa) configurarNevoa(amb.nevoa);
       cena.fog = new THREE.FogExp2(new THREE.Color(...(amb.corNevoa ?? [0, 0, 0])), 0.01);
@@ -59,6 +61,7 @@ export async function montarFilme({ renderer, cena, camera, w, h, q }) {
       renderer.toneMappingExposure = amb.exposicao ?? 1.3;
       Object.assign(pos.grade.uniforms.uSat, { value: amb.saturacao ?? 0.8 });
       pos.grade.uniforms.uVinheta.value = amb.vinheta ?? 0.5;
+      pos.grade.uniforms.uTinta.value.set(...(amb.tinta ?? [1, 1, 1]));
       c.entrar?.(p);
     }
     for (const a of p.atores ?? []) ctx.atores[a].raiz.visible = true;
@@ -74,6 +77,9 @@ export async function montarFilme({ renderer, cena, camera, w, h, q }) {
     ctx.tempoFilme = t;
     ctx.cen?.atualizar?.(tl, t, p);
     p.quadro?.(ctx, tl, contexto(p, tl));
+    // entrada e saída em preto
+    const fi = p.fadeIn ? Math.min(1, tl / p.fadeIn) : 1, fo = p.fadeOut ? Math.min(1, (p.duracao - tl) / p.fadeOut) : 1;
+    pos.grade.uniforms.uFade.value = Math.max(0, Math.min(fi, fo));
     pos.grade.uniforms.uTempo.value = t;
     pos.comp.render();
   }
