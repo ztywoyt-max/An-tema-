@@ -3,6 +3,8 @@
 //   node ferramentas/render-hd.mjs cavaleiro-hd --cap 1              1080p, 24 quadros/s
 //   node ferramentas/render-hd.mjs cavaleiro-hd --cap 1 --previa     640x360 (para conferir rápido)
 //   node ferramentas/render-hd.mjs cavaleiro-hd --cap 1 --planos 1.1a,1.1b --refazer
+//   vários processos podem rodar juntos: cada plano é travado (p-<id>.mp4.trava) por quem o renderiza;
+//   --ordem reversa começa do fim (bom para um segundo processo)
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn, execFileSync } from 'node:child_process';
@@ -36,9 +38,37 @@ const planos = await pagina.evaluate(() => window.estudio.planos);
 console.log(`${planos.length} planos`);
 const inicio = Date.now();
 let feitos = 0;
-for (const p of planos) {
+// trava de um plano: arquivo com o PID de quem renderiza; trava de processo morto é retomada
+const minhas = new Set();
+process.on('exit', () => { for (const t of minhas) fs.rmSync(t, { force: true }); });
+for (const sinal of ['SIGINT', 'SIGTERM']) process.on(sinal, () => process.exit(1));
+function pegar(arq) {
+  const trava = arq + '.trava';
+  for (let i = 0; i < 2; i++) {
+    try {
+      const fd = fs.openSync(trava, 'wx');
+      fs.writeSync(fd, String(process.pid));
+      fs.closeSync(fd);
+      minhas.add(trava);
+      return trava;
+    } catch {
+      let pid = 0;
+      try { pid = Number(fs.readFileSync(trava, 'utf8')); } catch { continue; }
+      if (!pid) return null;
+      try { process.kill(pid, 0); return null; } catch { fs.rmSync(trava, { force: true }); }
+    }
+  }
+  return null;
+}
+const lista = opc('ordem') === 'reversa' ? [...planos].reverse() : planos;
+for (let volta = 0; volta < 3; volta++) {
+ let novos = 0;
+ for (const p of lista) {
   const arq = path.join(pasta, `p-${p.id}.mp4`);
-  if (fs.existsSync(arq) && !tem('refazer')) continue;
+  if (fs.existsSync(arq) && (!tem('refazer') || volta > 0)) continue;
+  const trava = pegar(arq);
+  if (!trava) continue;
+  if (fs.existsSync(arq) && !tem('refazer')) { fs.rmSync(trava, { force: true }); minhas.delete(trava); continue; }
   const q0 = Math.ceil(p.inicio * fps - 1e-6), q1 = Math.ceil(p.fim * fps - 1e-6);
   const tmp = arq + '.tmp.mp4';
   const ff = spawn('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', `${w}x${h}`, '-r', String(fps), '-i', '-',
@@ -53,8 +83,13 @@ for (const p of planos) {
   ff.stdin.end();
   await fim;
   fs.renameSync(tmp, arq);
+  fs.rmSync(trava, { force: true });
+  minhas.delete(trava);
   feitos++;
+  novos++;
   console.log(`${p.id}: ${q1 - q0} quadros em ${((Date.now() - t0) / 1000).toFixed(0)} s`);
+ }
+ if (!novos) break;
 }
 await fechar();
 // junta os planos por capítulo
