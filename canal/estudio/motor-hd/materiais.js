@@ -3,9 +3,19 @@
 import * as THREE from 'three';
 
 // ---------- névoa por altura (substitui a névoa padrão de todos os materiais) ----------
-export function configurarNevoa({ base = 0, queda = 3, dirLua = [0, 0.3, -1], corLua = [0.2, 0.25, 0.35], expoente = 6, maximo = 0.97 } = {}) {
-  const d = new THREE.Vector3(...dirLua).normalize();
-  const v3 = (a) => `vec3(${a.map((x) => x.toFixed(5)).join(',')})`;
+// Os parâmetros são uniforms compartilhados: cada cenário muda a névoa sem recompilar nada.
+export const NEVOA = {
+  uNevDens: { value: 0.05 }, uNevQueda: { value: 3 }, uNevBase: { value: 0 }, uNevMax: { value: 0.97 },
+  uNevDirLua: { value: new THREE.Vector3(0, 0.3, -1).normalize() }, uNevCorLua: { value: new THREE.Color(0.1, 0.12, 0.2) }, uNevExp: { value: 6 },
+};
+export function injetarNevoa(sh) {
+  Object.assign(sh.uniforms, NEVOA);
+}
+let nevoaPronta = false;
+function prepararNevoa() {
+  if (nevoaPronta) return;
+  nevoaPronta = true;
+  THREE.Material.prototype.onBeforeCompile = function (sh) { injetarNevoa(sh); };
   THREE.ShaderChunk.fog_pars_vertex = `#ifdef USE_FOG
   varying float vFogDepth;
   varying vec3 vFogPos;
@@ -18,6 +28,8 @@ export function configurarNevoa({ base = 0, queda = 3, dirLua = [0, 0.3, -1], co
   uniform vec3 fogColor;
   varying float vFogDepth;
   varying vec3 vFogPos;
+  uniform float uNevDens, uNevQueda, uNevBase, uNevMax, uNevExp;
+  uniform vec3 uNevDirLua, uNevCorLua;
   #ifdef FOG_EXP2
     uniform float fogDensity;
   #else
@@ -30,25 +42,35 @@ export function configurarNevoa({ base = 0, queda = 3, dirLua = [0, 0.3, -1], co
     vec3 fRaio = vFogPos - cameraPosition;
     float fDist = length(fRaio);
     vec3 fDir = fRaio / max(fDist, 1e-4);
-    float fK = fRaio.y / ${queda.toFixed(4)};
+    float fK = fRaio.y / uNevQueda;
     float fInt = abs(fK) > 1e-3 ? (1.0 - exp(-fK)) / fK : 1.0;
-    #ifdef FOG_EXP2
-      float fDens = fogDensity;
-    #else
-      float fDens = 1.0 / max(fogFar, 1.0);
-    #endif
-    float fOptica = fDens * exp(-(cameraPosition.y - ${base.toFixed(4)}) / ${queda.toFixed(4)}) * fDist * fInt;
-    float fogFactor = min(1.0 - exp(-fOptica), ${maximo.toFixed(4)});
-    float fLua = pow(max(dot(fDir, ${v3([d.x, d.y, d.z])}), 0.0), ${expoente.toFixed(2)});
-    vec3 fCor = fogColor + ${v3(corLua)} * fLua;
+    float fOptica = uNevDens * exp(-(cameraPosition.y - uNevBase) / uNevQueda) * fDist * fInt;
+    float fogFactor = min(1.0 - exp(-fOptica), uNevMax);
+    float fLua = pow(max(dot(fDir, uNevDirLua), 0.0), uNevExp);
+    vec3 fCor = fogColor + uNevCorLua * fLua;
     gl_FragColor.rgb = mix(gl_FragColor.rgb, fCor, fogFactor);
   }
 #endif`;
+}
+prepararNevoa();
+
+// ajusta a névoa (pode ser chamado a cada cenário); devolve a direção da lua normalizada
+export function configurarNevoa({ densidade = 0.05, base = 0, queda = 3, dirLua = [0, 0.3, -1], corLua = [0.2, 0.25, 0.35], expoente = 6, maximo = 0.97 } = {}) {
+  const d = new THREE.Vector3(...dirLua).normalize();
+  NEVOA.uNevDens.value = densidade;
+  NEVOA.uNevBase.value = base;
+  NEVOA.uNevQueda.value = queda;
+  NEVOA.uNevMax.value = maximo;
+  NEVOA.uNevExp.value = expoente;
+  NEVOA.uNevDirLua.value.copy(d);
+  NEVOA.uNevCorLua.value.setRGB(...corLua);
   return d;
 }
 
 // ---------- triplanar ----------
 // tex: { cor, rm, normal } de texturas.js. escala: repetições por metro.
+// A projeção usa a posição de repouso do objeto (atributo position): a textura fica presa ao corpo
+// mesmo quando o esqueleto mexe a malha. O relevo é girado do repouso para a normal atual.
 // sujeira: { cor, y0, y1 } escurece abaixo de y1 (pés sujos de lama). musgo: { cor, qtd } nas faces de cima.
 export function triplanar(tex, { escala = 1, cor = 0xffffff, rugosidade = 1, metal = 1, relevo = 1, sujeira = null, musgo = null, emissivo = null, lado = THREE.FrontSide, fisico = null } = {}) {
   const base = {
@@ -68,22 +90,20 @@ export function triplanar(tex, { escala = 1, cor = 0xffffff, rugosidade = 1, met
     defs.push('#define TRI_MUSGO', `#define MUSGO_COR vec3(${c.r.toFixed(4)},${c.g.toFixed(4)},${c.b.toFixed(4)})`, `#define MUSGO_QTD ${musgo.qtd.toFixed(3)}`);
   }
   m.onBeforeCompile = (sh) => {
+    injetarNevoa(sh);
     sh.vertexShader = sh.vertexShader
       .replace('#include <common>', '#include <common>\nvarying vec3 vTriPos;\nvarying vec3 vTriNorm;')
       .replace('#include <worldpos_vertex>', `#include <worldpos_vertex>
-  {
-    vec4 triW = vec4(transformed, 1.0);
-    vec3 triN = objectNormal;
-    #ifdef USE_INSTANCING
-      triW = instanceMatrix * triW;
-      triN = mat3(instanceMatrix) * triN;
-    #endif
-    triW = modelMatrix * triW;
-    vTriPos = triW.xyz;
-    vTriNorm = normalize(mat3(modelMatrix) * triN);
-  }`);
+  vTriPos = position;
+  vTriNorm = normal;`);
     sh.fragmentShader = sh.fragmentShader
-      .replace('#include <common>', `#include <common>\n${defs.join('\n')}\nvarying vec3 vTriPos;\nvarying vec3 vTriNorm;`)
+      .replace('#include <common>', `#include <common>\n${defs.join('\n')}\nvarying vec3 vTriPos;\nvarying vec3 vTriNorm;
+vec3 triGirar(vec3 v, vec3 a, vec3 b) {
+  vec3 c = cross(a, b);
+  float d = dot(a, b);
+  if (d < -0.95) return b;
+  return v * d + cross(c, v) + c * dot(c, v) / (1.0 + d + 1e-4);
+}`)
       .replace('#include <map_fragment>', `
   vec3 triWN = normalize(vTriNorm);
   vec3 triB = pow(abs(triWN), vec3(4.0));
@@ -118,14 +138,11 @@ export function triplanar(tex, { escala = 1, cor = 0xffffff, rugosidade = 1, met
     tnX = vec3(tnX.xy + triWN.zy, abs(tnX.z) * triWN.x);
     tnY = vec3(tnY.xy + triWN.xz, abs(tnY.z) * triWN.y);
     tnZ = vec3(tnZ.xy + triWN.xy, abs(tnZ.z) * triWN.z);
-    vec3 triMundo = normalize(tnX.zyx * triB.x + tnY.xzy * triB.y + tnZ.xyz * triB.z);
-    normal = normalize((viewMatrix * vec4(triMundo, 0.0)).xyz);
-    #ifdef DOUBLE_SIDED
-      normal *= faceDirection;
-    #endif
+    vec3 triRep = normalize(tnX.zyx * triB.x + tnY.xzy * triB.y + tnZ.xyz * triB.z);
+    normal = normalize(triGirar(triRep, triWN, normal));
   }`);
   };
-  m.customProgramCacheKey = () => `tri|${defs.join('|')}`;
+  m.customProgramCacheKey = () => `tri2|${defs.join('|')}`;
   return m;
 }
 
@@ -133,6 +150,7 @@ export function triplanar(tex, { escala = 1, cor = 0xffffff, rugosidade = 1, met
 export function materialChao(lama, terra, { escala = 0.6, pocas = 0.6 } = {}) {
   const m = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, metalness: 0 });
   m.onBeforeCompile = (sh) => {
+    injetarNevoa(sh);
     Object.assign(sh.uniforms, {
       tLC: { value: lama.cor }, tLR: { value: lama.rm }, tLN: { value: lama.normal },
       tTC: { value: terra.cor }, tTR: { value: terra.rm }, tTN: { value: terra.normal },

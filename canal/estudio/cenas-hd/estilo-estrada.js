@@ -9,7 +9,7 @@ import { criarPos } from '../motor-hd/pos.js';
 export default async function ({ renderer, cena, camera, w, h, q }) {
   const corNevoa = [0.013, 0.019, 0.034];
   const corLua = [0.07, 0.09, 0.15];
-  const dirLua = configurarNevoa({ base: 0, queda: 2.4, dirLua: [-0.7, 0.34, -1], corLua, expoente: 9 });
+  const dirLua = configurarNevoa({ densidade: 0.055, base: 0, queda: 2.4, dirLua: [-0.7, 0.34, -1], corLua, expoente: 9 });
   cena.fog = new THREE.FogExp2(new THREE.Color(...corNevoa), 0.055);
   renderer.toneMappingExposure = Number(q.get('exp') ?? 1.3);
 

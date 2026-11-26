@@ -123,9 +123,9 @@ export const couro = () => feito('couro', () => criar(512, 4, (P, x, y, per, s) 
   const v = P.fbm(x, y, 0, 5, per);
   const rugas = P.crista(x * 3, y * 3, 2, 4, per * 3);
   const gasto = suave(0.1, 0.4, P.fbm(x * 2, y * 2, 5, 3, per * 2));
-  s.r = 0.19 + v * 0.05 + gasto * 0.08;
-  s.g = 0.12 + v * 0.03 + gasto * 0.05;
-  s.b = 0.07 + v * 0.02 + gasto * 0.03;
+  s.r = 0.4 + v * 0.08 + gasto * 0.1;
+  s.g = 0.28 + v * 0.05 + gasto * 0.07;
+  s.b = 0.18 + v * 0.03 + gasto * 0.04;
   s.h = rugas * 0.4 + v * 0.3;
   s.rug = 0.6 - gasto * 0.15;
   s.m = gasto;
@@ -223,9 +223,77 @@ export function galhoPinheiro() {
       const lado = i % 2 ? 1 : -1;
       ramo(128, y, 128 + lado * (70 + r() * 30), y - 90 - r() * 40, 2.5, 50);
     }
+    // mipmaps feitos à mão, engrossando o alfa a cada nível: a copa não some quando fica pequena na tela
+    const niveis = [c];
+    let w = 256, h = 512, k = 0;
+    while (w > 1 || h > 1) {
+      w = Math.max(1, w >> 1); h = Math.max(1, h >> 1); k++;
+      const n = document.createElement('canvas');
+      n.width = w; n.height = h;
+      const gn = n.getContext('2d');
+      gn.drawImage(niveis[niveis.length - 1], 0, 0, w, h);
+      const img = gn.getImageData(0, 0, w, h);
+      const ganho = Math.pow(1.45, Math.min(k, 4));
+      for (let i = 3; i < img.data.length; i += 4) img.data[i] = Math.min(255, img.data[i] * ganho);
+      gn.putImageData(img, 0, 0);
+      niveis.push(n);
+    }
     const t = new THREE.CanvasTexture(c);
+    t.mipmaps = niveis;
+    t.generateMipmaps = false;
+    t.minFilter = THREE.LinearMipmapLinearFilter;
     t.colorSpace = THREE.SRGBColorSpace;
     t.anisotropy = 8;
     return t;
   });
 }
+
+// fios de cabelo/barba (cor vem do material): listras finas na direção v, com mechas
+export const fios = () => feito('fios', () => criar(512, 4, (P, x, y, per, s, u, v) => {
+  const mecha = P.fbm(x * 6, y * 0.6, 0, 3, [per * 6, per * 0.6 || 1]);
+  const fio = 0.5 + 0.5 * Math.sin((u * 220 + mecha * 30) * Math.PI);
+  const fino = 0.5 + 0.5 * Math.sin((u * 640 + mecha * 50) * Math.PI);
+  const k = 0.6 + 0.25 * fio + 0.15 * fino;
+  s.r = s.g = s.b = k;
+  s.h = fio * 0.6 + fino * 0.4 + mecha * 0.5;
+  s.rug = 0.82 - fio * 0.12;
+  s.m = clamp(0.5 + mecha);
+}, { relevo: 2.2, semente: 19 }));
+
+// pelo de bicho (capuz de pele, gola): fios curtos e desalinhados
+export const pelo = () => feito('pelo', () => criar(512, 4, (P, x, y, per, s) => {
+  const dir = P.fbm(x * 2, y * 2, 3, 3, per * 2) * 2;
+  const tufo = P.fbm(x * 3, y * 3, 6, 3, per * 3);
+  const f = 0.5 + 0.5 * Math.sin((x * Math.cos(dir) + y * Math.sin(dir)) * 90);
+  const k = 0.55 + 0.3 * f + tufo * 0.3;
+  s.r = k; s.g = k * 0.92; s.b = k * 0.85;
+  s.h = f * 0.7 + tufo;
+  s.rug = 0.85;
+  s.m = clamp(0.5 + tufo);
+}, { relevo: 2.5, semente: 23 }));
+
+// lã grossa (mantos, xales): trama larga e felpuda
+export const la = () => feito('la', () => criar(512, 4, (P, x, y, per, s, u, v) => {
+  const fios2 = 48;
+  const tx = Math.sin(u * fios2 * Math.PI * 2), ty = Math.sin(v * fios2 * Math.PI * 2);
+  const trama = ((Math.floor(u * fios2) + Math.floor(v * fios2)) & 1) ? tx : ty;
+  const felpa = P.fbm(x * 12, y * 12, 2, 3, per * 12);
+  const mancha = suave(0, 0.35, P.fbm(x, y, 5, 4, per));
+  const k = (0.75 + trama * 0.12 + felpa * 0.25) * (1 - mancha * 0.3);
+  s.r = s.g = s.b = k;
+  s.h = trama * 0.5 + felpa * 0.6;
+  s.rug = 0.95;
+  s.m = mancha;
+}, { relevo: 1.8, semente: 29 }));
+
+// metal polido (armaduras): riscos finos e pequenas manchas
+export const aco = () => feito('aco', () => criar(512, 4, (P, x, y, per, s) => {
+  const risco = Math.pow(clamp(1 - Math.abs(P.ruido(x * 0.5, y * 30, 3, [per * 0.5 || 1, per * 30])) * 8), 4);
+  const mancha = suave(0.1, 0.4, P.fbm(x, y, 7, 4, per));
+  const k = 0.82 - mancha * 0.15 + risco * 0.1;
+  s.r = k; s.g = k; s.b = k;
+  s.h = -risco * 0.5 + mancha * 0.2;
+  s.rug = 0.22 + mancha * 0.25 - risco * 0.05;
+  s.met = 1;
+  s.m = mancha;
+}, { relevo: 0.6, semente: 31 }));

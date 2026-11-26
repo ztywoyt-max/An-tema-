@@ -1,0 +1,1501 @@
+[
+ {
+  "id": "ab.01",
+  "cena": "ab",
+  "capitulo": 0,
+  "voz": "narrador",
+  "texto": "Dizem que, nas estradas do Vale de Pedralva, anda um homem que não usa armadura.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "ab.02",
+  "cena": "ab",
+  "capitulo": 0,
+  "voz": "narrador",
+  "texto": "Nem cota de malha. Nem couro. Nem camisa.",
+  "pausaAntes": 0,
+  "pausaDepois": 1.2
+ },
+ {
+  "id": "ab.03",
+  "cena": "ab",
+  "capitulo": 0,
+  "voz": "narrador",
+  "texto": "Só uma cueca de linho... um capacete enferrujado... e uma espada que um dia já foi bonita.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "ab.04",
+  "cena": "ab",
+  "capitulo": 0,
+  "voz": "narrador",
+  "texto": "No metal do capacete, há centenas de riscos. Ninguém sabe o que eles contam.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "ab.05",
+  "cena": "ab",
+  "capitulo": 0,
+  "voz": "narrador",
+  "texto": "E ninguém, nunca, viu o rosto dele.",
+  "pausaAntes": 0,
+  "pausaDepois": 1.2
+ },
+ {
+  "id": "ab.06",
+  "cena": "ab",
+  "capitulo": 0,
+  "voz": "narrador",
+  "texto": "Esta é a história do último risco.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.1.01",
+  "cena": "1.1",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "Tomé, o ferreiro de Pedralva, tinha prometido à esposa que chegariam antes do anoitecer.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.1.02",
+  "cena": "1.1",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "Não chegaram.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.1.03",
+  "cena": "1.1",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "A neblina desceu cedo naquela noite, como se o vale quisesse esconder alguma coisa.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.2.01",
+  "cena": "1.2",
+  "capitulo": 1,
+  "voz": "raposa",
+  "texto": "Desce da carroça, ferreiro. Devagar. E deixa a bolsa no banco.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Raposa"
+ },
+ {
+  "id": "1.2.02",
+  "cena": "1.2",
+  "capitulo": 1,
+  "voz": "tome",
+  "texto": "Eu não tenho nada. Só ferro e a minha família.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Tomé"
+ },
+ {
+  "id": "1.2.03",
+  "cena": "1.2",
+  "capitulo": 1,
+  "voz": "raposa",
+  "texto": "Então a gente leva o ferro... e vê o que mais serve.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Raposa"
+ },
+ {
+  "id": "1.2.04",
+  "cena": "1.2",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "Dália apertou o bebê contra o peito.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.2.05",
+  "cena": "1.2",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "E foi então que, lá no fundo da estrada, alguém começou a se aproximar.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.3.01",
+  "cena": "1.3",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "Primeiro veio o som: metal raspando nas pedras, num ritmo lento, sem pressa nenhuma.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.3.02",
+  "cena": "1.3",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "Depois, a silhueta.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.3.03",
+  "cena": "1.3",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "Um homem alto, de pés descalços, vestindo apenas uma cueca de linho encardida.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.3.04",
+  "cena": "1.3",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "Na cabeça, um elmo fechado, tomado pela ferrugem.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.3.05",
+  "cena": "1.3",
+  "capitulo": 1,
+  "voz": "bandido1",
+  "texto": "Olha só... um mendigo de balde na cabeça.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Bandido 1"
+ },
+ {
+  "id": "1.3.06",
+  "cena": "1.3",
+  "capitulo": 1,
+  "voz": "raposa",
+  "texto": "Volta pro buraco de onde saiu, pelado. Isso aqui não é da sua conta.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Raposa"
+ },
+ {
+  "id": "1.3.07",
+  "cena": "1.3",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "O homem não respondeu. Também não parou.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.4.01",
+  "cena": "1.4",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "A flecha entrou fundo. Qualquer homem teria caído.",
+  "pausaAntes": 0,
+  "pausaDepois": 1.2
+ },
+ {
+  "id": "1.4.02",
+  "cena": "1.4",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "Ele só olhou para baixo... segurou a haste... e arrancou.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.4.03",
+  "cena": "1.4",
+  "capitulo": 1,
+  "voz": "bandido2",
+  "texto": "...Que diabo é isso?",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Bandido 2"
+ },
+ {
+  "id": "1.5.01",
+  "cena": "1.5",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "Não foi uma luta. Foi uma lição.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.5.02",
+  "cena": "1.5",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "Ele não matou nenhum deles. Parecia até tomar cuidado para não matar.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.5.03",
+  "cena": "1.5",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "Em poucos segundos, os três corriam para dentro da floresta, e a neblina os engoliu.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.6.01",
+  "cena": "1.6",
+  "capitulo": 1,
+  "voz": "tome",
+  "texto": "Eu... eu não sei como agradecer. Qual é o seu nome, senhor?",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Tomé"
+ },
+ {
+  "id": "1.6.02",
+  "cena": "1.6",
+  "capitulo": 1,
+  "voz": "enferrujado",
+  "texto": "Não importa.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Enferrujado"
+ },
+ {
+  "id": "1.6.03",
+  "cena": "1.6",
+  "capitulo": 1,
+  "voz": "tome",
+  "texto": "Pedralva fica logo depois do rio. O senhor vem com a gente? Por favor.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Tomé"
+ },
+ {
+  "id": "1.6.04",
+  "cena": "1.6",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "Ele olhou para a mulher, para o bebê, e para o ferreiro.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.6.05",
+  "cena": "1.6",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "Contou-os em silêncio. Um... dois... três.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "1.6.06",
+  "cena": "1.6",
+  "capitulo": 1,
+  "voz": "narrador",
+  "texto": "E seguiu a carroça até o amanhecer.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.1.01",
+  "cena": "2.1",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Pedralva era pequena. Cento e poucas almas, um moinho, uma ponte e um rio que nunca secava.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.1.02",
+  "cena": "2.1",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Naquela manhã, ninguém trabalhou direito.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.1.03",
+  "cena": "2.1",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Todo mundo queria ver o homem quase nu que tinha levado uma flecha no peito... e continuado andando.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.2.01",
+  "cena": "2.2",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Ofereceram cama. Ele recusou.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.2.02",
+  "cena": "2.2",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Ofereceram comida. Ele aceitou, mas nunca comeu na frente de ninguém.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.2.03",
+  "cena": "2.2",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Em troca, consertava cercas, carregava pedras e não pedia nada.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.2.04",
+  "cena": "2.2",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Dormia no celeiro, sentado, como quem não quer se acostumar com lugar nenhum.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.3.01",
+  "cena": "2.3",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Só uma pessoa em Pedralva não tinha medo dele.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.3.02",
+  "cena": "2.3",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Lia, a filha mais velha do ferreiro. Nove anos, muitas perguntas, e nenhuma vontade de esperar a resposta.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.3.03",
+  "cena": "2.3",
+  "capitulo": 2,
+  "voz": "lia",
+  "texto": "Você é um cavaleiro?",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Lia"
+ },
+ {
+  "id": "2.3.04",
+  "cena": "2.3",
+  "capitulo": 2,
+  "voz": "lia",
+  "texto": "Cavaleiro de quê? Cadê seu cavalo? Por que você anda pelado?",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Lia"
+ },
+ {
+  "id": "2.3.05",
+  "cena": "2.3",
+  "capitulo": 2,
+  "voz": "lia",
+  "texto": "Vou te chamar de Cabeça de Balde.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Lia"
+ },
+ {
+  "id": "2.4.01",
+  "cena": "2.4",
+  "capitulo": 2,
+  "voz": "lia",
+  "texto": "Meu pai disse que você não usa armadura porque é pobre.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Lia"
+ },
+ {
+  "id": "2.4.02",
+  "cena": "2.4",
+  "capitulo": 2,
+  "voz": "enferrujado",
+  "texto": "Seu pai é um bom homem. Mas está errado.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Enferrujado"
+ },
+ {
+  "id": "2.4.03",
+  "cena": "2.4",
+  "capitulo": 2,
+  "voz": "lia",
+  "texto": "Então por quê?",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Lia"
+ },
+ {
+  "id": "2.4.04",
+  "cena": "2.4",
+  "capitulo": 2,
+  "voz": "enferrujado",
+  "texto": "Armadura é pra quem tem medo de morrer.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Enferrujado"
+ },
+ {
+  "id": "2.4.05",
+  "cena": "2.4",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Lia pensou nisso por um bom tempo. Depois fez a pergunta que ninguém em Pedralva tinha coragem de fazer.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.4.06",
+  "cena": "2.4",
+  "capitulo": 2,
+  "voz": "lia",
+  "texto": "E o capacete? Você tem medo de quê?",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Lia"
+ },
+ {
+  "id": "2.4.07",
+  "cena": "2.4",
+  "capitulo": 2,
+  "voz": "enferrujado",
+  "texto": "O capacete não é pra mim. É pra que ninguém precise lembrar de mim.",
+  "pausaAntes": 1.2,
+  "pausaDepois": 0,
+  "personagem": "Enferrujado"
+ },
+ {
+  "id": "2.5.01",
+  "cena": "2.5",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Brana, a curandeira, também estava olhando.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.5.02",
+  "cena": "2.5",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Mas não para o homem. Para a espada.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.6.01",
+  "cena": "2.6",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Naquela noite, Lia não conseguiu dormir. Escapou de casa e espiou pela fresta do celeiro.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.6.02",
+  "cena": "2.6",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Viu o homem riscar o capacete. Uma vez. Duas. Três.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "2.6.03",
+  "cena": "2.6",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "E, como era teimosa, contou todos os outros também.",
+  "pausaAntes": 0,
+  "pausaDepois": 1.2
+ },
+ {
+  "id": "2.6.04",
+  "cena": "2.6",
+  "capitulo": 2,
+  "voz": "narrador",
+  "texto": "Duzentos e noventa e nove.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.1.01",
+  "cena": "3.1",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Vinte anos antes, aquele homem tinha nome.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.1.02",
+  "cena": "3.1",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Sir Dâmaso. O Capitão Dourado.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.1.03",
+  "cena": "3.1",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Dono da armadura mais bonita do reino, e da espada mais rápida também.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.1.04",
+  "cena": "3.1",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Diziam que ele nunca tinha perdido uma luta... e nunca tinha desobedecido uma ordem.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.2.01",
+  "cena": "3.2",
+  "capitulo": 3,
+  "voz": "malvar",
+  "texto": "Brumal escondeu os rebeldes. Deu comida a eles. Deu teto.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Malvar"
+ },
+ {
+  "id": "3.2.02",
+  "cena": "3.2",
+  "capitulo": 3,
+  "voz": "malvar",
+  "texto": "Quero que, amanhã, ninguém se lembre de que essa aldeia existiu.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Malvar"
+ },
+ {
+  "id": "3.2.03",
+  "cena": "3.2",
+  "capitulo": 3,
+  "voz": "enferrujado",
+  "texto": "Há crianças em Brumal, meu senhor.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Dâmaso"
+ },
+ {
+  "id": "3.2.04",
+  "cena": "3.2",
+  "capitulo": 3,
+  "voz": "malvar",
+  "texto": "Há crianças em todo lugar, capitão. Obedeça.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Malvar"
+ },
+ {
+  "id": "3.2.05",
+  "cena": "3.2",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Dâmaso hesitou.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.2.06",
+  "cena": "3.2",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Só por um instante.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.2.07",
+  "cena": "3.2",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Depois fez o que sempre tinha feito.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.3.01",
+  "cena": "3.3",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Brumal queimou a noite inteira.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.3.02",
+  "cena": "3.3",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Trezentas e doze pessoas moravam ali.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.4.01",
+  "cena": "3.4",
+  "capitulo": 3,
+  "voz": "brana",
+  "texto": "Você não vai morrer, cavaleiro.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Mulher"
+ },
+ {
+  "id": "3.4.02",
+  "cena": "3.4",
+  "capitulo": 3,
+  "voz": "brana",
+  "texto": "Nem por lâmina, nem por fogo, nem por velhice.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Mulher"
+ },
+ {
+  "id": "3.4.03",
+  "cena": "3.4",
+  "capitulo": 3,
+  "voz": "brana",
+  "texto": "Não até devolver cada vida que tirou esta noite. Trezentas e doze.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Mulher"
+ },
+ {
+  "id": "3.4.04",
+  "cena": "3.4",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Ele achou que era o desespero falando.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.4.05",
+  "cena": "3.4",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Não era.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.5.01",
+  "cena": "3.5",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Ele tentou morrer. Muitas vezes.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.5.02",
+  "cena": "3.5",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "O corpo sempre se fechava. A dor ficava.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.5.03",
+  "cena": "3.5",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Então entendeu que armadura nenhuma fazia mais sentido.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.5.04",
+  "cena": "3.5",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Armadura serve para proteger uma vida. A dele não precisava de proteção.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.5.05",
+  "cena": "3.5",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Precisava de um fim.",
+  "pausaAntes": 0,
+  "pausaDepois": 1.2
+ },
+ {
+  "id": "3.5.06",
+  "cena": "3.5",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Ficou só com duas coisas: a espada, que nunca mais limpou...",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.5.07",
+  "cena": "3.5",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "e o capacete, para que ninguém nunca mais visse o rosto do homem que queimou Brumal.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.5.08",
+  "cena": "3.5",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "Dizem que a ferrugem é sangue que não sai.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "3.5.09",
+  "cena": "3.5",
+  "capitulo": 3,
+  "voz": "narrador",
+  "texto": "E, a partir daquele dia, ele começou a contar.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "4.1.01",
+  "cena": "4.1",
+  "capitulo": 4,
+  "voz": "soldado",
+  "texto": "Por ordem do Barão Malvar, o tributo de Pedralva dobrou.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Soldado"
+ },
+ {
+  "id": "4.1.02",
+  "cena": "4.1",
+  "capitulo": 4,
+  "voz": "tome",
+  "texto": "Dobrou? A colheita foi pela metade! Não temos nem o de antes!",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Tomé"
+ },
+ {
+  "id": "4.1.03",
+  "cena": "4.1",
+  "capitulo": 4,
+  "voz": "soldado",
+  "texto": "Então o barão vem buscar pessoalmente. Na lua nova.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Soldado"
+ },
+ {
+  "id": "4.1.04",
+  "cena": "4.1",
+  "capitulo": 4,
+  "voz": "soldado",
+  "texto": "E ele não costuma voltar de mãos vazias. Pergunte a Brumal.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Soldado"
+ },
+ {
+  "id": "4.1.05",
+  "cena": "4.1",
+  "capitulo": 4,
+  "voz": "narrador",
+  "texto": "Brumal.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "4.1.06",
+  "cena": "4.1",
+  "capitulo": 4,
+  "voz": "narrador",
+  "texto": "Fazia vinte anos que ele não ouvia esse nome em voz alta.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "4.2.01",
+  "cena": "4.2",
+  "capitulo": 4,
+  "voz": "aldeao",
+  "texto": "A gente tem que fugir. Pegar o que der e ir pro sul.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Aldeão"
+ },
+ {
+  "id": "4.2.02",
+  "cena": "4.2",
+  "capitulo": 4,
+  "voz": "tome",
+  "texto": "Fugir pra onde? Com as crianças? No inverno?",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Tomé"
+ },
+ {
+  "id": "4.2.03",
+  "cena": "4.2",
+  "capitulo": 4,
+  "voz": "enferrujado",
+  "texto": "Ninguém vai queimar esta aldeia.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Enferrujado"
+ },
+ {
+  "id": "4.2.04",
+  "cena": "4.2",
+  "capitulo": 4,
+  "voz": "narrador",
+  "texto": "Foi a primeira vez que Pedralva ouviu a voz dele falando com todos.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "4.2.05",
+  "cena": "4.2",
+  "capitulo": 4,
+  "voz": "narrador",
+  "texto": "E ninguém teve coragem de discordar.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "4.3.01",
+  "cena": "4.3",
+  "capitulo": 4,
+  "voz": "lia",
+  "texto": "Cabeça de Balde... o que são os riscos?",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Lia"
+ },
+ {
+  "id": "4.3.02",
+  "cena": "4.3",
+  "capitulo": 4,
+  "voz": "enferrujado",
+  "texto": "Vidas. Cada risco é alguém que eu ajudei a continuar vivo.",
+  "pausaAntes": 1.2,
+  "pausaDepois": 0,
+  "personagem": "Enferrujado"
+ },
+ {
+  "id": "4.3.03",
+  "cena": "4.3",
+  "capitulo": 4,
+  "voz": "lia",
+  "texto": "E vai riscar até quando?",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Lia"
+ },
+ {
+  "id": "4.3.04",
+  "cena": "4.3",
+  "capitulo": 4,
+  "voz": "enferrujado",
+  "texto": "Até trezentas e doze.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Enferrujado"
+ },
+ {
+  "id": "4.3.05",
+  "cena": "4.3",
+  "capitulo": 4,
+  "voz": "lia",
+  "texto": "Faltam treze, então.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Lia"
+ },
+ {
+  "id": "4.3.06",
+  "cena": "4.3",
+  "capitulo": 4,
+  "voz": "narrador",
+  "texto": "Ele virou o capacete para ela, surpreso. Ela deu de ombros.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "4.3.07",
+  "cena": "4.3",
+  "capitulo": 4,
+  "voz": "narrador",
+  "texto": "Era teimosa. Já tinha contado.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "4.3.08",
+  "cena": "4.3",
+  "capitulo": 4,
+  "voz": "brana",
+  "texto": "Quantas faltam?",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Brana"
+ },
+ {
+  "id": "4.3.09",
+  "cena": "4.3",
+  "capitulo": 4,
+  "voz": "narrador",
+  "texto": "Ele não tinha contado a ninguém sobre o número. A ninguém além de Lia.",
+  "pausaAntes": 0,
+  "pausaDepois": 1.2
+ },
+ {
+  "id": "4.3.10",
+  "cena": "4.3",
+  "capitulo": 4,
+  "voz": "narrador",
+  "texto": "Naquela noite, ele não dormiu.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.1.01",
+  "cena": "5.1",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "O barão não mandou cinco soldados. Mandou sessenta.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.1.02",
+  "cena": "5.1",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "E veio junto.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.2.01",
+  "cena": "5.2",
+  "capitulo": 5,
+  "voz": "soldado",
+  "texto": "Um homem pelado numa ponte. É isso que Pedralva tem?",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Soldado"
+ },
+ {
+  "id": "5.2.02",
+  "cena": "5.2",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "Os soldados riram. Como os bandidos tinham rido.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.2.03",
+  "cena": "5.2",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "Pararam de rir mais rápido.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.3.01",
+  "cena": "5.3",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "Cada golpe que ele recebia era um golpe que não chegava a uma casa.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.3.02",
+  "cena": "5.3",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "Cada flecha nas costas dele era uma flecha que não acertava uma criança.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.3.03",
+  "cena": "5.3",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "Ele não lutava para vencer. Lutava para ser o lugar onde a violência terminava.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.3.04",
+  "cena": "5.3",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "Pedralva tinha molhado os telhados. Pedralva tinha aprendido.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.4.01",
+  "cena": "5.4",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "Malvar parou a dois passos dele. Olhou o homem de cima a baixo.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.4.02",
+  "cena": "5.4",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "E então olhou a espada.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.4.03",
+  "cena": "5.4",
+  "capitulo": 5,
+  "voz": "malvar",
+  "texto": "Eu conheço essa espada.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Malvar"
+ },
+ {
+  "id": "5.4.04",
+  "cena": "5.4",
+  "capitulo": 5,
+  "voz": "malvar",
+  "texto": "Eu te dei essa espada. Ela brilhava.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Malvar"
+ },
+ {
+  "id": "5.4.05",
+  "cena": "5.4",
+  "capitulo": 5,
+  "voz": "enferrujado",
+  "texto": "Ela enferrujou no dia em que eu te obedeci.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Enferrujado"
+ },
+ {
+  "id": "5.4.06",
+  "cena": "5.4",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "A espada polida do barão quebrou como galho seco.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.4.07",
+  "cena": "5.4",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "A enferrujada, não.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.4.08",
+  "cena": "5.4",
+  "capitulo": 5,
+  "voz": "malvar",
+  "texto": "Faça. Você sempre obedeceu.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Malvar"
+ },
+ {
+  "id": "5.4.09",
+  "cena": "5.4",
+  "capitulo": 5,
+  "voz": "enferrujado",
+  "texto": "Não mais.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Enferrujado"
+ },
+ {
+  "id": "5.5.01",
+  "cena": "5.5",
+  "capitulo": 5,
+  "voz": "lia",
+  "texto": "...cento e trinta e nove, cento e quarenta, cento e quarenta e um!",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Lia"
+ },
+ {
+  "id": "5.5.02",
+  "cena": "5.5",
+  "capitulo": 5,
+  "voz": "lia",
+  "texto": "Cabeça de Balde! Todo mundo tá vivo! Você passou! Você passou muito das trezentas e doze!",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Lia"
+ },
+ {
+  "id": "5.5.03",
+  "cena": "5.5",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "Pela conta da menina, a dívida estava paga havia muito tempo.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.5.04",
+  "cena": "5.5",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "Ele esperou sentir alguma coisa.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "5.5.05",
+  "cena": "5.5",
+  "capitulo": 5,
+  "voz": "narrador",
+  "texto": "Qualquer coisa.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.1.01",
+  "cena": "6.1",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "O corte se fechou. Como sempre.",
+  "pausaAntes": 0,
+  "pausaDepois": 1.2
+ },
+ {
+  "id": "6.1.02",
+  "cena": "6.1",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Trezentas e doze. Ele tinha passado das trezentas e doze. E nada.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.1.03",
+  "cena": "6.1",
+  "capitulo": 6,
+  "voz": "enferrujado",
+  "texto": "Era mentira?",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Enferrujado"
+ },
+ {
+  "id": "6.2.01",
+  "cena": "6.2",
+  "capitulo": 6,
+  "voz": "brana",
+  "texto": "Eu estava lá, Dâmaso.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Brana"
+ },
+ {
+  "id": "6.2.02",
+  "cena": "6.2",
+  "capitulo": 6,
+  "voz": "brana",
+  "texto": "Você segurou a tocha. Eu segurei meu filho.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Brana"
+ },
+ {
+  "id": "6.2.03",
+  "cena": "6.2",
+  "capitulo": 6,
+  "voz": "brana",
+  "texto": "Estas mãos tiraram ele do fogo. Tarde demais.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Brana"
+ },
+ {
+  "id": "6.2.04",
+  "cena": "6.2",
+  "capitulo": 6,
+  "voz": "brana",
+  "texto": "Eu te reconheci no primeiro dia. Pela espada. Ninguém mais anda com uma espada daquela.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Brana"
+ },
+ {
+  "id": "6.2.05",
+  "cena": "6.2",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Ele não disse nada. Não havia nada que pudesse ser dito.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.2.06",
+  "cena": "6.2",
+  "capitulo": 6,
+  "voz": "brana",
+  "texto": "O número... fui eu que inventei. Trezentas e doze, ou mil, ou dez. Tanto fazia.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Brana"
+ },
+ {
+  "id": "6.2.07",
+  "cena": "6.2",
+  "capitulo": 6,
+  "voz": "brana",
+  "texto": "Eu precisava que você continuasse andando. Que sofresse andando.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Brana"
+ },
+ {
+  "id": "6.2.08",
+  "cena": "6.2",
+  "capitulo": 6,
+  "voz": "brana",
+  "texto": "Mas maldição nenhuma se quebra com números.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Brana"
+ },
+ {
+  "id": "6.2.09",
+  "cena": "6.2",
+  "capitulo": 6,
+  "voz": "brana",
+  "texto": "Ela se quebra quando alguém que você feriu decide te perdoar.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Brana"
+ },
+ {
+  "id": "6.2.10",
+  "cena": "6.2",
+  "capitulo": 6,
+  "voz": "brana",
+  "texto": "Eu te perdoo.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Brana"
+ },
+ {
+  "id": "6.3.01",
+  "cena": "6.3",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Pela primeira vez em vinte anos, uma ferida ficou aberta.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.3.02",
+  "cena": "6.3",
+  "capitulo": 6,
+  "voz": "brana",
+  "texto": "Agora você pode morrer.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Brana"
+ },
+ {
+  "id": "6.3.03",
+  "cena": "6.3",
+  "capitulo": 6,
+  "voz": "brana",
+  "texto": "Então tente viver.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Brana"
+ },
+ {
+  "id": "6.4.01",
+  "cena": "6.4",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Não havia nada de terrível debaixo do capacete.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.4.02",
+  "cena": "6.4",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Só um homem. Com rugas, com barba grisalha, com olhos de quem não dorme direito há vinte anos.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.4.03",
+  "cena": "6.4",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Ele nunca escondeu o rosto por ser feio.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.4.04",
+  "cena": "6.4",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Escondia porque alguém, em algum lugar, ainda poderia reconhecê-lo.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.4.05",
+  "cena": "6.4",
+  "capitulo": 6,
+  "voz": "lia",
+  "texto": "Hum. Eu achei que você ia ser mais bonito.",
+  "pausaAntes": 0,
+  "pausaDepois": 0,
+  "personagem": "Lia"
+ },
+ {
+  "id": "6.4.06",
+  "cena": "6.4",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "E Dâmaso riu.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.4.07",
+  "cena": "6.4",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Fazia tanto tempo que ele quase não reconheceu o som.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.5.01",
+  "cena": "6.5",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "O capacete ficou pendurado na porta da casa de Brana.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.5.02",
+  "cena": "6.5",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Duzentos e noventa e nove riscos.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.5.03",
+  "cena": "6.5",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Ninguém nunca mais acrescentou nenhum.",
+  "pausaAntes": 0,
+  "pausaDepois": 1.2
+ },
+ {
+  "id": "6.5.04",
+  "cena": "6.5",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Porque algumas dívidas não se pagam contando.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.5.05",
+  "cena": "6.5",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Elas acabam quando alguém decide que você não deve mais nada.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.6.01",
+  "cena": "6.6",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Dizem que, nas estradas do Vale de Pedralva, anda um homem que não usa armadura.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.6.02",
+  "cena": "6.6",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "Mas agora ele usa camisa.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ },
+ {
+  "id": "6.6.03",
+  "cena": "6.6",
+  "capitulo": 6,
+  "voz": "narrador",
+  "texto": "E qualquer um pode ver o rosto dele.",
+  "pausaAntes": 0,
+  "pausaDepois": 0
+ }
+]

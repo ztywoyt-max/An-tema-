@@ -6,6 +6,7 @@ import { Perlin, clamp, suave, mistura } from './ruido.js';
 import { malha, unir, cone, elipsoide, esfera, caixa, smin, smax, envCone, envEl, limites } from './sdf.js';
 import { criar, ferrugem, pele, linho, couro } from './texturas.js';
 import { triplanar } from './materiais.js';
+import { geoCache } from './cache.js';
 
 const add = (a, b, k = 1) => [a[0] + b[0] * k, a[1] + b[1] * k, a[2] + b[2] * k];
 const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
@@ -301,3 +302,37 @@ export function criarCavaleiro({ pose = POSE_PARADO, marcas = 312, passo = 0.006
   raiz.userData = { capacete, espada, J };
   return raiz;
 }
+
+// ---------- peças reaproveitáveis (motor animável) ----------
+// capacete com a base em y = 0, centrado; marcas = riscos gravados
+export function criarCapacete({ marcas = 312, novo = false } = {}) {
+  const P3 = new Perlin(41);
+  const texCap = texturaCapacete(novo ? 0 : marcas);
+  const uvCap = (x, y, z) => [Math.atan2(x, z) / (Math.PI * 2) + 0.5, y / 0.82];
+  const gCap = geoCache('capacete-v1', () => malha(sdfCapacete(P3), { min: [-0.15, -0.01, -0.17], max: [0.15, 0.36, 0.175], passo: 0.0028, uv: uvCap, suavizar: 0 }));
+  const matCap = novo
+    ? new THREE.MeshStandardMaterial({ color: 0xd8b060, roughness: 0.22, metalness: 1, side: THREE.DoubleSide })
+    : new THREE.MeshStandardMaterial({ map: texCap.cor, roughnessMap: texCap.rm, metalnessMap: texCap.rm, normalMap: texCap.normal, normalScale: new THREE.Vector2(1.2, 1.2), roughness: 1, metalness: 1, side: THREE.DoubleSide });
+  const capacete = new THREE.Mesh(gCap, matCap);
+  const forro = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 16), new THREE.MeshBasicMaterial({ color: 0x000000 }));
+  forro.scale.set(CAP.rx * 0.86, CAP.alt * 0.55, CAP.rz * 0.86);
+  forro.position.y = CAP.alt * 0.5;
+  capacete.add(forro);
+  capacete.castShadow = capacete.receiveShadow = true;
+  capacete.userData.textura = texCap;
+  return capacete;
+}
+
+// espada com a guarda em y = 0 e a lâmina para +y (o cabo fica em y < 0)
+export function criarEspada({ nova = false } = {}) {
+  const P3 = new Perlin(43);
+  const espada = new THREE.Group();
+  const gLam = geoCache('lamina-v1', () => malha(sdfLamina(P3), { min: [-0.12, -0.26, -0.025], max: [0.12, 0.88, 0.025], passo: 0.0016, suavizar: 0 }));
+  const matLam = nova ? new THREE.MeshStandardMaterial({ color: 0xc8ccd0, roughness: 0.18, metalness: 1 }) : triplanar(ferrugem(), { escala: 7, relevo: 1, rugosidade: 1, metal: 1 });
+  espada.add(new THREE.Mesh(gLam, matLam));
+  const gCabo = geoCache('cabo-v1', () => malha(sdfCabo(P3), { min: [-0.025, -0.22, -0.025], max: [0.025, 0.0, 0.025], passo: 0.0015 }));
+  espada.add(new THREE.Mesh(gCabo, triplanar(couro(), { escala: 9, relevo: 1, metal: 0 })));
+  espada.traverse((o) => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } });
+  return espada;
+}
+export { CAP, texturaCapacete };

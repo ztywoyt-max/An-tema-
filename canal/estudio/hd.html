@@ -21,18 +21,38 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const cena = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(38, w / h, 0.05, 900);
+const { carregarCache } = await import('./motor-hd/cache.js');
+await carregarCache();
 const t0 = performance.now();
-const mod = await import(`./cenas-hd/${q.get('cena') ?? 'estilo-estrada'}.js`);
-const obra = await mod.default({ THREE, renderer, cena, camera, w, h, q });
-console.log(`cena montada em ${((performance.now() - t0) / 1000).toFixed(1)} s`);
+const fontes = [['Cinzel', 'cinzel/files/cinzel-latin-600-normal.woff2', {}], ['Cormorant Garamond', 'cormorant-garamond/files/cormorant-garamond-latin-500-italic.woff2', { style: 'italic' }]];
+await Promise.all(fontes.map(async ([n, f, o]) => { const ff = new FontFace(n, `url(./node_modules/@fontsource/${f})`, o); await ff.load(); document.fonts.add(ff); }));
+let obra;
+if (q.get('filme')) {
+  const { montarFilme } = await import('./motor-hd/filme.js');
+  obra = await montarFilme({ renderer, cena, camera, w, h, q });
+} else {
+  const mod = await import(`./cenas-hd/${q.get('cena') ?? 'estilo-estrada'}.js`);
+  obra = await mod.default({ THREE, renderer, cena, camera, w, h, q });
+}
+console.log(`montado em ${((performance.now() - t0) / 1000).toFixed(1)} s`);
+const gl = renderer.getContext();
+const pixels = new Uint8Array(w * h * 4);
 window.estudio = {
   pronto: true,
   duracao: obra.duracao ?? 0,
-  fps: 30,
+  planos: obra.planos ?? [],
+  // quadro cru (RGBA, de baixo para cima) em base64, para o ffmpeg
+  quadro(t) {
+    obra.quadro(t);
+    gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+    let s = '';
+    for (let i = 0; i < pixels.length; i += 0x8000) s += String.fromCharCode.apply(null, pixels.subarray(i, i + 0x8000));
+    return btoa(s);
+  },
   foto(t = 0) {
     obra.atualizar?.(t);
     const a = performance.now();
-    if (obra.pos) obra.pos.comp.render(); else renderer.render(cena, camera);
+    if (obra.quadro) obra.quadro(t); else if (obra.pos) obra.pos.comp.render(); else renderer.render(cena, camera);
     console.log(`quadro em ${((performance.now() - a) / 1000).toFixed(1)} s`);
     return renderer.domElement.toDataURL('image/png');
   },
