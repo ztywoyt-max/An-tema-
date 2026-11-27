@@ -5,6 +5,7 @@
 //   node ferramentas/render-hd.mjs cavaleiro-hd --cap 1 --planos 1.1a,1.1b --refazer
 //   vários processos podem rodar juntos: cada plano é travado (p-<id>.mp4.trava) por quem o renderiza;
 //   --ordem reversa começa do fim (bom para um segundo processo)
+//   --horas 3 encerra o processo (entre um plano e outro) depois de 3 h, para não acumular memória
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn, execFileSync } from 'node:child_process';
@@ -61,9 +62,12 @@ function pegar(arq) {
   return null;
 }
 const lista = opc('ordem') === 'reversa' ? [...planos].reverse() : planos;
-for (let volta = 0; volta < 3; volta++) {
+const prazo = inicio + Number(opc('horas', Infinity)) * 3600000;
+let cansou = false;
+for (let volta = 0; volta < 3 && !cansou; volta++) {
  let novos = 0;
  for (const p of lista) {
+  if (Date.now() > prazo) { cansou = true; console.log('prazo do processo esgotado; encerrando'); break; }
   const arq = path.join(pasta, `p-${p.id}.mp4`);
   if (fs.existsSync(arq) && (!tem('refazer') || volta > 0)) continue;
   const trava = pegar(arq);
