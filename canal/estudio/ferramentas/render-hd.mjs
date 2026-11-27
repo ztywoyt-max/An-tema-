@@ -6,6 +6,7 @@
 //   vários processos podem rodar juntos: cada plano é travado (p-<id>.mp4.trava) por quem o renderiza;
 //   --ordem reversa começa do fim (bom para um segundo processo)
 //   --horas 3 encerra o processo (entre um plano e outro) depois de 3 h, para não acumular memória
+//   --perfil ps2: visual mais leve (sem oclusão, sombras menores), desenhado em 1280x720 e ampliado para 1080p
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn, execFileSync } from 'node:child_process';
@@ -19,7 +20,9 @@ const tem = (n) => args.includes(`--${n}`);
 const filme = args.find((a, i) => !a.startsWith('--') && !(i > 0 && args[i - 1].startsWith('--') && !['--previa', '--refazer'].includes(args[i - 1]))) ?? 'cavaleiro-hd';
 const cap = opc('cap', 'todos');
 const previa = tem('previa');
-const [w, h] = (opc('res', previa ? '640x360' : '1920x1080')).split('x').map(Number);
+const perfil = opc('perfil');
+const [w, h] = (opc('res', previa ? '640x360' : perfil === 'ps2' ? '1280x720' : '1920x1080')).split('x').map(Number);
+const ampliar = perfil === 'ps2' && !previa && h < 1080 ? ',scale=1920:1080:flags=lanczos' : '';
 const fps = Number(opc('fps', 24));
 const pasta = path.join(raiz, 'saida', 'hd', previa ? `${filme}-previa` : filme);
 fs.mkdirSync(pasta, { recursive: true });
@@ -28,6 +31,7 @@ const { pagina, url, fechar, estado } = await abrir(raiz, { largura: w, altura: 
 const q = { filme, cap, res: `${w}x${h}` };
 if (opc('planos')) q.planos = opc('planos');
 if (previa) q.ao = '0';
+if (perfil) q.perfil = perfil;
 await pagina.goto(url(q));
 let vigia;
 await Promise.race([
@@ -76,7 +80,7 @@ for (let volta = 0; volta < 3 && !cansou; volta++) {
   const q0 = Math.ceil(p.inicio * fps - 1e-6), q1 = Math.ceil(p.fim * fps - 1e-6);
   const tmp = arq + '.tmp.mp4';
   const ff = spawn('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', `${w}x${h}`, '-r', String(fps), '-i', '-',
-    '-vf', 'vflip', '-c:v', 'libx264', '-preset', previa ? 'veryfast' : 'medium', '-crf', previa ? '24' : '15', '-pix_fmt', 'yuv420p', tmp], { stdio: ['pipe', 'inherit', 'inherit'] });
+    '-vf', 'vflip' + ampliar, '-c:v', 'libx264', '-preset', previa ? 'veryfast' : 'medium', '-crf', previa ? '24' : '15', '-pix_fmt', 'yuv420p', tmp], { stdio: ['pipe', 'inherit', 'inherit'] });
   const fim = new Promise((ok, falha) => ff.on('close', (c) => (c === 0 ? ok() : falha(new Error('ffmpeg ' + c)))));
   const t0 = Date.now();
   for (let k = q0; k < q1; k++) {

@@ -137,7 +137,8 @@ const RAP = [2.3, -6.0], B1 = [-2.4, -5.0], B2 = [3.0, -3.9];
 const olharPara = (de, para) => Math.atan2(para[0] - de[0], para[1] - de[1]);
 
 // ---------- planos ----------
-const noite = { cenario: 'estrada' };
+// semAO: na estrada a oclusão de ambiente briga com a névoa e deixa as árvores brancas
+const noite = { cenario: 'estrada', semAO: true };
 const titulo = (id, cap, texto, sub, min = 5) => ({
   id, cap, cenario: 'tela', min, antes: 0, fadeIn: 1.2, fadeOut: 1.2,
   preparar: (ctx) => { ctx.cen.desenhar({ titulo: texto, sub }); ctx.cen.mostrar(); },

@@ -18,7 +18,7 @@ renderer.setSize(w, h, false);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = q.get('perfil') === 'ps2' ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
 const cena = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(38, w / h, 0.05, 900);
 const { carregarCache } = await import('./motor-hd/cache.js');

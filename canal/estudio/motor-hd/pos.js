@@ -35,13 +35,14 @@ const Grade = {
     }`,
 };
 
-export function criarPos(renderer, cena, camera, { w = 1920, h = 1080, bloom = 0.55, ao = true } = {}) {
-  const alvo = new THREE.WebGLRenderTarget(w, h, { type: THREE.HalfFloatType, samples: 4 });
+export function criarPos(renderer, cena, camera, { w = 1920, h = 1080, bloom = 0.55, ao = true, msaa = 4 } = {}) {
+  const alvo = new THREE.WebGLRenderTarget(w, h, { type: THREE.HalfFloatType, samples: msaa });
   const comp = new EffectComposer(renderer, alvo);
   comp.setSize(w, h);
   comp.addPass(new RenderPass(cena, camera));
+  let gtao = null;
   if (ao) {
-    const gtao = new GTAOPass(cena, camera, w, h);
+    gtao = new GTAOPass(cena, camera, w, h);
     gtao.updateGtaoMaterial({ radius: 0.6, distanceExponent: 1.5, thickness: 1.0, scale: 1.2, samples: 16 });
     gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 16 });
     gtao.blendIntensity = 0.9;
@@ -62,5 +63,5 @@ export function criarPos(renderer, cena, camera, { w = 1920, h = 1080, bloom = 0
   const grade = new ShaderPass(Grade);
   grade.uniforms.uRes.value.set(w, h);
   comp.addPass(grade);
-  return { comp, grade, bloom: b };
+  return { comp, grade, bloom: b, gtao };
 }

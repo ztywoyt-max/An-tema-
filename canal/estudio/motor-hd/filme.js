@@ -17,7 +17,20 @@ export async function montarFilme({ renderer, cena, camera, w, h, q }) {
   const todos = montarLinha(mod.planos, falas, tempos);
   let planos = todos.planos.filter((p) => cap == null || cap === 'todos' || String(p.cap) === cap);
   if (so) planos = planos.filter((p) => so.includes(p.id));
-  const pos = criarPos(renderer, cena, camera, { w, h, bloom: 0.55, ao: q.get('ao') !== '0' });
+  // perfil "ps2": sem oclusão de ambiente nem MSAA; sombras menores e só de personagens e objetos (a floresta
+  // e o mato, malhas instanciadas, não fazem sombra); bem mais rápido no render por software
+  const ps2 = q.get('perfil') === 'ps2';
+  const pos = criarPos(renderer, cena, camera, { w, h, bloom: 0.55, ao: !ps2 && q.get('ao') !== '0', msaa: ps2 ? 0 : 4 });
+  const reduzir = (l, n) => { if (l.shadow.mapSize.x > n) { l.shadow.mapSize.set(n, n); l.shadow.map?.dispose(); l.shadow.map = null; } };
+  const aplicarPerfil = () => {
+    if (q.get('sombras') === '0') renderer.shadowMap.enabled = false;
+    if (!ps2) return;
+    cena.traverse((o) => {
+      if (o.isDirectionalLight && o.castShadow) reduzir(o, 1024);
+      if ((o.isPointLight || o.isSpotLight) && o.castShadow) reduzir(o, 512);
+      if (o.isInstancedMesh) o.castShadow = false;
+    });
+  };
 
   const ctx = { THREE, renderer, cena, camera, q, w, h, pos, cenarios: {}, atores: {}, tempoFilme: 0 };
   ctx.ator = (n) => ctx.atores[n];
@@ -42,7 +55,7 @@ export async function montarFilme({ renderer, cena, camera, w, h, q }) {
       console.log(`ator ${a}: ${((performance.now() - t0) / 1000).toFixed(1)} s`);
     }
   }
-
+  aplicarPerfil();
   let atual = null;
   function entrar(p) {
     for (const c of Object.values(ctx.cenarios)) { c.grupo.visible = false; if (c.base) c.base.visible = false; }
@@ -65,9 +78,12 @@ export async function montarFilme({ renderer, cena, camera, w, h, q }) {
       c.entrar?.(p);
     }
     for (const a of p.atores ?? []) ctx.atores[a].raiz.visible = true;
+    // semAO: planos em que a oclusão de ambiente estraga a imagem (na estrada ela briga com a névoa)
+    if (pos.gtao) pos.gtao.enabled = !p.semAO;
     camera.fov = p.fov ?? 38;
     camera.updateProjectionMatrix();
     p.preparar?.(ctx);
+    aplicarPerfil();
     atual = p;
   }
   function quadro(t) {
